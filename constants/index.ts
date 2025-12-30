@@ -152,7 +152,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'first-trip',
 		title: 'Nuestro primer viaje al Lago Calima',
-		description: 'Conversaciones profundas bajo el cielo abierto, risas compartidas y el inicio de una conexión que cambiaría todo. El día que nos acercamos de verdad.',
+		description: 'En este viaje conectamos y conversamos mucho más. Fue el inicio de algo hermoso.',
 		date: '2024-10-12',
 		image: '/images/lagocalima.jpeg',
 		imageAlt: 'Lago Calima',
@@ -160,7 +160,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'first-halloween',
 		title: 'Nuestro primer Halloween',
-		description: 'Nuestra primera celebración juntos, disfrazados y sonriendo. Un recuerdo mágico que guardamos en el corazón para siempre.',
+		description: 'Nuestra primera celebración juntos. Un recuerdo mágico, disfrazados y felices.',
 		date: '2024-10-31',
 		images: ['/images/halloween.jpeg', '/images/halloween2.jpeg'],
 		imageAlt: 'Halloween juntos',
@@ -168,7 +168,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'birthday-love',
 		title: 'Cumpleaños de mi princesa hermosa',
-		description: 'El día más especial del año. Celebrando a la persona que ilumina mis días y llena mi vida de alegría.',
+		description: 'El día más especial del año. Celebrando a la persona que ilumina mis días.',
 		date: '2025-03-16',
 		image: '/images/cumpleaños.jpeg',
 		imageAlt: 'Cumpleaños',
@@ -176,7 +176,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'relationship-start',
 		title: 'Pedida de noviazgo',
-		description: 'El momento en que dejamos de ser "algo" para convertirnos en "todo". El comienzo oficial de nuestra historia de amor.',
+		description: 'El momento en que dejamos de ser "algo" para convertirnos en "todo".',
 		date: '2025-04-06',
 		image: '/images/noviazgo.jpg',
 		imageAlt: 'Pedida de noviazgo',
@@ -184,7 +184,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'quince-invitation',
 		title: 'Invitación a los 15 años',
-		description: 'El honor más grande: ser invitado a formar parte de uno de los días más importantes de tu vida. Un privilegio que valoro infinitamente.',
+		description: 'La gozamos en la fiesta, fuimos los tíos más cool. Te amo, mi amor.',
 		date: '2025-08-30',
 		image: '/images/fiesta 15.jpeg',
 		imageAlt: 'Fiesta de 15',
@@ -192,7 +192,7 @@ export const TIMELINE_MILESTONES: TimelineMilestone[] = [
 	{
 		id: 'special-outing',
 		title: 'Nuestra salida especial',
-		description: 'Otra aventura más a tu lado. Cada momento contigo es un recuerdo que atesoro, una historia más en nuestro libro.',
+		description: 'Cita romántica a tu lado, como siempre quiero tener.',
 		date: '2025-09-20',
 		image: '/images/invitacion especial.jpeg',
 		imageAlt: 'Salida especial',

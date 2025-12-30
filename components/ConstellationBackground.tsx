@@ -1,27 +1,22 @@
-'use client'
-
-import { useRef, useMemo, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
-
-// ===== PALETA DE COLORES — SIEMPRE MÁGICA Y OSCURA =====
+// ===== PALETA DE COLORES — PROFUNDIDAD CÓSMICA =====
 const SKY_COLORS = {
-    // Estado inicial (arriba de la página) - Azul profundo mágico
+    // Estado inicial: Azul medianoche profundo con toque místico
     dawn: {
         top: '#0f172a',      // Slate 900
         mid: '#1e1b4b',      // Indigo 950
         bottom: '#312e81',   // Indigo 900
     },
-    // Estado medio - Transición a púrpura profundo
+    // Estado medio: Transición a violeta intenso
     dusk: {
         top: '#020617',      // Slate 950
         mid: '#2e1065',      // Violet 950
-        bottom: '#4c1d95',   // Violet 900
+        bottom: '#581c87',   // Purple 800 - Un poco más vibrante
     },
-    // Estado final - Noche profunda
+    // Estado final: Abismo estrellado
     night: {
         top: '#000000',      // Negro puro
-        mid: '#0f0518',      // Casi negro púrpura
-        bottom: '#1e1b4b',   // Indigo muy oscuro
+        mid: '#0f0518',      // Casi negro
+        bottom: '#172554',   // Blue 950 - Contraste sutil
     }
 }
 

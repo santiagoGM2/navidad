@@ -30,8 +30,8 @@ export default function Home() {
 						<motion.h1
 							className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]"
 							style={{
-								color: '#1a1a2e',
-								textShadow: '0 2px 20px rgba(255, 255, 255, 0.5)',
+								color: '#ffffff',
+								textShadow: '0 0 40px rgba(255, 255, 255, 0.4)',
 							}}
 						>
 							Recuerda que
@@ -57,7 +57,7 @@ export default function Home() {
 							animate={{ opacity: 1 }}
 							transition={{ delay: 1, duration: 1.5 }}
 							style={{
-								color: '#3a3a5c',
+								color: 'rgba(255, 255, 255, 0.7)',
 							}}
 						>
 							Un viaje a través de las estrellas,
