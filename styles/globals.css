@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UNIVERSO DE CONSTELACIONES — Sistema de Diseño
+   Transición visual: Día → Noche
+═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+	:root {
+		--color-sky-dawn: 135 206 235;
+		--color-sky-dusk: 74 107 138;
+		--color-sky-night: 10 10 26;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	body {
+		@apply font-sans;
+		background: #87CEEB;
+		min-height: 100vh;
+		overflow-x: hidden;
+	}
+
+	/* Typography */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-display font-bold tracking-tight;
+	}
+
+	p {
+		@apply leading-relaxed;
+	}
+
+	/* Selection styling */
+	::selection {
+		background: rgba(139, 92, 246, 0.3);
+		color: white;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENTES GLASS
+═══════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+	.glass {
+		@apply backdrop-blur-md;
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	}
+
+	.glass-light {
+		@apply backdrop-blur-md;
+		background: rgba(255, 255, 255, 0.85);
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+	}
+
+	.glass-dark {
+		@apply backdrop-blur-lg;
+		background: rgba(10, 10, 26, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILIDADES
+═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+
+	/* Transiciones suaves */
+	.transition-smooth {
+		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.transition-slow {
+		transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+	}
+
+	/* Espaciado de secciones */
+	.section-spacing {
+		@apply py-24 md:py-32 lg:py-40;
+	}
+
+	/* Z-index layers */
+	.z-background {
+		z-index: -10;
+	}
+
+	.z-scene {
+		z-index: 0;
+	}
+
+	.z-content {
+		z-index: 10;
+	}
+
+	.z-overlay {
+		z-index: 20;
+	}
+
+	.z-modal {
+		z-index: 50;
+	}
+
+	.z-nav {
+		z-index: 100;
+	}
+
+	/* Texto con gradiente */
+	.gradient-text {
+		@apply bg-clip-text text-transparent;
+		background-image: linear-gradient(135deg,
+				#8b5cf6 0%,
+				#6366f1 50%,
+				#3b82f6 100%);
+	}
+
+	/* Custom scrollbar - Minimalista */
+	::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: rgba(139, 92, 246, 0.3);
+		border-radius: 3px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: rgba(139, 92, 246, 0.5);
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMACIONES — Constelaciones
+═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes twinkle {
+
+	0%,
+	100% {
+		opacity: 0.3;
+		transform: scale(1);
+	}
+
+	50% {
+		opacity: 1;
+		transform: scale(1.15);
+	}
+}
+
+@keyframes float {
+
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+
+	50% {
+		transform: translateY(-8px);
+	}
+}
+
+@keyframes pulse-soft {
+
+	0%,
+	100% {
+		opacity: 0.7;
+	}
+
+	50% {
+		opacity: 1;
+	}
+}
+
+/* Clases de animación */
+.animate-twinkle {
+	animation: twinkle 3s ease-in-out infinite;
+}
+
+.animate-float {
+	animation: float 5s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+	animation: pulse-soft 4s ease-in-out infinite;
+}
