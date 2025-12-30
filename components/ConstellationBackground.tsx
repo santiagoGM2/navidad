@@ -1,3 +1,8 @@
+'use client'
+
+import { useRef, useMemo, useState, useEffect } from 'react'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+
 // ===== PALETA DE COLORES — PROFUNDIDAD CÓSMICA =====
 const SKY_COLORS = {
     // Estado inicial: Azul medianoche profundo con toque místico
