@@ -2,6 +2,7 @@
 
 import { AlbumImage as AlbumImageType } from '@/constants'
 import { useState } from 'react'
+import Image from 'next/image'
 
 interface AlbumImageProps {
 	image: AlbumImageType
@@ -30,16 +31,18 @@ export default function AlbumImage({ image }: AlbumImageProps) {
 							<div className="w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
 						</div>
 					)}
-					<img
+					<Image
 						src={image.src}
 						alt={image.alt}
-						className={`w-full h-full object-cover transition-slower group-hover:scale-110 ${isLoading ? 'opacity-0' : 'opacity-100'
+						fill
+						className={`object-cover transition-slower group-hover:scale-110 ${isLoading ? 'opacity-0' : 'opacity-100'
 							}`}
 						onLoad={() => setIsLoading(false)}
 						onError={() => {
 							setIsLoading(false)
 							setHasError(true)
 						}}
+						sizes="(max-width: 768px) 50vw, 33vw"
 					/>
 					{/* Overlay en hover */}
 					<div className="absolute inset-0 bg-gradient-to-t from-blue-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-slow flex items-end p-4">

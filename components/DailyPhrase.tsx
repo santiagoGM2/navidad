@@ -97,7 +97,7 @@ export default function DailyPhrase() {
 					animate={{ opacity: 1, y: 0 }}
 					className="font-display text-xl md:text-2xl lg:text-3xl text-white/90 italic leading-relaxed mb-4"
 				>
-					"{phrase.text}"
+					&ldquo;{phrase.text}&rdquo;
 				</motion.p>
 
 				{phrase.author && (
