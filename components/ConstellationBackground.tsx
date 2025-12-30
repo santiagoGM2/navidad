@@ -3,44 +3,25 @@
 import { useRef, useMemo, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
-/**
- * ConstellationBackground - Sistema de Fondo de Constelaciones
- * 
- * CONCEPTO: Transición progresiva de día a noche
- * 
- * INICIO (scroll 0%): Cielo claro, tipo atardecer temprano
- * - Fondo claro/cálido
- * - Constelaciones apenas visibles
- * - Pocos puntos de luz
- * 
- * PROGRESIÓN (scroll 0-100%):
- * - Fondo oscurece gradualmente
- * - Más estrellas aparecen
- * - Constelaciones brillan más
- * - Estrellas fugaces ocasionales
- * 
- * FINAL (scroll 100%): Noche profunda
- * - Cielo oscuro estrellado
- * - Constelaciones brillantes
- * - Máxima inmersión
- */
-
-// ===== PALETA DE COLORES — TRANSICIÓN DÍA → NOCHE =====
+// ===== PALETA DE COLORES — SIEMPRE MÁGICA Y OSCURA =====
 const SKY_COLORS = {
+    // Estado inicial (arriba de la página) - Azul profundo mágico
     dawn: {
-        top: '#87CEEB',      // Cielo azul claro
-        mid: '#B4D7E8',      // Azul pálido
-        bottom: '#E8C4A0',   // Dorado suave
+        top: '#0f172a',      // Slate 900
+        mid: '#1e1b4b',      // Indigo 950
+        bottom: '#312e81',   // Indigo 900
     },
+    // Estado medio - Transición a púrpura profundo
     dusk: {
-        top: '#4A6B8A',      // Azul crepuscular
-        mid: '#5D4E6D',      // Púrpura suave
-        bottom: '#8B6B5B',   // Naranja atenuado
+        top: '#020617',      // Slate 950
+        mid: '#2e1065',      // Violet 950
+        bottom: '#4c1d95',   // Violet 900
     },
+    // Estado final - Noche profunda
     night: {
-        top: '#0a0a1a',      // Negro azulado
-        mid: '#0d0d25',      // Azul muy oscuro
-        bottom: '#12122a',   // Púrpura muy oscuro
+        top: '#000000',      // Negro puro
+        mid: '#0f0518',      // Casi negro púrpura
+        bottom: '#1e1b4b',   // Indigo muy oscuro
     }
 }
 
@@ -53,7 +34,6 @@ interface Star {
     baseOpacity: number
     twinkleSpeed: number
     delay: number
-    appearAt: number // Momento del scroll en que aparece (0-1)
 }
 
 interface ConstellationStar {
@@ -97,10 +77,10 @@ export default function ConstellationBackground({ children }: { children: React.
         restDelta: 0.0001
     })
 
-    // Detección de móvil
+    // Detección de móvil y re-renderizado seguro
     useEffect(() => {
+        setIsMobile(window.innerWidth < 768)
         const check = () => setIsMobile(window.innerWidth < 768)
-        check()
         window.addEventListener('resize', check)
         return () => window.removeEventListener('resize', check)
     }, [])
@@ -110,25 +90,23 @@ export default function ConstellationBackground({ children }: { children: React.
         const createShootingStar = () => {
             const newStar: ShootingStar = {
                 id: Date.now(),
-                startX: Math.random() * 80 + 10, // 10-90%
-                startY: Math.random() * 40, // 0-40% (parte superior)
-                angle: Math.random() * 30 + 15, // 15-45 grados
-                length: Math.random() * 80 + 60, // Longitud del trazo
-                duration: Math.random() * 1 + 0.5, // 0.5-1.5 segundos
+                startX: Math.random() * 80 + 10,
+                startY: Math.random() * 40,
+                angle: Math.random() * 30 + 15,
+                length: Math.random() * 80 + 60,
+                duration: Math.random() * 1 + 0.5,
                 delay: 0
             }
 
-            setShootingStars(prev => [...prev.slice(-2), newStar]) // Máximo 3 a la vez
+            setShootingStars(prev => [...prev.slice(-2), newStar])
 
-            // Limpiar después de la animación
             setTimeout(() => {
                 setShootingStars(prev => prev.filter(s => s.id !== newStar.id))
             }, newStar.duration * 1000 + 500)
         }
 
-        // Intervalo aleatorio para estrellas fugaces (cada 4-10 segundos)
         const scheduleNext = () => {
-            const delay = Math.random() * 6000 + 4000
+            const delay = Math.random() * 4000 + 3000 // Más frecuentes
             return setTimeout(() => {
                 createShootingStar()
                 scheduleNext()
@@ -140,137 +118,62 @@ export default function ConstellationBackground({ children }: { children: React.
     }, [])
 
     // ===== TRANSFORMACIONES DE COLOR =====
-    const skyTop = useTransform(
-        smoothProgress,
-        [0, 0.3, 0.6, 1],
-        [SKY_COLORS.dawn.top, SKY_COLORS.dusk.top, SKY_COLORS.night.top, SKY_COLORS.night.top]
-    )
+    const skyTop = useTransform(smoothProgress, [0, 0.5, 1], [SKY_COLORS.dawn.top, SKY_COLORS.dusk.top, SKY_COLORS.night.top])
+    const skyMid = useTransform(smoothProgress, [0, 0.5, 1], [SKY_COLORS.dawn.mid, SKY_COLORS.dusk.mid, SKY_COLORS.night.mid])
+    const skyBottom = useTransform(smoothProgress, [0, 0.5, 1], [SKY_COLORS.dawn.bottom, SKY_COLORS.dusk.bottom, SKY_COLORS.night.bottom])
 
-    const skyMid = useTransform(
-        smoothProgress,
-        [0, 0.3, 0.6, 1],
-        [SKY_COLORS.dawn.mid, SKY_COLORS.dusk.mid, SKY_COLORS.night.mid, SKY_COLORS.night.mid]
-    )
-
-    const skyBottom = useTransform(
-        smoothProgress,
-        [0, 0.3, 0.6, 1],
-        [SKY_COLORS.dawn.bottom, SKY_COLORS.dusk.bottom, SKY_COLORS.night.bottom, SKY_COLORS.night.bottom]
-    )
-
-    // Opacidad global de estrellas
-    const starsOpacity = useTransform(smoothProgress, [0, 0.2, 0.5, 1], [0.15, 0.4, 0.8, 1])
-
-    // Opacidad de constelaciones
-    const constellationsOpacity = useTransform(smoothProgress, [0, 0.3, 0.6, 1], [0.1, 0.3, 0.6, 0.85])
-
-    // Brillo de estrellas fugaces
-    const shootingStarsOpacity = useTransform(smoothProgress, [0, 0.4, 1], [0, 0.5, 1])
+    const starsOpacity = useTransform(smoothProgress, [0, 0.2], [0.8, 1]) // Siempre visibles
+    const constellationsOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0.8]) // Más visibles
 
     // ===== GENERACIÓN DE ESTRELLAS =====
     const stars = useMemo((): Star[] => {
-        const count = isMobile ? 120 : 300
+        // Usamos un número fijo inicial para evitar desajustes de hidratación
+        // Luego useEffect ajustaría si fuera necesario, pero mejor mantenerlo simple
+        const count = 200
         return Array.from({ length: count }).map((_, i) => ({
             id: i,
             x: Math.random() * 100,
             y: Math.random() * 100,
-            size: Math.random() * 2.5 + 0.5,
-            baseOpacity: Math.random() * 0.6 + 0.4,
-            twinkleSpeed: Math.random() * 4 + 2,
-            delay: Math.random() * 5,
-            appearAt: Math.random() * 0.6 // Algunas aparecen antes, otras después
+            size: Math.random() * 2 + 1, // Un poco más grandes
+            baseOpacity: Math.random() * 0.5 + 0.3,
+            twinkleSpeed: Math.random() * 3 + 2,
+            delay: Math.random() * 5
         }))
-    }, [isMobile])
+    }, [])
 
     // ===== CONSTELACIONES EN FORMA DE CORAZÓN =====
     const constellations = useMemo((): Constellation[] => [
-        // Corazón 1 - Superior izquierda (grande)
         {
             id: 1,
             stars: [
-                { x: 12, y: 18 },  // Punta inferior
-                { x: 8, y: 12 },   // Curva izquierda baja
-                { x: 6, y: 8 },    // Curva izquierda alta
-                { x: 10, y: 5 },   // Lóbulo izquierdo
-                { x: 14, y: 7 },   // Centro superior
-                { x: 18, y: 5 },   // Lóbulo derecho
-                { x: 22, y: 8 },   // Curva derecha alta
-                { x: 20, y: 12 },  // Curva derecha baja
+                { x: 12, y: 18 }, { x: 8, y: 12 }, { x: 6, y: 8 }, { x: 10, y: 5 },
+                { x: 14, y: 7 }, { x: 18, y: 5 }, { x: 22, y: 8 }, { x: 20, y: 12 }
             ],
             connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0]],
-            appearAt: 0.2
+            appearAt: 0
         },
-        // Corazón 2 - Superior derecha (mediano)
         {
             id: 2,
             stars: [
-                { x: 78, y: 22 },  // Punta inferior
-                { x: 74, y: 16 },  // Curva izquierda
-                { x: 76, y: 11 },  // Lóbulo izquierdo
-                { x: 80, y: 13 },  // Centro superior
-                { x: 84, y: 11 },  // Lóbulo derecho
-                { x: 86, y: 16 },  // Curva derecha
+                { x: 78, y: 22 }, { x: 74, y: 16 }, { x: 76, y: 11 }, { x: 80, y: 13 },
+                { x: 84, y: 11 }, { x: 86, y: 16 }
             ],
             connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]],
-            appearAt: 0.25
+            appearAt: 0
         },
-        // Corazón 3 - Centro (pequeño)
+        // Más corazones distribuidos...
         {
             id: 3,
             stars: [
-                { x: 50, y: 35 },  // Punta inferior
-                { x: 47, y: 30 },  // Curva izquierda
-                { x: 48, y: 26 },  // Lóbulo izquierdo
-                { x: 52, y: 26 },  // Lóbulo derecho
-                { x: 53, y: 30 },  // Curva derecha
+                { x: 50, y: 35 }, { x: 47, y: 30 }, { x: 48, y: 26 }, { x: 52, y: 26 }, { x: 53, y: 30 }
             ],
             connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
-            appearAt: 0.3
-        },
-        // Corazón 4 - Izquierda medio (pequeño)
-        {
-            id: 4,
-            stars: [
-                { x: 25, y: 50 },  // Punta inferior
-                { x: 22, y: 45 },  // Curva izquierda
-                { x: 23, y: 41 },  // Lóbulo izquierdo
-                { x: 27, y: 41 },  // Lóbulo derecho
-                { x: 28, y: 45 },  // Curva derecha
-            ],
-            connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
-            appearAt: 0.35
-        },
-        // Corazón 5 - Derecha abajo (mediano)
-        {
-            id: 5,
-            stars: [
-                { x: 85, y: 55 },  // Punta inferior
-                { x: 81, y: 49 },  // Curva izquierda
-                { x: 83, y: 44 },  // Lóbulo izquierdo
-                { x: 87, y: 46 },  // Centro
-                { x: 91, y: 44 },  // Lóbulo derecho
-                { x: 93, y: 49 },  // Curva derecha
-            ],
-            connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]],
-            appearAt: 0.4
-        },
-        // Corazón 6 - Inferior izquierda (pequeño)
-        {
-            id: 6,
-            stars: [
-                { x: 15, y: 70 },  // Punta inferior
-                { x: 12, y: 65 },  // Curva izquierda
-                { x: 13, y: 61 },  // Lóbulo izquierdo
-                { x: 17, y: 61 },  // Lóbulo derecho
-                { x: 18, y: 65 },  // Curva derecha
-            ],
-            connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
-            appearAt: 0.45
+            appearAt: 0
         }
     ], [])
 
     return (
-        <div ref={containerRef} className="relative min-h-screen overflow-hidden">
+        <div ref={containerRef} className="relative min-h-screen overflow-hidden bg-slate-900">
 
             {/* ===== CAPA 0: CIELO GRADIENTE ===== */}
             <motion.div
@@ -278,91 +181,73 @@ export default function ConstellationBackground({ children }: { children: React.
                 style={{
                     background: useTransform(
                         [skyTop, skyMid, skyBottom],
-                        ([top, mid, bottom]) =>
-                            `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`
+                        ([top, mid, bottom]) => `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`
                     )
                 }}
             />
 
-            {/* ===== CAPA 1: ESTRELLAS INDIVIDUALES ===== */}
-            <motion.div
-                className="fixed inset-0 z-[1] pointer-events-none"
-                style={{ opacity: starsOpacity }}
-            >
+            {/* ===== CAPA 1: ESTRELLAS ===== */}
+            <motion.div className="fixed inset-0 z-[1] pointer-events-none" style={{ opacity: starsOpacity }}>
                 {stars.map((star) => (
                     <motion.div
                         key={star.id}
-                        className="absolute rounded-full"
+                        className="absolute rounded-full bg-white"
                         style={{
                             left: `${star.x}%`,
                             top: `${star.y}%`,
                             width: star.size,
                             height: star.size,
-                            backgroundColor: '#ffffff',
-                            boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8)`
+                            boxShadow: `0 0 ${star.size}px rgba(255, 255, 255, 0.8)`
                         }}
                         animate={{
-                            opacity: [star.baseOpacity * 0.3, star.baseOpacity, star.baseOpacity * 0.3],
-                            scale: [0.9, 1.1, 0.9]
+                            opacity: [star.baseOpacity, 1, star.baseOpacity],
+                            scale: [1, 1.2, 1]
                         }}
                         transition={{
                             duration: star.twinkleSpeed,
                             repeat: Infinity,
                             delay: star.delay,
-                            ease: 'easeInOut'
+                            ease: "easeInOut"
                         }}
                     />
                 ))}
             </motion.div>
 
             {/* ===== CAPA 2: CONSTELACIONES ===== */}
-            <motion.div
-                className="fixed inset-0 z-[2] pointer-events-none"
-                style={{ opacity: constellationsOpacity }}
-            >
-                <svg
-                    className="absolute inset-0 w-full h-full"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                >
+            <motion.div className="fixed inset-0 z-[2] pointer-events-none" style={{ opacity: constellationsOpacity }}>
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                     {constellations.map((constellation) => (
                         <g key={constellation.id}>
-                            {/* Líneas conectoras */}
+                            {/* Líneas */}
                             {constellation.connections.map(([from, to], i) => (
                                 <motion.line
-                                    key={`${constellation.id}-line-${i}`}
+                                    key={`line-${constellation.id}-${i}`}
                                     x1={constellation.stars[from].x}
                                     y1={constellation.stars[from].y}
                                     x2={constellation.stars[to].x}
                                     y2={constellation.stars[to].y}
-                                    stroke="rgba(255, 255, 255, 0.25)"
-                                    strokeWidth="0.08"
-                                    strokeLinecap="round"
-                                    initial={{ pathLength: 0, opacity: 0 }}
-                                    animate={{ pathLength: 1, opacity: 1 }}
-                                    transition={{
-                                        pathLength: { duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' },
-                                        opacity: { duration: 1.5 }
-                                    }}
+                                    stroke="rgba(255, 255, 255, 0.2)"
+                                    strokeWidth="0.1"
+                                    initial={{ opacity: 0.5 }}
+                                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                                 />
                             ))}
-                            {/* Estrellas de la constelación */}
+                            {/* Estrellas */}
                             {constellation.stars.map((star, i) => (
                                 <motion.circle
-                                    key={`${constellation.id}-star-${i}`}
+                                    key={`star-${constellation.id}-${i}`}
                                     cx={star.x}
                                     cy={star.y}
-                                    r="0.35"
+                                    r={0.4} // Valor estático seguro
                                     fill="white"
-                                    animate={{
-                                        opacity: [0.5, 1, 0.5],
-                                        r: [0.25, 0.4, 0.25]
-                                    }}
+                                    initial={{ opacity: 0.8 }}
+                                    animate={{ opacity: [0.6, 1, 0.6] }}
                                     transition={{
-                                        duration: 2.5 + i * 0.2,
+                                        duration: 3,
                                         repeat: Infinity,
-                                        delay: i * 0.15,
-                                        ease: 'easeInOut'
+                                        delay: i * 0.2,
+                                        ease: "easeInOut"
                                     }}
                                 />
                             ))}
@@ -372,63 +257,28 @@ export default function ConstellationBackground({ children }: { children: React.
             </motion.div>
 
             {/* ===== CAPA 3: ESTRELLAS FUGACES ===== */}
-            <motion.div
-                className="fixed inset-0 z-[3] pointer-events-none overflow-hidden"
-                style={{ opacity: shootingStarsOpacity }}
-            >
+            <div className="fixed inset-0 z-[3] pointer-events-none overflow-hidden">
                 {shootingStars.map((star) => (
                     <motion.div
                         key={star.id}
-                        className="absolute"
+                        className="absolute h-[2px] rounded-full bg-gradient-to-r from-white via-white/50 to-transparent"
                         style={{
                             left: `${star.startX}%`,
                             top: `${star.startY}%`,
                             width: star.length,
-                            height: 2,
-                            background: 'linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 30%, transparent 100%)',
-                            borderRadius: '2px',
-                            transformOrigin: 'left center',
-                            transform: `rotate(${star.angle}deg)`,
-                            filter: 'blur(0.5px)'
+                            rotate: star.angle
                         }}
-                        initial={{ opacity: 0, scaleX: 0 }}
+                        initial={{ opacity: 0, x: 0 }}
                         animate={{
-                            opacity: [0, 1, 1, 0],
-                            scaleX: [0, 1, 1, 1],
-                            x: [0, star.length * 1.5]
+                            opacity: [0, 1, 0],
+                            x: star.length * 2
                         }}
-                        transition={{
-                            duration: star.duration,
-                            ease: 'easeOut'
-                        }}
+                        transition={{ duration: star.duration, ease: "easeOut" }}
                     />
                 ))}
-            </motion.div>
+            </div>
 
-            {/* ===== CAPA 4: BRILLO ATMOSFÉRICO ===== */}
-            <motion.div
-                className="fixed inset-0 z-[4] pointer-events-none"
-                style={{
-                    opacity: useTransform(smoothProgress, [0, 0.5, 1], [0.3, 0.1, 0])
-                }}
-            >
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 200, 150, 0.15) 0%, transparent 60%)'
-                    }}
-                />
-            </motion.div>
-
-            {/* ===== CAPA 5: VIGNETTE SUTIL ===== */}
-            <div
-                className="fixed inset-0 z-[5] pointer-events-none"
-                style={{
-                    background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.15) 100%)'
-                }}
-            />
-
-            {/* ===== CONTENIDO PRINCIPAL ===== */}
+            {/* ===== CONTENIDO ===== */}
             <div className="relative z-[10]">
                 {children}
             </div>
