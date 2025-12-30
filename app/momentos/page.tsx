@@ -56,7 +56,7 @@ function MomentBubble({ moment, index }: { moment: typeof MOMENTS[number]; index
 				className="glass-subtle rounded-full px-8 py-5 md:px-10 md:py-6 inline-block max-w-md"
 			>
 				<p className="font-display text-lg md:text-xl text-slate-800 text-center italic">
-					"{moment.text}"
+					&ldquo;{moment.text}&rdquo;
 				</p>
 			</motion.div>
 		</motion.div>

@@ -115,7 +115,7 @@ export default function Home() {
 							>
 								<div className="relative backdrop-blur-sm bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-500">
 									<p className="font-display text-lg md:text-xl text-white/85 italic text-center leading-relaxed">
-										"{moment.text}"
+										&ldquo;{moment.text}&rdquo;
 									</p>
 								</div>
 							</motion.div>
