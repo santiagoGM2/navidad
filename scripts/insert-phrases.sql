@@ -12,3 +12,4 @@ INSERT INTO daily_phrases (text, author, active) VALUES
 ('mi amor por ti crece cada día', NULL, true)
 ON CONFLICT DO NOTHING;
 
+

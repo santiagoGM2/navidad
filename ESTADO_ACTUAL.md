@@ -44,3 +44,4 @@ Ve a http://localhost:3000 y verás la frase del día funcionando.
 
 **Nota:** El error actual es normal - solo falta crear la tabla en Supabase ejecutando el SQL.
 
+

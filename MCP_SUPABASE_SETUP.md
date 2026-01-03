@@ -77,3 +77,4 @@ Si prefieres no usar MCP, puedes:
 2. Usar el SQL Editor de Supabase
 3. Crear un panel de administración en tu app
 
+

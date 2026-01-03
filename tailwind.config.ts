@@ -27,9 +27,9 @@ const config: Config = {
 			},
 			fontFamily: {
 				// Tipografía principal: elegante y legible
-				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'sans': ['var(--font-inter)', 'system-ui', 'sans-serif'],
 				// Tipografía secundaria: para títulos y elementos especiales
-				'display': ['Playfair Display', 'Georgia', 'serif'],
+				'display': ['var(--font-playfair)', 'Georgia', 'serif'],
 			},
 			fontSize: {
 				// Escala tipográfica armoniosa

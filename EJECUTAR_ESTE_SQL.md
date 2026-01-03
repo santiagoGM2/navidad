@@ -74,3 +74,4 @@ ON CONFLICT DO NOTHING;
 5. Reinicia el servidor: `npm run dev`
 6. Ve a http://localhost:3000 y verás la frase del día funcionando
 
+

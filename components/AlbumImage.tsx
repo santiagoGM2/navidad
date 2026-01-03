@@ -43,6 +43,8 @@ export default function AlbumImage({ image }: AlbumImageProps) {
 							setHasError(true)
 						}}
 						sizes="(max-width: 768px) 50vw, 33vw"
+						loading="lazy"
+						quality={85}
 					/>
 					{/* Overlay en hover */}
 					<div className="absolute inset-0 bg-gradient-to-t from-blue-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-slow flex items-end p-4">
@@ -53,3 +55,4 @@ export default function AlbumImage({ image }: AlbumImageProps) {
 		</div>
 	)
 }
+

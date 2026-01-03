@@ -136,6 +136,8 @@ function TimelineDepthItem({ milestone, index }: { milestone: TimelineMilestone,
                                     fill
                                     className="object-cover rounded-xl border border-white/10 hover:scale-105 transition-transform duration-700"
                                     sizes="(max-width: 768px) 100vw, 50vw"
+                                    loading="lazy"
+                                    quality={85}
                                 />
                             </div>
                             {/* Overlay sutil con gradiente */}
@@ -195,6 +197,8 @@ function ImageCarousel({ images, alt }: { images: string[], alt: string }) {
                             fill
                             className="object-cover rounded-xl border border-white/10"
                             sizes="(max-width: 768px) 100vw, 50vw"
+                            loading="lazy"
+                            quality={85}
                         />
                     </motion.div>
                 </AnimatePresence>

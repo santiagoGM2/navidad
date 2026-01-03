@@ -262,3 +262,4 @@ El sistema visual está completamente definido y listo para:
 3. Añadir componentes con glassmorphism
 4. Desarrollar la narrativa visual del sitio
 
+

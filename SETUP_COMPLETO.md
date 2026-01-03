@@ -119,3 +119,4 @@ INSERT INTO daily_phrases (text, author, active) VALUES
 ('Tu frase personalizada aquí', 'Autor (opcional)', true);
 ```
 
+

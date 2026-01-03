@@ -126,10 +126,10 @@ export default function ConstellationBackground({ children }: { children: React.
     const constellationsOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0.8]) // Más visibles
 
     // ===== GENERACIÓN DE ESTRELLAS =====
+    // Optimización: Reducir número de estrellas en móvil para mejor rendimiento
     const stars = useMemo((): Star[] => {
-        // Usamos un número fijo inicial para evitar desajustes de hidratación
-        // Luego useEffect ajustaría si fuera necesario, pero mejor mantenerlo simple
-        const count = 200
+        // Reducir estrellas en móvil para mejorar rendimiento
+        const count = isMobile ? 100 : 200
         return Array.from({ length: count }).map((_, i) => ({
             id: i,
             x: Math.random() * 100,
@@ -139,7 +139,7 @@ export default function ConstellationBackground({ children }: { children: React.
             twinkleSpeed: Math.random() * 3 + 2,
             delay: Math.random() * 5
         }))
-    }, [])
+    }, [isMobile])
 
     // ===== CONSTELACIONES EN FORMA DE CORAZÓN =====
     const constellations = useMemo((): Constellation[] => [

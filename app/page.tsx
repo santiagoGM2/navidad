@@ -1,12 +1,22 @@
 'use client'
 
+import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import ConstellationBackground from '@/components/ConstellationBackground'
-import DepthTimeline from '@/components/DepthTimeline'
-import HeartbeatLetter from '@/components/HeartbeatLetter'
 import TimeCounter from '@/components/TimeCounter'
-import DailyPhrase from '@/components/DailyPhrase'
 import { MOMENTS } from '@/constants'
+
+// Lazy load componentes pesados que no están en el viewport inicial
+const DepthTimeline = lazy(() => import('@/components/DepthTimeline'))
+const HeartbeatLetter = lazy(() => import('@/components/HeartbeatLetter'))
+const DailyPhrase = lazy(() => import('@/components/DailyPhrase'))
+
+// Placeholder para componentes lazy
+const LazyPlaceholder = ({ children }: { children: React.ReactNode }) => (
+	<div className="min-h-[400px] flex items-center justify-center">
+		{children}
+	</div>
+)
 
 export default function Home() {
 	return (
@@ -14,19 +24,19 @@ export default function Home() {
 			<main className="w-full relative">
 
 				{/* ═══════════════════════════════════════════════════════════
-				    HERO SECTION — Primera Vista
+				    HERO SECTION — Primera Vista (LCP Element)
 				    UI minimalista sobre fondo de cielo claro
 				═══════════════════════════════════════════════════════════ */}
 				<section className="min-h-screen flex flex-col items-center justify-center px-6 relative">
 
-					{/* Contenedor del Título Principal */}
+					{/* Contenedor del Título Principal - LCP Element */}
 					<motion.div
 						className="text-center max-w-4xl mx-auto z-10"
 						initial={{ opacity: 0, y: 40 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 1.8, ease: [0.25, 0.46, 0.45, 0.94] }}
 					>
-						{/* Título Principal */}
+						{/* Título Principal - Prioridad LCP */}
 						<motion.h1
 							className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15]"
 							style={{
@@ -80,10 +90,12 @@ export default function Home() {
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    HISTORIA — Timeline
+				    HISTORIA — Timeline (Lazy Loaded)
 				═══════════════════════════════════════════════════════════ */}
 				<div id="timeline" className="relative z-10">
-					<DepthTimeline />
+					<Suspense fallback={<LazyPlaceholder><div className="text-white/50">Cargando historia...</div></LazyPlaceholder>}>
+						<DepthTimeline />
+					</Suspense>
 				</div>
 
 
@@ -125,17 +137,19 @@ export default function Home() {
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    FRASE DEL DÍA
+				    FRASE DEL DÍA (Lazy Loaded)
 				═══════════════════════════════════════════════════════════ */}
 				<section className="py-28 md:py-36 px-6 relative z-10">
 					<div className="max-w-3xl mx-auto">
-						<DailyPhrase />
+						<Suspense fallback={null}>
+							<DailyPhrase />
+						</Suspense>
 					</div>
 				</section>
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    CARTA FINAL — El Tesoro
+				    CARTA FINAL — El Tesoro (Lazy Loaded)
 				═══════════════════════════════════════════════════════════ */}
 				<section id="final" className="py-32 md:py-48 px-6 min-h-[80vh] flex flex-col justify-center items-center relative z-10">
 					<motion.div
@@ -152,7 +166,9 @@ export default function Home() {
 							Si has llegado hasta aquí, es porque mereces saberlo todo.
 						</p>
 					</motion.div>
-					<HeartbeatLetter />
+					<Suspense fallback={<LazyPlaceholder><div className="text-white/50">Cargando carta...</div></LazyPlaceholder>}>
+						<HeartbeatLetter />
+					</Suspense>
 				</section>
 
 
