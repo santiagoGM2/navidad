@@ -4,24 +4,25 @@ import { useRef, useMemo, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 // ===== PALETA DE COLORES — PROFUNDIDAD CÓSMICA =====
+// ===== PALETA DE COLORES — PROFUNDIDAD CÓSMICA =====
 const SKY_COLORS = {
-    // Estado inicial: Azul medianoche profundo con toque místico
+    // Estado inicial: Azul vibrante (Atardecer mágico)
     dawn: {
-        top: '#0f172a',      // Slate 900
-        mid: '#1e1b4b',      // Indigo 950
-        bottom: '#312e81',   // Indigo 900
+        top: '#1e3a8a',      // Blue 900
+        mid: '#4f46e5',      // Indigo 600
+        bottom: '#7c3aed',   // Violet 600
     },
-    // Estado medio: Transición a violeta intenso
+    // Estado medio: Transición a morado profundo (Crepúsculo)
     dusk: {
-        top: '#020617',      // Slate 950
-        mid: '#2e1065',      // Violet 950
-        bottom: '#581c87',   // Purple 800 - Un poco más vibrante
+        top: '#0f172a',      // Slate 900
+        mid: '#312e81',      // Indigo 900
+        bottom: '#581c87',   // Purple 900
     },
-    // Estado final: Abismo estrellado
+    // Estado final: Noche profunda (Abismo estrellado)
     night: {
         top: '#000000',      // Negro puro
-        mid: '#0f0518',      // Casi negro
-        bottom: '#172554',   // Blue 950 - Contraste sutil
+        mid: '#020617',      // Slate 950 (casi negro)
+        bottom: '#0f0518',   // Morado casi negro
     }
 }
 
@@ -176,7 +177,7 @@ export default function ConstellationBackground({ children }: { children: React.
         setStars(newStars)
     }, [isMobile])
 
-    // ===== CONSTELACIONES EN FORMA DE CORAZÓN =====
+    // ===== CONSTELACIONES EN FORMA DE CORAZÓN Y DOSA MAYOR =====
     const constellations = useMemo((): Constellation[] => [
         {
             id: 1,
@@ -185,6 +186,16 @@ export default function ConstellationBackground({ children }: { children: React.
                 { x: 14, y: 7 }, { x: 18, y: 5 }, { x: 22, y: 8 }, { x: 20, y: 12 }
             ],
             connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0]],
+            appearAt: 0
+        },
+        // Ursa Major (El Carro / Big Dipper) - Visible en el cielo medio
+        {
+            id: 4, // ID único
+            stars: [
+                { x: 40, y: 45 }, { x: 45, y: 42 }, { x: 52, y: 42 }, { x: 55, y: 38 }, // Handle
+                { x: 62, y: 35 }, { x: 68, y: 35 }, { x: 68, y: 28 }, { x: 62, y: 28 }  // Pan
+            ],
+            connections: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 4]],
             appearAt: 0
         },
         {

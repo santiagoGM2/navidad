@@ -23,7 +23,7 @@ export default function TimeCounter() {
 		>
 			{/* Fondo con contraste mejorado */}
 			<div
-				className="absolute -inset-6 rounded-3xl -z-10"
+				className="absolute -inset-6 rounded-3xl -z-10 backdrop-blur-xl"
 				style={{
 					background: 'linear-gradient(135deg, rgba(30, 30, 60, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%)',
 					boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
