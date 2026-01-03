@@ -59,11 +59,11 @@ interface ShootingStar {
 }
 
 // ===== COMPONENTE PARA GRADIENTE DEL CIELO =====
-function SkyGradientLayer({ 
-    skyTop, 
-    skyMid, 
-    skyBottom 
-}: { 
+function SkyGradientLayer({
+    skyTop,
+    skyMid,
+    skyBottom
+}: {
     skyTop: any
     skyMid: any
     skyBottom: any
@@ -72,7 +72,7 @@ function SkyGradientLayer({
         [skyTop, skyMid, skyBottom],
         ([top, mid, bottom]) => `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`
     )
-    
+
     return (
         <motion.div
             className="fixed inset-0 z-0"
@@ -110,6 +110,8 @@ export default function ConstellationBackground({ children }: { children: React.
 
     // ===== SISTEMA DE ESTRELLAS FUGACES =====
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout
+
         const createShootingStar = () => {
             const newStar: ShootingStar = {
                 id: Date.now(),
@@ -129,15 +131,23 @@ export default function ConstellationBackground({ children }: { children: React.
         }
 
         const scheduleNext = () => {
-            const delay = Math.random() * 4000 + 3000 // Más frecuentes
-            return setTimeout(() => {
+            // Generar delay aleatorio para la siguiente estrella
+            const delay = Math.random() * 4000 + 3000
+
+            // Programar la siguiente estrella
+            timeoutId = setTimeout(() => {
                 createShootingStar()
-                scheduleNext()
+                scheduleNext() // Recursividad controlada
             }, delay)
         }
 
-        const timeoutId = scheduleNext()
-        return () => clearTimeout(timeoutId)
+        // Iniciar el ciclo
+        scheduleNext()
+
+        // Limpieza al desmontar
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId)
+        }
     }, [])
 
     // ===== TRANSFORMACIONES DE COLOR =====
@@ -149,11 +159,12 @@ export default function ConstellationBackground({ children }: { children: React.
     const constellationsOpacity = useTransform(smoothProgress, [0, 0.3], [0.4, 0.8]) // Más visibles
 
     // ===== GENERACIÓN DE ESTRELLAS =====
-    // Optimización: Reducir número de estrellas en móvil para mejor rendimiento
-    const stars = useMemo((): Star[] => {
-        // Reducir estrellas en móvil para mejorar rendimiento
+    // Solución a Hydration Mismatch: Generar estrellas solo en el cliente
+    const [stars, setStars] = useState<Star[]>([])
+
+    useEffect(() => {
         const count = isMobile ? 100 : 200
-        return Array.from({ length: count }).map((_, i) => ({
+        const newStars = Array.from({ length: count }).map((_, i) => ({
             id: i,
             x: Math.random() * 100,
             y: Math.random() * 100,
@@ -162,6 +173,7 @@ export default function ConstellationBackground({ children }: { children: React.
             twinkleSpeed: Math.random() * 3 + 2,
             delay: Math.random() * 5
         }))
+        setStars(newStars)
     }, [isMobile])
 
     // ===== CONSTELACIONES EN FORMA DE CORAZÓN =====
