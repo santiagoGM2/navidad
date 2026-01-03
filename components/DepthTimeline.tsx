@@ -31,10 +31,21 @@ export default function DepthTimeline() {
                 className="text-center mb-24 px-4 sticky top-20 z-0"
                 style={{ opacity: useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]) }}
             >
-                <h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
+                <h2 
+					className="font-display text-4xl md:text-6xl font-bold text-white mb-4"
+					style={{ 
+						textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
+					}}
+				>
                     Nuestra Historia
                 </h2>
-                <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto font-light">
+                <p 
+					className="text-lg md:text-xl max-w-2xl mx-auto font-light"
+					style={{ 
+						color: 'rgba(255, 255, 255, 0.9)', // Mejorado de 0.7 a 0.9 para contraste ≥ 4.5:1
+						textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
+					}}
+				>
                     Un camino de momentos que nos trajeron hasta aquí
                 </p>
             </motion.div>
@@ -113,10 +124,21 @@ function TimelineDepthItem({ milestone, index }: { milestone: TimelineMilestone,
                         </span>
                     </div>
 
-                    <h3 className={`font-display text-2xl md:text-3xl text-white mb-3 ${isEven ? '' : 'md:text-right'}`}>
+                    <h3 
+						className={`font-display text-2xl md:text-3xl text-white mb-3 ${isEven ? '' : 'md:text-right'}`}
+						style={{ 
+							textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
+						}}
+					>
                         {milestone.title}
                     </h3>
-                    <p className={`text-white/70 leading-relaxed font-light ${isEven ? '' : 'md:text-right'}`}>
+                    <p 
+						className={`leading-relaxed font-light ${isEven ? '' : 'md:text-right'}`}
+						style={{ 
+							color: 'rgba(255, 255, 255, 0.9)', // Mejorado de 0.7 a 0.9 para contraste ≥ 4.5:1
+							textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+						}}
+					>
                         {milestone.description}
                     </p>
 
@@ -135,9 +157,11 @@ function TimelineDepthItem({ milestone, index }: { milestone: TimelineMilestone,
                                     alt={milestone.imageAlt || milestone.title}
                                     fill
                                     className="object-cover rounded-xl border border-white/10 hover:scale-105 transition-transform duration-700"
-                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     loading="lazy"
                                     quality={85}
+                                    placeholder="blur"
+                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                                 />
                             </div>
                             {/* Overlay sutil con gradiente */}
@@ -196,9 +220,11 @@ function ImageCarousel({ images, alt }: { images: string[], alt: string }) {
                             alt={`${alt} - ${currentIndex + 1}`}
                             fill
                             className="object-cover rounded-xl border border-white/10"
-                            sizes="(max-width: 768px) 100vw, 50vw"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             loading="lazy"
                             quality={85}
+                            placeholder="blur"
+                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                         />
                     </motion.div>
                 </AnimatePresence>

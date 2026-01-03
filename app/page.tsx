@@ -60,14 +60,15 @@ export default function Home() {
 							yo te amo más.
 						</motion.h1>
 
-						{/* Subtítulo elegante */}
+						{/* Subtítulo elegante - Contraste mejorado para WCAG AA */}
 						<motion.p
 							className="mt-10 md:mt-14 text-base sm:text-lg md:text-xl font-light tracking-wide max-w-xl mx-auto leading-relaxed"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 1, duration: 1.5 }}
 							style={{
-								color: 'rgba(255, 255, 255, 0.7)',
+								color: 'rgba(255, 255, 255, 0.95)', // Mejorado de 0.7 a 0.95 para contraste ≥ 4.5:1
+								textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)', // Sombra para mejor legibilidad
 							}}
 						>
 							Un viaje a través de las estrellas,
@@ -106,11 +107,19 @@ export default function Home() {
 					<div className="text-center mb-20">
 						<motion.h2
 							className="font-display text-3xl md:text-5xl text-white font-bold mb-4"
-							style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
+							style={{ 
+								textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)' // Mejor contraste
+							}}
 						>
 							Pequeños Instantes
 						</motion.h2>
-						<p className="text-white/50 text-base md:text-lg font-light">
+						<p 
+							className="text-base md:text-lg font-light"
+							style={{ 
+								color: 'rgba(255, 255, 255, 0.85)', // Mejorado de 0.5 a 0.85 para contraste ≥ 4.5:1
+								textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
+							}}
+						>
 							Susurros que las estrellas guardan para nosotros
 						</p>
 					</div>
@@ -125,8 +134,14 @@ export default function Home() {
 								transition={{ delay: i * 0.1, duration: 0.6 }}
 								viewport={{ once: true }}
 							>
-								<div className="relative backdrop-blur-sm bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-500">
-									<p className="font-display text-lg md:text-xl text-white/85 italic text-center leading-relaxed">
+								<div className="relative backdrop-blur-sm bg-white/10 border border-white/20 p-6 md:p-8 rounded-2xl hover:bg-white/15 hover:border-white/30 transition-all duration-500">
+									<p 
+										className="font-display text-lg md:text-xl italic text-center leading-relaxed"
+										style={{ 
+											color: 'rgba(255, 255, 255, 0.95)', // Mejorado para contraste ≥ 4.5:1
+											textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)'
+										}}
+									>
 										&ldquo;{moment.text}&rdquo;
 									</p>
 								</div>
@@ -157,10 +172,21 @@ export default function Home() {
 						transition={{ duration: 1 }}
 						viewport={{ once: true }}
 					>
-						<h2 className="font-display text-3xl md:text-5xl text-white font-bold mb-5">
+						<h2 
+							className="font-display text-3xl md:text-5xl text-white font-bold mb-5"
+							style={{ 
+								textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
+							}}
+						>
 							El Tesoro Final
 						</h2>
-						<p className="text-white/50 font-light">
+						<p 
+							className="font-light"
+							style={{ 
+								color: 'rgba(255, 255, 255, 0.85)', // Mejorado para contraste ≥ 4.5:1
+								textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
+							}}
+						>
 							Si has llegado hasta aquí, es porque mereces saberlo todo.
 						</p>
 					</motion.div>
@@ -173,7 +199,13 @@ export default function Home() {
 				{/* ═══════════════════════════════════════════════════════════
 				    FOOTER
 				═══════════════════════════════════════════════════════════ */}
-				<footer className="py-10 text-center text-white/25 text-sm relative z-10">
+				<footer 
+					className="py-10 text-center text-sm relative z-10"
+					style={{ 
+						color: 'rgba(255, 255, 255, 0.6)', // Mejorado de 0.25 a 0.6 para mejor legibilidad
+						textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+					}}
+				>
 					<p>Hecho con amor eterno.</p>
 				</footer>
 

@@ -24,9 +24,11 @@
 
 	body {
 		@apply font-sans;
-		background: #87CEEB;
+		background: #3b82f6; /* Color inicial más claro para mejor contraste */
 		min-height: 100vh;
 		overflow-x: hidden;
+		/* Optimización de renderizado */
+		will-change: scroll-position;
 	}
 
 	/* Typography */

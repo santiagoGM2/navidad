@@ -31,16 +31,16 @@ export default function TimeCounter() {
 			/>
 
 			<div className="relative rounded-2xl p-8 md:p-12 border border-white/10">
-				{/* Título del contador */}
-				<h3
+				{/* Título del contador - Cambiado a h2 para estructura correcta */}
+				<h2
 					className="font-display text-xl md:text-2xl lg:text-3xl mb-10 text-center font-semibold"
 					style={{
 						color: '#ffffff',
-						textShadow: '0 2px 10px rgba(139, 92, 246, 0.5)'
+						textShadow: '0 2px 10px rgba(139, 92, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.3)' // Mejor contraste
 					}}
 				>
 					El tiempo que llevamos escribiendo esta historia...
-				</h3>
+				</h2>
 
 				{/* Grid de números */}
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">

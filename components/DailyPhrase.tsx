@@ -97,7 +97,13 @@ export default function DailyPhrase() {
 					</motion.div>
 				</div>
 
-				<p className="text-xs text-amber-200/50 uppercase tracking-widest mb-4">
+				<p 
+					className="text-xs uppercase tracking-widest mb-4"
+					style={{ 
+						color: 'rgba(251, 191, 36, 0.9)', // Mejorado para contraste ≥ 4.5:1
+						textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+					}}
+				>
 					Frase del dia
 				</p>
 
@@ -105,13 +111,23 @@ export default function DailyPhrase() {
 					key={phrase.id}
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
-					className="font-display text-xl md:text-2xl lg:text-3xl text-white/90 italic leading-relaxed mb-4"
+					className="font-display text-xl md:text-2xl lg:text-3xl italic leading-relaxed mb-4"
+					style={{ 
+						color: 'rgba(255, 255, 255, 0.95)', // Mejorado para contraste ≥ 4.5:1
+						textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
+					}}
 				>
 					&ldquo;{phrase.text}&rdquo;
 				</motion.p>
 
 				{phrase.author && (
-					<p className="text-sm text-white/50">
+					<p 
+						className="text-sm"
+						style={{ 
+							color: 'rgba(255, 255, 255, 0.8)', // Mejorado para contraste ≥ 4.5:1
+							textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
+						}}
+					>
 						- {phrase.author}
 					</p>
 				)}

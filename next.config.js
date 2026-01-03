@@ -19,7 +19,12 @@ const nextConfig = {
 		minimumCacheTTL: 60,
 	},
 	
-	// Headers de caché para assets estáticos
+	// Optimización de bundle
+	experimental: {
+		optimizePackageImports: ['framer-motion'],
+	},
+	
+	// Headers de seguridad, caché y rendimiento
 	async headers() {
 		return [
 			{
@@ -37,6 +42,10 @@ const nextConfig = {
 						key: 'X-Content-Type-Options',
 						value: 'nosniff'
 					},
+					{
+						key: 'Referrer-Policy',
+						value: 'strict-origin-when-cross-origin'
+					},
 				],
 			},
 			{
@@ -48,12 +57,16 @@ const nextConfig = {
 					},
 				],
 			},
+			{
+				source: '/images/:path*',
+				headers: [
+					{
+						key: 'Cache-Control',
+						value: 'public, max-age=31536000, immutable',
+					},
+				],
+			},
 		]
-	},
-	
-	// Optimización de bundle
-	experimental: {
-		optimizePackageImports: ['framer-motion'],
 	},
 }
 
