@@ -4,12 +4,12 @@ import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import TimeCounter from '@/components/TimeCounter'
+import DailyPhrase from '@/components/DailyPhrase'
 import { MOMENTS } from '@/constants'
 
 // Lazy load componentes pesados que no están en el viewport inicial
 const DepthTimeline = lazy(() => import('@/components/DepthTimeline'))
 const HeartbeatLetter = lazy(() => import('@/components/HeartbeatLetter'))
-const DailyPhrase = lazy(() => import('@/components/DailyPhrase'))
 
 // Placeholder para componentes lazy
 const LazyPlaceholder = ({ children }: { children: React.ReactNode }) => (
@@ -137,13 +137,11 @@ export default function Home() {
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    FRASE DEL DÍA (Lazy Loaded)
+				    FRASE DEL DÍA
 				═══════════════════════════════════════════════════════════ */}
 				<section className="py-28 md:py-36 px-6 relative z-10">
 					<div className="max-w-3xl mx-auto">
-						<Suspense fallback={null}>
-							<DailyPhrase />
-						</Suspense>
+						<DailyPhrase />
 					</div>
 				</section>
 

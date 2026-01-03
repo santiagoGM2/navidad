@@ -48,7 +48,17 @@ export default function DailyPhrase() {
 		)
 	}
 
-	if (error || !phrase) {
+	if (error) {
+		return (
+			<div className="text-center py-12">
+				<p className="text-white/50 text-sm">
+					No se pudo cargar la frase del día
+				</p>
+			</div>
+		)
+	}
+
+	if (!phrase) {
 		return null
 	}
 

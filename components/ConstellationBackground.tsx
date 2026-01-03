@@ -58,6 +58,29 @@ interface ShootingStar {
     delay: number
 }
 
+// ===== COMPONENTE PARA GRADIENTE DEL CIELO =====
+function SkyGradientLayer({ 
+    skyTop, 
+    skyMid, 
+    skyBottom 
+}: { 
+    skyTop: any
+    skyMid: any
+    skyBottom: any
+}) {
+    const gradient = useTransform(
+        [skyTop, skyMid, skyBottom],
+        ([top, mid, bottom]) => `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`
+    )
+    
+    return (
+        <motion.div
+            className="fixed inset-0 z-0"
+            style={{ background: gradient }}
+        />
+    )
+}
+
 // ===== COMPONENTE PRINCIPAL =====
 export default function ConstellationBackground({ children }: { children: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -176,15 +199,7 @@ export default function ConstellationBackground({ children }: { children: React.
         <div ref={containerRef} className="relative min-h-screen overflow-hidden bg-slate-900">
 
             {/* ===== CAPA 0: CIELO GRADIENTE ===== */}
-            <motion.div
-                className="fixed inset-0 z-0"
-                style={{
-                    background: useTransform(
-                        [skyTop, skyMid, skyBottom],
-                        ([top, mid, bottom]) => `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`
-                    )
-                }}
-            />
+            <SkyGradientLayer skyTop={skyTop} skyMid={skyMid} skyBottom={skyBottom} />
 
             {/* ===== CAPA 1: ESTRELLAS ===== */}
             <motion.div className="fixed inset-0 z-[1] pointer-events-none" style={{ opacity: starsOpacity }}>
