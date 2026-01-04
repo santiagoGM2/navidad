@@ -67,6 +67,7 @@ export default function ConstellationBackground({ children }: { children: React.
     })
 
     useEffect(() => {
+        if (typeof window === 'undefined') return
         setIsMobile(window.innerWidth < 768)
         setPageLoaded(true)
     }, [])
@@ -164,9 +165,9 @@ export default function ConstellationBackground({ children }: { children: React.
         return () => {
             window.removeEventListener('resize', resize)
             window.removeEventListener('mousemove', handleMouseMove)
-            cancelAnimationFrame(animationFrameId)
+            if (animationFrameId) cancelAnimationFrame(animationFrameId)
         }
-    }, [isMobile, prefersReducedMotion])
+    }, [isMobile, prefersReducedMotion, pageLoaded])
 
     // ===== DATOS DE CONSTELACIONES (SVG) =====
     const constellationData = useMemo(() => [

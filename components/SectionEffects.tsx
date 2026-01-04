@@ -16,6 +16,8 @@ export default function SectionEffects({ sectionId, effectType }: SectionEffects
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
+		if (typeof window === 'undefined') return
+
 		const canvas = canvasRef.current
 		if (!canvas) return
 
@@ -120,7 +122,7 @@ export default function SectionEffects({ sectionId, effectType }: SectionEffects
 
 		return () => {
 			window.removeEventListener('resize', resize)
-			cancelAnimationFrame(animationFrameId)
+			if (animationFrameId) cancelAnimationFrame(animationFrameId)
 		}
 	}, [effectType])
 

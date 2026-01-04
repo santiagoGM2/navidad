@@ -26,6 +26,8 @@ export function useMouseInteraction() {
 
 	// Seguir el cursor con corazones suaves
 	useEffect(() => {
+		if (typeof window === 'undefined') return
+
 		let animationFrameId: number
 		const heartsToFollow: Array<{ id: number; x: number; y: number; targetX: number; targetY: number }> = []
 		let currentMousePos = { x: 0, y: 0 }
@@ -77,7 +79,7 @@ export function useMouseInteraction() {
 		return () => {
 			window.removeEventListener('mousemove', handleMouseMove)
 			window.removeEventListener('touchmove', handleTouchMove)
-			cancelAnimationFrame(animationFrameId)
+			if (animationFrameId) cancelAnimationFrame(animationFrameId)
 		}
 	}, [])
 
@@ -99,6 +101,8 @@ export function useMouseInteraction() {
 	}, [])
 
 	useEffect(() => {
+		if (typeof window === 'undefined') return
+
 		window.addEventListener('click', handleClick)
 		window.addEventListener('touchstart', handleClick)
 

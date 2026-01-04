@@ -62,7 +62,7 @@ export default function EmotionalDailyPhrase() {
 
 	// Ajustar fondo según estado emocional
 	useEffect(() => {
-		if (!emotionalState) return
+		if (!emotionalState || typeof document === 'undefined') return
 
 		const root = document.documentElement
 		
