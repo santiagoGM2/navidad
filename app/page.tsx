@@ -1,26 +1,24 @@
 'use client'
 
-import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import TimeCounter from '@/components/TimeCounter'
-import DailyPhrase from '@/components/DailyPhrase'
+import EmotionalDailyPhrase from '@/components/EmotionalDailyPhrase'
+import GlobalInteractions from '@/components/GlobalInteractions'
+import SectionEffects from '@/components/SectionEffects'
 import { MOMENTS } from '@/constants'
-
-// Lazy load componentes pesados que no están en el viewport inicial
-const DepthTimeline = lazy(() => import('@/components/DepthTimeline'))
-const HeartbeatLetter = lazy(() => import('@/components/HeartbeatLetter'))
-
-// Placeholder para componentes lazy
-const LazyPlaceholder = ({ children }: { children: React.ReactNode }) => (
-	<div className="min-h-[400px] flex items-center justify-center">
-		{children}
-	</div>
-)
+import DepthTimeline from '@/components/DepthTimeline'
+import HeartbeatLetter from '@/components/HeartbeatLetter'
+import SealedLetters from '@/components/SealedLetters'
+import HowISeeYou from '@/components/HowISeeYou'
+import UnlockableHeart from '@/components/UnlockableHeart'
 
 export default function Home() {
 	return (
 		<ConstellationBackground>
+			{/* Interacciones globales */}
+			<GlobalInteractions />
+
 			<main className="w-full relative">
 
 				{/* ═══════════════════════════════════════════════════════════
@@ -91,12 +89,10 @@ export default function Home() {
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    HISTORIA — Timeline (Lazy Loaded)
+				    HISTORIA — Timeline
 				═══════════════════════════════════════════════════════════ */}
 				<div id="timeline" className="relative z-10">
-					<Suspense fallback={<LazyPlaceholder><div className="text-white/50">Cargando historia...</div></LazyPlaceholder>}>
-						<DepthTimeline />
-					</Suspense>
+					<DepthTimeline />
 				</div>
 
 
@@ -104,18 +100,20 @@ export default function Home() {
 				    MOMENTOS — Frases destacadas
 				═══════════════════════════════════════════════════════════ */}
 				<section id="moments" className="py-32 md:py-48 px-6 relative z-10">
+					{/* Efectos de partículas para recuerdos */}
+					<SectionEffects sectionId="moments" effectType="particles" />
 					<div className="text-center mb-20">
 						<motion.h2
 							className="font-display text-3xl md:text-5xl text-white font-bold mb-4"
-							style={{ 
+							style={{
 								textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)' // Mejor contraste
 							}}
 						>
 							Pequeños Instantes
 						</motion.h2>
-						<p 
+						<p
 							className="text-base md:text-lg font-light"
-							style={{ 
+							style={{
 								color: 'rgba(255, 255, 255, 0.85)', // Mejorado de 0.5 a 0.85 para contraste ≥ 4.5:1
 								textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
 							}}
@@ -135,9 +133,9 @@ export default function Home() {
 								viewport={{ once: true }}
 							>
 								<div className="relative backdrop-blur-sm bg-white/10 border border-white/20 p-6 md:p-8 rounded-2xl hover:bg-white/15 hover:border-white/30 transition-all duration-500">
-									<p 
+									<p
 										className="font-display text-lg md:text-xl italic text-center leading-relaxed"
-										style={{ 
+										style={{
 											color: 'rgba(255, 255, 255, 0.95)', // Mejorado para contraste ≥ 4.5:1
 											textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)'
 										}}
@@ -152,19 +150,36 @@ export default function Home() {
 
 
 				{/* ═══════════════════════════════════════════════════════════
-				    FRASE DEL DÍA
+				    FRASE DEL DÍA (CON ESTADO EMOCIONAL)
 				═══════════════════════════════════════════════════════════ */}
 				<section className="py-28 md:py-36 px-6 relative z-10">
 					<div className="max-w-3xl mx-auto">
-						<DailyPhrase />
+						<EmotionalDailyPhrase />
 					</div>
 				</section>
 
+				{/* ═══════════════════════════════════════════════════════════
+				    ASÍ TE VEO YO — Constelación Dinámica
+				═══════════════════════════════════════════════════════════ */}
+				<HowISeeYou />
 
 				{/* ═══════════════════════════════════════════════════════════
-				    CARTA FINAL — El Tesoro (Lazy Loaded)
+				    CARTAS SELLADAS EN EL TIEMPO
+				═══════════════════════════════════════════════════════════ */}
+				<SealedLetters />
+
+				{/* ═══════════════════════════════════════════════════════════
+				    RETO DEL CORAZÓN
+				═══════════════════════════════════════════════════════════ */}
+				<UnlockableHeart />
+
+
+				{/* ═══════════════════════════════════════════════════════════
+				    CARTA FINAL — El Tesoro
 				═══════════════════════════════════════════════════════════ */}
 				<section id="final" className="py-32 md:py-48 px-6 min-h-[80vh] flex flex-col justify-center items-center relative z-10">
+					{/* Efectos elegantes para carta final */}
+					<SectionEffects sectionId="final" effectType="elegant" />
 					<motion.div
 						className="w-full max-w-2xl text-center mb-12"
 						initial={{ opacity: 0 }}
@@ -172,17 +187,17 @@ export default function Home() {
 						transition={{ duration: 1 }}
 						viewport={{ once: true }}
 					>
-						<h2 
+						<h2
 							className="font-display text-3xl md:text-5xl text-white font-bold mb-5"
-							style={{ 
+							style={{
 								textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
 							}}
 						>
 							El Tesoro Final
 						</h2>
-						<p 
+						<p
 							className="font-light"
-							style={{ 
+							style={{
 								color: 'rgba(255, 255, 255, 0.85)', // Mejorado para contraste ≥ 4.5:1
 								textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
 							}}
@@ -190,18 +205,16 @@ export default function Home() {
 							Si has llegado hasta aquí, es porque mereces saberlo todo.
 						</p>
 					</motion.div>
-					<Suspense fallback={<LazyPlaceholder><div className="text-white/50">Cargando carta...</div></LazyPlaceholder>}>
-						<HeartbeatLetter />
-					</Suspense>
+					<HeartbeatLetter />
 				</section>
 
 
 				{/* ═══════════════════════════════════════════════════════════
 				    FOOTER
 				═══════════════════════════════════════════════════════════ */}
-				<footer 
+				<footer
 					className="py-10 text-center text-sm relative z-10"
-					style={{ 
+					style={{
 						color: 'rgba(255, 255, 255, 0.6)', // Mejorado de 0.25 a 0.6 para mejor legibilidad
 						textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
 					}}

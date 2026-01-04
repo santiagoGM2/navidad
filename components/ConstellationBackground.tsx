@@ -39,7 +39,7 @@ function SkyGradientLayer({
 
     return (
         <motion.div
-            className="fixed inset-0 z-0"
+            className="fixed inset-0 z-[-10]"
             style={{ background: gradient }}
         />
     )
@@ -51,6 +51,7 @@ export default function ConstellationBackground({ children }: { children: React.
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const prefersReducedMotion = useReducedMotion()
     const [isMobile, setIsMobile] = useState(false)
+    const [pageLoaded, setPageLoaded] = useState(false) // Fix hydration mismatch
 
     // Scroll tracking
     const { scrollYProgress } = useScroll({
@@ -67,6 +68,7 @@ export default function ConstellationBackground({ children }: { children: React.
 
     useEffect(() => {
         setIsMobile(window.innerWidth < 768)
+        setPageLoaded(true)
     }, [])
 
     // ===== TRANSFORMACIONES DE COLOR CSS =====
@@ -78,11 +80,14 @@ export default function ConstellationBackground({ children }: { children: React.
 
     // ===== LÓGICA DE PARTÍCULAS (Starfield 3D Simulado) =====
     useEffect(() => {
+        if (!pageLoaded) return
+
         const canvas = canvasRef.current
         if (!canvas) return
 
         const ctx = canvas.getContext('2d')
         if (!ctx) return
+        // ... (rest of the logic remains, just ensuring z-indices are updated below)
 
         let animationFrameId: number
         let width = window.innerWidth
@@ -188,14 +193,14 @@ export default function ConstellationBackground({ children }: { children: React.
             {/* CAPA -1: GRADIENTE BASE */}
             <SkyGradientLayer skyTop={skyTop} skyMid={skyMid} skyBottom={skyBottom} />
 
-            {/* CAPA 0: GALAXIA CANVAS NATIVO (Z-INDEX 1) */}
+            {/* CAPA 0: GALAXIA CANVAS NATIVO (Z-INDEX -1) */}
             <canvas
                 ref={canvasRef}
-                className="fixed inset-0 z-[1] pointer-events-none opacity-80"
+                className="fixed inset-0 z-[-1] pointer-events-none opacity-80"
             />
 
-            {/* CAPA 1: CONSTELACIONES SVG (Z-INDEX 2) */}
-            <motion.div className="fixed inset-0 z-[2] pointer-events-none" style={{ opacity: constellationsOpacity }}>
+            {/* CAPA 1: CONSTELACIONES SVG (Z-INDEX 0) */}
+            <motion.div className="fixed inset-0 z-[0] pointer-events-none" style={{ opacity: constellationsOpacity }}>
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                     {constellationData.map((constellation) => (
                         <g key={constellation.id}>
