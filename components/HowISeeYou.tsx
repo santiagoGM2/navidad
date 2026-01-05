@@ -49,9 +49,10 @@ export default function HowISeeYou() {
 		if (selectedWords.length === 0) return
 
 		const points: ConstellationPoint[] = selectedWords.map((word, index) => {
-			// Distribución circular elegante
+			// Distribución circular elegante con radio más consistente
 			const angle = (index / selectedWords.length) * Math.PI * 2
-			const radius = 30 + Math.random() * 10
+			// Radio más controlado para evitar que las palabras se salgan
+			const radius = selectedWords.length === 3 ? 28 : 32
 			const centerX = 50
 			const centerY = 50
 
@@ -113,7 +114,7 @@ export default function HowISeeYou() {
 
 				{/* Constelación */}
 				<motion.div
-					className="relative w-full aspect-square max-w-2xl mx-auto"
+					className="relative w-full aspect-square max-w-lg md:max-w-xl lg:max-w-2xl mx-auto"
 					initial={{ opacity: 0, scale: 0.9 }}
 					whileInView={{ opacity: 1, scale: 1 }}
 					transition={{ duration: 1, ease: 'easeOut' }}
@@ -123,6 +124,7 @@ export default function HowISeeYou() {
 						className="w-full h-full"
 						viewBox="0 0 100 100"
 						preserveAspectRatio="xMidYMid meet"
+						style={{ overflow: 'visible' }}
 					>
 						{/* Líneas de conexión */}
 						{constellation.map((point) =>
@@ -179,10 +181,10 @@ export default function HowISeeYou() {
 
 								{/* Palabra - Usar foreignObject para mejor renderizado */}
 								<foreignObject
-									x={point.x - 30}
-									y={point.y - 8}
-									width="60"
-									height="16"
+									x={point.x - 40}
+									y={point.y - 12}
+									width="80"
+									height="24"
 								>
 									<motion.div
 										initial={{ opacity: 0, y: 4 }}
@@ -191,13 +193,20 @@ export default function HowISeeYou() {
 											duration: 0.8,
 											delay: index * 0.2 + 0.5
 										}}
-										className="text-center"
+										className="text-center flex items-center justify-center"
 										style={{ 
-											color: 'rgba(255, 255, 255, 0.9)',
+											color: 'rgba(255, 255, 255, 0.95)',
 											fontFamily: 'var(--font-playfair)',
-											fontSize: 'clamp(0.75rem, 1.5vw, 1rem)',
+											fontSize: 'clamp(0.75rem, 1vw, 1rem)',
 											fontWeight: 500,
-											textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
+											lineHeight: '1.3',
+											letterSpacing: '0.02em',
+											textShadow: '0 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(139, 92, 246, 0.3)',
+											whiteSpace: 'nowrap',
+											overflow: 'visible',
+											width: '100%',
+											height: '100%',
+											padding: '2px 4px'
 										}}
 									>
 										{point.word}

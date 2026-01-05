@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useDaysUntil } from '@/hooks/useDaysUntil'
-import { RELATIONSHIP_START_DATE } from '@/constants'
+import { useCountdown } from '@/hooks/useCountdown'
 
-// Fecha del aniversario (1 año después del inicio)
-const ANNIVERSARY_DATE = new Date(RELATIONSHIP_START_DATE)
-ANNIVERSARY_DATE.setFullYear(ANNIVERSARY_DATE.getFullYear() + 1)
+// Fecha del aniversario: 6 de abril de 2026
+const ANNIVERSARY_DATE = '2026-04-06'
 
 interface SealedLetter {
 	id: string
@@ -25,7 +23,7 @@ const SEALED_LETTERS: SealedLetter[] = [
 		type: 'date',
 		title: 'Aniversario',
 		description: 'Para cuando cumplamos 1 año',
-		unlockDate: ANNIVERSARY_DATE.toISOString().split('T')[0],
+		unlockDate: ANNIVERSARY_DATE,
 		content: `Mi amor,
 
 Hoy cumplimos un año juntos. Un año de risas, de abrazos, de conversaciones hasta tarde, de crecer juntos.
@@ -64,8 +62,8 @@ export default function SealedLetters() {
 	const [showPasswordInput, setShowPasswordInput] = useState<{ [key: string]: boolean }>({})
 	const [error, setError] = useState<{ [key: string]: boolean }>({})
 
-	const daysUntilAnniversary = useDaysUntil(ANNIVERSARY_DATE.toISOString().split('T')[0])
-	const isAnniversaryUnlocked = daysUntilAnniversary === 0
+	const countdown = useCountdown(ANNIVERSARY_DATE)
+	const isAnniversaryUnlocked = countdown.isExpired
 
 	// Verificar si las cartas basadas en fecha están desbloqueadas
 	useEffect(() => {
@@ -192,18 +190,85 @@ export default function SealedLetters() {
 											</h3>
 
 											{isDateLocked && (
-												<motion.p
-													className="text-sm md:text-base mb-4"
-													style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-													key={daysUntilAnniversary}
-													initial={{ scale: 1.1 }}
+												<motion.div
+													className="mb-4"
+													key={`${countdown.days}-${countdown.hours}-${countdown.minutes}-${countdown.seconds}`}
+													initial={{ scale: 1.05 }}
 													animate={{ scale: 1 }}
+													transition={{ duration: 0.3 }}
 												>
-													🔒 Esta carta se abrirá en{' '}
-													<span className="font-bold text-amber-300">
-														{daysUntilAnniversary} {daysUntilAnniversary === 1 ? 'día' : 'días'}
-													</span>
-												</motion.p>
+													<p 
+														className="text-sm md:text-base mb-3"
+														style={{ color: 'rgba(255, 255, 255, 0.7)' }}
+													>
+														🔒 Esta carta se abrirá el 6 de abril de 2026
+													</p>
+													<div className="flex flex-wrap justify-center gap-3 md:gap-4">
+														{/* Días */}
+														<div className="text-center">
+															<div 
+																className="text-2xl md:text-3xl font-bold"
+																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
+															>
+																{countdown.days}
+															</div>
+															<div 
+																className="text-xs md:text-sm uppercase tracking-wider mt-1"
+																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+															>
+																{countdown.days === 1 ? 'Día' : 'Días'}
+															</div>
+														</div>
+														
+														{/* Horas */}
+														<div className="text-center">
+															<div 
+																className="text-2xl md:text-3xl font-bold"
+																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
+															>
+																{countdown.hours}
+															</div>
+															<div 
+																className="text-xs md:text-sm uppercase tracking-wider mt-1"
+																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+															>
+																{countdown.hours === 1 ? 'Hora' : 'Horas'}
+															</div>
+														</div>
+														
+														{/* Minutos */}
+														<div className="text-center">
+															<div 
+																className="text-2xl md:text-3xl font-bold"
+																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
+															>
+																{countdown.minutes}
+															</div>
+															<div 
+																className="text-xs md:text-sm uppercase tracking-wider mt-1"
+																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+															>
+																{countdown.minutes === 1 ? 'Min' : 'Min'}
+															</div>
+														</div>
+														
+														{/* Segundos */}
+														<div className="text-center">
+															<div 
+																className="text-2xl md:text-3xl font-bold"
+																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
+															>
+																{countdown.seconds}
+															</div>
+															<div 
+																className="text-xs md:text-sm uppercase tracking-wider mt-1"
+																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+															>
+																Seg
+															</div>
+														</div>
+													</div>
+												</motion.div>
 											)}
 
 											{letter.type === 'password' && !showInput && (

@@ -36,28 +36,122 @@ const EMOTIONAL_PHRASES: EmotionalPhrases = {
 
 type EmotionalState = 'happy' | 'regular' | 'sad' | null
 
+// Función para obtener la fecha actual en formato YYYY-MM-DD
+function getTodayDateString(): string {
+	const today = new Date()
+	today.setHours(0, 0, 0, 0)
+	return today.toISOString().split('T')[0]
+}
+
+// Función determinística para seleccionar frase basada en fecha y estado
+function getDailyPhrase(state: EmotionalState, dateString: string): Phrase | null {
+	if (!state) return null
+	
+	const phrases = EMOTIONAL_PHRASES[state]
+	if (phrases.length === 0) return null
+	
+	// Crear un hash simple y determinístico basado en la fecha
+	// Convertir la fecha en un número y usar módulo para seleccionar la frase
+	const dateHash = parseInt(dateString.replace(/-/g, ''), 10)
+	const index = dateHash % phrases.length
+	
+	return phrases[index]
+}
+
+// Clave para localStorage
+const STORAGE_KEY = 'emotional-daily-phrase'
+const STORAGE_DATE_KEY = 'emotional-daily-phrase-date'
+
 /**
  * Componente ampliado de frase del día con estado emocional
  * Personaliza la experiencia según cómo se siente el usuario
+ * Frases determinísticas: una frase por día por estado emocional
  */
 export default function EmotionalDailyPhrase() {
 	const [emotionalState, setEmotionalState] = useState<EmotionalState>(null)
 	const [phrase, setPhrase] = useState<Phrase | null>(null)
 	const [isLoading, setIsLoading] = useState(false)
 
-	// Cargar frase según estado emocional
+	// Cargar frase según estado emocional (determinística por día)
 	useEffect(() => {
-		if (!emotionalState) return
+		if (!emotionalState) {
+			setPhrase(null)
+			return
+		}
 
 		setIsLoading(true)
 		
-		// Simular carga (en producción sería una API call)
+		// Obtener fecha actual
+		const todayString = getTodayDateString()
+		
+		// Verificar si tenemos una frase guardada para hoy y este estado
+		if (typeof window !== 'undefined') {
+			const savedDate = localStorage.getItem(STORAGE_DATE_KEY)
+			const savedState = localStorage.getItem(STORAGE_KEY + '-state')
+			const savedPhraseId = localStorage.getItem(STORAGE_KEY + '-phrase-id')
+			
+			// Si la fecha guardada es de hoy y el estado coincide, usar la frase guardada
+			if (savedDate === todayString && savedState === emotionalState && savedPhraseId) {
+				const phrases = EMOTIONAL_PHRASES[emotionalState]
+				const savedPhrase = phrases.find(p => p.id === savedPhraseId)
+				if (savedPhrase) {
+					setPhrase(savedPhrase)
+					setIsLoading(false)
+					return
+				}
+			}
+		}
+		
+		// Obtener frase determinística para hoy y este estado
 		setTimeout(() => {
-			const phrases = EMOTIONAL_PHRASES[emotionalState]
-			const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)]
-			setPhrase(randomPhrase)
+			const dailyPhrase = getDailyPhrase(emotionalState, todayString)
+			
+			if (dailyPhrase) {
+				setPhrase(dailyPhrase)
+				
+				// Guardar en localStorage
+				if (typeof window !== 'undefined') {
+					localStorage.setItem(STORAGE_DATE_KEY, todayString)
+					localStorage.setItem(STORAGE_KEY + '-state', emotionalState)
+					localStorage.setItem(STORAGE_KEY + '-phrase-id', dailyPhrase.id)
+				}
+			}
+			
 			setIsLoading(false)
-		}, 500)
+		}, 300)
+	}, [emotionalState])
+	
+	// Verificar si cambió el día y limpiar estado si es necesario
+	useEffect(() => {
+		if (typeof window === 'undefined') return
+		
+		const checkDateChange = () => {
+			const todayString = getTodayDateString()
+			const savedDate = localStorage.getItem(STORAGE_DATE_KEY)
+			
+			// Si cambió el día, limpiar localStorage para que se recarguen las frases
+			if (savedDate && savedDate !== todayString) {
+				localStorage.removeItem(STORAGE_KEY + '-state')
+				localStorage.removeItem(STORAGE_KEY + '-phrase-id')
+				
+				// Si hay un estado activo, recargar la frase
+				if (emotionalState) {
+					const dailyPhrase = getDailyPhrase(emotionalState, todayString)
+					if (dailyPhrase) {
+						setPhrase(dailyPhrase)
+						localStorage.setItem(STORAGE_DATE_KEY, todayString)
+						localStorage.setItem(STORAGE_KEY + '-state', emotionalState)
+						localStorage.setItem(STORAGE_KEY + '-phrase-id', dailyPhrase.id)
+					}
+				}
+			}
+		}
+		
+		// Verificar cada minuto si cambió el día
+		const interval = setInterval(checkDateChange, 60000)
+		checkDateChange() // Verificar inmediatamente
+		
+		return () => clearInterval(interval)
 	}, [emotionalState])
 
 	// Ajustar fondo según estado emocional

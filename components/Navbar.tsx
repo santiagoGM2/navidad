@@ -19,7 +19,10 @@ export default function Navbar() {
 	const navBlur = useTransform(scrollYProgress, [0, 0.05], [0, 1])
 
 	const handleNavClick = (href: string) => {
-		if (href.startsWith('#')) {
+		if (href === '#') {
+			// Scroll suave al inicio absoluto de la página
+			window.scrollTo({ top: 0, behavior: 'smooth' })
+		} else if (href.startsWith('#')) {
 			const element = document.querySelector(href)
 			if (element) {
 				element.scrollIntoView({ behavior: 'smooth' })

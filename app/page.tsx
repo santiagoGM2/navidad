@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import TimeCounter from '@/components/TimeCounter'
 import EmotionalDailyPhrase from '@/components/EmotionalDailyPhrase'
@@ -95,6 +96,45 @@ export default function Home() {
 					<DepthTimeline />
 				</div>
 
+				{/* ═══════════════════════════════════════════════════════════
+				    BOTÓN DE TRANSICIÓN — Collage
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-16 md:py-24 px-6 relative z-10">
+					<div className="max-w-7xl mx-auto">
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.8, ease: 'easeOut' }}
+							viewport={{ once: true }}
+							className="w-full"
+						>
+							<Link href="/collage">
+								<motion.button
+									className="w-full py-6 md:py-8 px-8 md:px-12 rounded-full bg-gradient-to-r from-violet-600/20 via-purple-600/20 to-pink-600/20 backdrop-blur-md border border-white/20 hover:border-white/40 transition-all duration-500 relative overflow-hidden group"
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+								>
+									{/* Efecto de brillo al hover */}
+									<motion.div
+										className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+										initial={{ x: '-100%' }}
+										whileHover={{ x: '100%' }}
+										transition={{ duration: 0.6 }}
+									/>
+									
+									<span 
+										className="relative z-10 font-display text-lg md:text-xl lg:text-2xl font-semibold text-white"
+										style={{ 
+											textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
+										}}
+									>
+										Conoce más esta historia de amor
+									</span>
+								</motion.button>
+							</Link>
+						</motion.div>
+					</div>
+				</section>
 
 				{/* ═══════════════════════════════════════════════════════════
 				    MOMENTOS — Frases destacadas
