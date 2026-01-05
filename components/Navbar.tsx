@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
 const navItems = [
@@ -12,11 +13,17 @@ const navItems = [
 ]
 
 export default function Navbar() {
+	const pathname = usePathname()
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 	const { scrollYProgress } = useScroll()
 
 	const navOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1])
 	const navBlur = useTransform(scrollYProgress, [0, 0.05], [0, 1])
+
+	// Ocultar navbar en la página de collage
+	if (pathname === '/collage') {
+		return null
+	}
 
 	const handleNavClick = (href: string) => {
 		if (href === '#') {
