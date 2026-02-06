@@ -13,6 +13,7 @@ import HeartbeatLetter from '@/components/HeartbeatLetter'
 import SealedLetters from '@/components/SealedLetters'
 import HowISeeYou from '@/components/HowISeeYou'
 import UnlockableHeart from '@/components/UnlockableHeart'
+import AnniversarySection from '@/components/AnniversarySection'
 
 export default function Home() {
 	return (
@@ -213,6 +214,10 @@ export default function Home() {
 				═══════════════════════════════════════════════════════════ */}
 				<UnlockableHeart />
 
+				{/* ═══════════════════════════════════════════════════════════
+				    10 MESES — Aniversario especial
+				═══════════════════════════════════════════════════════════ */}
+				<AnniversarySection />
 
 				{/* ═══════════════════════════════════════════════════════════
 				    CARTA FINAL — El Tesoro
