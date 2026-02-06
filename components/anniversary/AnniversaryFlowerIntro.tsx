@@ -5,7 +5,6 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 type TulipColor = string
 
-/** Single tulip that blooms and floats in */
 function IntroTulip({
 	color,
 	delay,
@@ -26,7 +25,7 @@ function IntroTulip({
 	return (
 		<motion.svg
 			viewBox="0 0 40 56"
-			className="absolute -translate-x-1/2 -translate-y-1/2"
+			className="absolute"
 			style={{
 				width: size,
 				height: size * (56 / 40),
@@ -50,7 +49,6 @@ function IntroTulip({
 	)
 }
 
-/** Small filler flower */
 function IntroSmallFlower({
 	color,
 	delay,
@@ -69,7 +67,7 @@ function IntroSmallFlower({
 	return (
 		<motion.svg
 			viewBox="0 0 24 24"
-			className="absolute -translate-x-1/2 -translate-y-1/2"
+			className="absolute"
 			style={{ width: size, height: size, left: `${leftPct}%`, top: `${topPct}%`, transform: 'translate(-50%, -50%)' }}
 			initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
 			animate={{ opacity: 1, scale: 1 }}
@@ -84,25 +82,26 @@ function IntroSmallFlower({
 	)
 }
 
-/** Bouquet layout: positions (%, %) and sizes for a large centered bouquet */
 function useBouquetLayout() {
 	return useMemo(() => {
 		const tulips: Array<{ color: string; delay: number; leftPct: number; topPct: number; size: number; rotation: number }> = [
-			{ color: '#f472b6', delay: 0.1, leftPct: 38, topPct: 55, size: 42, rotation: -15 },
-			{ color: '#c084fc', delay: 0.2, leftPct: 50, topPct: 52, size: 48, rotation: -5 },
-			{ color: '#f59e0b', delay: 0.3, leftPct: 62, topPct: 55, size: 42, rotation: 8 },
-			{ color: '#ec4899', delay: 0.25, leftPct: 34, topPct: 60, size: 36, rotation: -20 },
-			{ color: '#fbbf24', delay: 0.35, leftPct: 66, topPct: 60, size: 36, rotation: 18 },
-			{ color: '#e879f9', delay: 0.15, leftPct: 42, topPct: 50, size: 40, rotation: -8 },
-			{ color: '#fb923c', delay: 0.4, leftPct: 58, topPct: 50, size: 40, rotation: 10 },
-			{ color: '#a78bfa', delay: 0.45, leftPct: 44, topPct: 58, size: 32, rotation: 0 },
-			{ color: '#f87171', delay: 0.5, leftPct: 56, topPct: 58, size: 32, rotation: 5 },
+			{ color: '#f472b6', delay: 0.05, leftPct: 32, topPct: 58, size: 52, rotation: -18 },
+			{ color: '#c084fc', delay: 0.12, leftPct: 48, topPct: 54, size: 62, rotation: -6 },
+			{ color: '#f59e0b', delay: 0.18, leftPct: 64, topPct: 58, size: 52, rotation: 10 },
+			{ color: '#ec4899', delay: 0.08, leftPct: 28, topPct: 64, size: 44, rotation: -22 },
+			{ color: '#fbbf24', delay: 0.2, leftPct: 70, topPct: 64, size: 44, rotation: 20 },
+			{ color: '#e879f9', delay: 0.1, leftPct: 38, topPct: 52, size: 48, rotation: -10 },
+			{ color: '#fb923c', delay: 0.22, leftPct: 58, topPct: 52, size: 48, rotation: 12 },
+			{ color: '#a78bfa', delay: 0.25, leftPct: 40, topPct: 62, size: 38, rotation: 0 },
+			{ color: '#f87171', delay: 0.28, leftPct: 56, topPct: 62, size: 38, rotation: 6 },
+			{ color: '#c084fc', delay: 0.14, leftPct: 44, topPct: 48, size: 42, rotation: -8 },
+			{ color: '#f472b6', delay: 0.3, leftPct: 52, topPct: 48, size: 42, rotation: 8 },
 		]
 		const small: Array<{ color: string; delay: number; leftPct: number; topPct: number; size: number }> = [
-			{ color: '#f472b6', delay: 0.55, leftPct: 28, topPct: 62, size: 22 },
-			{ color: '#c084fc', delay: 0.6, leftPct: 72, topPct: 62, size: 22 },
-			{ color: '#fbbf24', delay: 0.65, leftPct: 32, topPct: 52, size: 20 },
-			{ color: '#e879f9', delay: 0.7, leftPct: 68, topPct: 52, size: 20 },
+			{ color: '#f472b6', delay: 0.35, leftPct: 22, topPct: 66, size: 26 },
+			{ color: '#c084fc', delay: 0.38, leftPct: 76, topPct: 66, size: 26 },
+			{ color: '#fbbf24', delay: 0.32, leftPct: 26, topPct: 54, size: 24 },
+			{ color: '#e879f9', delay: 0.4, leftPct: 72, topPct: 54, size: 24 },
 		]
 		return { tulips, small }
 	}, [])
@@ -117,9 +116,8 @@ export default function AnniversaryFlowerIntro({ onContinue }: AnniversaryFlower
 	const reduceMotion = useReducedMotion()
 	const { tulips, small } = useBouquetLayout()
 
-	// After bouquet animation, show OK / X
 	useEffect(() => {
-		const t = setTimeout(() => setShowControls(true), 3800)
+		const t = setTimeout(() => setShowControls(true), 4200)
 		return () => clearTimeout(t)
 	}, [])
 
@@ -134,7 +132,6 @@ export default function AnniversaryFlowerIntro({ onContinue }: AnniversaryFlower
 			}}
 			aria-label="Feliz 10 meses - ramo de flores"
 		>
-			{/* Soft glow */}
 			<div
 				className="absolute inset-0 pointer-events-none"
 				style={{
@@ -142,9 +139,8 @@ export default function AnniversaryFlowerIntro({ onContinue }: AnniversaryFlower
 				}}
 			/>
 
-			{/* Bouquet: percentage-based container so it scales on all screens */}
-			<div className="absolute inset-0 flex items-end justify-center" style={{ paddingBottom: '10%' }}>
-				<div className="relative w-[min(88vw,480px)] h-[min(52vh,360px)]">
+			<div className="absolute inset-0 flex items-end justify-center" style={{ paddingBottom: '8%' }}>
+				<div className="relative w-[min(95vw,620px)] h-[min(65vh,480px)]">
 					{tulips.map((t, i) => (
 						<IntroTulip
 							key={`t-${i}`}
@@ -171,28 +167,26 @@ export default function AnniversaryFlowerIntro({ onContinue }: AnniversaryFlower
 				</div>
 			</div>
 
-			{/* Overlay text */}
 			<motion.div
-				className="relative z-10 text-center px-4 pt-[20%] md:pt-[18%]"
+				className="relative z-10 text-center px-4 pt-[12%] md:pt-[10%]"
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 1.8, duration: 0.8 }}
 			>
 				<p
-					className="font-display text-xl md:text-2xl lg:text-3xl text-white font-medium leading-relaxed"
+					className="font-display text-2xl md:text-3xl lg:text-4xl text-white font-medium leading-relaxed"
 					style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.2)' }}
 				>
-					Feliz 10 meses amor,
+					Feliz 10 meses amor.
 					<br />
-					te regalé este ramo 💐
+					Te regalé este ramo.
 				</p>
 			</motion.div>
 
-			{/* OK / X controls */}
 			<AnimatePresence>
 				{showControls && (
 					<motion.div
-						className="absolute bottom-[10%] left-0 right-0 flex justify-center gap-4 z-20"
+						className="absolute bottom-[12%] left-0 right-0 flex justify-center z-20"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0 }}
@@ -201,22 +195,12 @@ export default function AnniversaryFlowerIntro({ onContinue }: AnniversaryFlower
 						<motion.button
 							type="button"
 							onClick={onContinue}
-							className="px-8 py-3 rounded-xl font-medium bg-white/15 border border-white/30 text-white backdrop-blur-sm hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40"
-							whileHover={{ scale: 1.05 }}
+							className="px-10 py-4 rounded-xl font-medium bg-white/15 border border-white/30 text-white backdrop-blur-sm hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40"
+							whileHover={{ scale: 1.03 }}
 							whileTap={{ scale: 0.98 }}
 							aria-label="Continuar"
 						>
-							OK
-						</motion.button>
-						<motion.button
-							type="button"
-							onClick={onContinue}
-							className="px-8 py-3 rounded-xl font-medium bg-white/10 border border-white/20 text-white/90 backdrop-blur-sm hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.98 }}
-							aria-label="Cerrar"
-						>
-							✕
+							Continuar
 						</motion.button>
 					</motion.div>
 				)}

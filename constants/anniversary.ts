@@ -1,23 +1,31 @@
 /**
  * Constantes para la experiencia de aniversario (10 meses)
- * Incluye preguntas del juego "¿Quién es más...?" y textos de resultados
+ * Preguntas del juego "Quien es mas..." y textos de resultados
  */
 
-export const ANNIVERSARY_UNLOCK_CODE = '0602'
-
-/** Placeholder para la carta emocional — editar en AnniversarySection o aquí */
 export const ANNIVERSARY_LETTER = {
-	title: 'Para ti, en nuestros 10 meses',
-	content: `— Aquí irá tu carta o mensaje emocional. Puedes editarlo en components/AnniversarySection.tsx (ANNIVERSARY_LETTER). —`,
+	title: 'Para ti',
+	content: `Hoy cumplimos diez meses juntos y quise hacer algo diferente para ti. Algo que no se desgaste con el tiempo, algo que podamos volver a ver cuando queramos recordar todo lo que hemos construido hasta ahora.
+
+Han sido diez meses llenos de momentos que guardo con muchísimo cariño. Momentos simples, conversaciones largas, risas inesperadas, planes que salieron mejor de lo que imaginábamos y otros que simplemente se volvieron especiales por el hecho de vivirlos juntos.
+
+Contigo he aprendido a valorar los detalles pequeños, a tener más paciencia, a escuchar mejor y a querer de una forma más tranquila y más real. Me gusta pensar que hemos ido creciendo poco a poco, con calma, con confianza, con cariño sincero.
+
+No se trata solo del tiempo que llevamos, sino de todo lo que hemos construido en ese tiempo. La forma en la que nos acompañamos, la forma en la que nos entendemos, la forma en la que siempre encontramos cómo volver a reír.
+
+Quise regalarte este espacio porque representa algo que estamos creando juntos. No es solo una página, es una forma de guardar un recuerdo, de dejar marcado este momento, estos diez meses que significan tanto para mí.
+
+Gracias por estar, por tu paciencia, por tu forma de ser, por todo lo que aportas incluso cuando no te das cuenta. Me haces bien, me das tranquilidad, y me gusta imaginar todo lo que todavía nos falta por vivir.
+
+Esto es solo un pequeño detalle comparado con todo lo que significas para mí, pero está hecho con tiempo, con intención y con mucho cariño.
+
+Felices diez meses.`,
 } as const
 
-/** Preguntas del juego "¿Quién es más...?" con etiquetas para resultados */
 export interface QuienEsMasQuestion {
 	id: number
 	text: string
-	/** Etiqueta cuando gana Santi (ej. "el más terco") */
 	traitSanti: string
-	/** Etiqueta cuando gana Tefa (ej. "la más sentimental") */
 	traitTefa: string
 }
 
@@ -44,11 +52,10 @@ export const QUIEN_ES_MAS_QUESTIONS: QuienEsMasQuestion[] = [
 	{ id: 20, text: '¿Quién es más romántico?', traitSanti: 'el más romántico', traitTefa: 'la más romántica' },
 ]
 
-/** Mensajes de análisis de pareja (se eligen según resultados) */
-export const RELATIONSHIP_TIPS = [
-	'Ustedes dos se complementan: donde uno es fuerte, el otro suma. Sigan así. 💕',
-	'La clave está en reírse juntos. Y ustedes ya lo hacen. 😊',
-	'Cada pareja es un equipo. Ustedes ya saben jugar en equipo. 🏆',
-	'Pequeños detalles hacen la diferencia. No dejen de regalarse momentos. 🌸',
-	'Diez meses son solo el inicio. Lo mejor viene cuando siguen eligiéndose. ✨',
+export const RELATIONSHIP_ANALYSIS = [
+	'Ustedes dos se complementan: donde uno es fuerte, el otro suma. Sigan así.',
+	'La clave está en reírse juntos. Y ustedes ya lo hacen.',
+	'Cada pareja es un equipo. Ustedes ya saben jugar en equipo.',
+	'Pequeños detalles hacen la diferencia. No dejen de regalarse momentos.',
+	'Diez meses son solo el inicio. Lo mejor viene cuando siguen eligiéndose.',
 ]

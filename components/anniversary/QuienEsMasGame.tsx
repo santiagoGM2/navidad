@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { QUIEN_ES_MAS_QUESTIONS, RELATIONSHIP_TIPS } from '@/constants/anniversary'
+import { QUIEN_ES_MAS_QUESTIONS, RELATIONSHIP_ANALYSIS } from '@/constants/anniversary'
 
 type Vote = 'santi' | 'tefa'
 
@@ -28,7 +28,6 @@ export default function QuienEsMasGame() {
 		}
 	}
 
-	// Results: count wins per person per question, build trait labels
 	const santiWins = votes
 		.map((v, i) => (v === 'santi' ? QUIEN_ES_MAS_QUESTIONS[i].traitSanti : null))
 		.filter(Boolean) as string[]
@@ -38,12 +37,12 @@ export default function QuienEsMasGame() {
 
 	const santiCount = votes.filter((v) => v === 'santi').length
 	const tefaCount = votes.filter((v) => v === 'tefa').length
-	const [tip, setTip] = useState('')
+	const [analysis, setAnalysis] = useState('')
 	useEffect(() => {
-		if (showResults && tip === '') {
-			setTip(RELATIONSHIP_TIPS[Math.floor(Math.random() * RELATIONSHIP_TIPS.length)])
+		if (showResults && !analysis) {
+			setAnalysis(RELATIONSHIP_ANALYSIS[Math.floor(Math.random() * RELATIONSHIP_ANALYSIS.length)])
 		}
-	}, [showResults, tip])
+	}, [showResults, analysis])
 
 	if (showResults && allDone) {
 		return (
@@ -60,7 +59,6 @@ export default function QuienEsMasGame() {
 					Resultados
 				</motion.h3>
 
-				{/* Score */}
 				<div className="flex justify-center gap-8">
 					<div className="text-center">
 						<div className="text-4xl md:text-5xl font-bold text-white" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
@@ -77,41 +75,54 @@ export default function QuienEsMasGame() {
 					</div>
 				</div>
 
-				{/* Dynamic conclusions */}
+				{(() => {
+					const diff = Math.abs(santiCount - tefaCount)
+					const summary =
+						diff <= 2
+							? 'Hay un claro equilibrio en cómo se reparten las respuestas.'
+							: santiCount > tefaCount
+								? 'Santi se llevó la mayoría esta vez.'
+								: 'Tefa se llevó la mayoría esta vez.'
+					return (
+						<p className="text-center text-white/90 text-base mb-6 max-w-md mx-auto">
+							{summary}
+						</p>
+					)
+				})()}
+
 				<div className="space-y-3 max-w-md mx-auto">
-					{santiWins.slice(0, 5).map((trait, i) => (
+					{santiWins.slice(0, 6).map((trait, i) => (
 						<motion.p
 							key={`s-${i}`}
 							initial={{ opacity: 0, x: -10 }}
 							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.08 * i }}
+							transition={{ delay: 0.06 * i }}
 							className="text-center text-white/95 text-sm md:text-base"
 						>
-							Santi es {trait} 😅
+							Santi resultó ser {trait}.
 						</motion.p>
 					))}
-					{tefaWins.slice(0, 5).map((trait, i) => (
+					{tefaWins.slice(0, 6).map((trait, i) => (
 						<motion.p
 							key={`t-${i}`}
 							initial={{ opacity: 0, x: 10 }}
 							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: 0.08 * (i + 5) }}
+							transition={{ delay: 0.06 * (i + 6) }}
 							className="text-center text-white/95 text-sm md:text-base"
 						>
-							Tefa es {trait} 💖
+							Tefa resultó ser {trait}.
 						</motion.p>
 					))}
 				</div>
 
-				{/* Relationship tip */}
 				<motion.div
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.6 }}
+					transition={{ delay: 0.5 }}
 					className="backdrop-blur-md bg-white/10 rounded-2xl p-6 border border-white/20 max-w-lg mx-auto"
 				>
 					<p className="text-center text-white/90 text-base md:text-lg font-light leading-relaxed">
-						{tip || RELATIONSHIP_TIPS[0]}
+						{analysis || RELATIONSHIP_ANALYSIS[0]}
 					</p>
 				</motion.div>
 			</motion.div>
@@ -127,10 +138,9 @@ export default function QuienEsMasGame() {
 				¿Quién es más...?
 			</h3>
 			<p className="text-center text-white/80 text-sm md:text-base">
-				Voten juntos — sin prisa, sin timer.
+				Voten juntos. Sin prisa, sin tiempo límite.
 			</p>
 
-			{/* Progress */}
 			<div className="flex justify-center gap-1 flex-wrap">
 				{QUIEN_ES_MAS_QUESTIONS.map((_, i) => (
 					<div
