@@ -219,26 +219,30 @@ export default function ConstellationBackground({ children }: { children: React.
                                     transition={{ duration: 2, delay: 0.5 + i * 0.1, ease: "easeInOut" }}
                                 />
                             ))}
-                            {constellation.stars.map((star, i) => (
-                                <motion.circle
-                                    key={`star-${constellation.id}-${i}`}
-                                    cx={star.x}
-                                    cy={star.y}
-                                    r={0.6}
-                                    fill="white"
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                                >
-                                    <animate
-                                        attributeName="opacity"
-                                        values="0.5;1;0.5"
-                                        dur="3s"
-                                        repeatCount="indefinite"
-                                        begin={`${Math.random() * 2}s`}
-                                    />
-                                </motion.circle>
-                            ))}
+                            {constellation.stars.map((star, i) => {
+                                // Valor determinista para evitar hydration mismatch (server vs client)
+                                const beginSec = ((constellation.id * 17 + i * 13) % 20) / 10
+                                return (
+                                    <motion.circle
+                                        key={`star-${constellation.id}-${i}`}
+                                        cx={star.x}
+                                        cy={star.y}
+                                        r={0.6}
+                                        fill="white"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ duration: 0.5, delay: i * 0.1 }}
+                                    >
+                                        <animate
+                                            attributeName="opacity"
+                                            values="0.5;1;0.5"
+                                            dur="3s"
+                                            repeatCount="indefinite"
+                                            begin={`${beginSec}s`}
+                                        />
+                                    </motion.circle>
+                                )
+                            })}
                         </g>
                     ))}
                 </svg>

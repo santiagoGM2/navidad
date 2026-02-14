@@ -22,7 +22,6 @@ export default function ValentineIntroOverlay() {
 	}, [])
 
 	const getRandomPos = useCallback(() => {
-		// Porcentaje dentro de la tarjeta: zona de botones aprox. 60–95% vertical, 15–85% horizontal
 		const x = 15 + Math.random() * 70
 		const y = 62 + Math.random() * 28
 		return { x, y }
@@ -34,7 +33,6 @@ export default function ValentineIntroOverlay() {
 			const now = Date.now()
 			if (now - lastEscapeAt.current < EVASIVE_COOLDOWN_MS) return
 
-			const card = cardRef.current.getBoundingClientRect()
 			const btn = noButtonRef.current.getBoundingClientRect()
 			const mx = e.clientX
 			const my = e.clientY
@@ -50,7 +48,6 @@ export default function ValentineIntroOverlay() {
 		[getRandomPos]
 	)
 
-	// Evitar scroll cuando el overlay está visible
 	useEffect(() => {
 		if (!showIntro) return
 		const prev = document.body.style.overflow
@@ -67,7 +64,7 @@ export default function ValentineIntroOverlay() {
 			className="fixed inset-0 w-[100vw] h-[100vh] flex items-center justify-center overflow-hidden"
 			style={{
 				zIndex: OVERLAY_Z,
-				backgroundColor: '#0d9488',
+				background: 'linear-gradient(160deg, #0d9488 0%, #0f766e 40%, #115e59 100%)',
 				opacity: isClosing ? 0 : 1,
 				transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
 				pointerEvents: isClosing ? 'none' : 'auto',
@@ -77,18 +74,29 @@ export default function ValentineIntroOverlay() {
 			aria-modal="true"
 			aria-label="¿Quieres ser mi Valentín?"
 		>
+			{/* Brillo sutil de fondo */}
+			<div
+				className="absolute inset-0 opacity-30"
+				style={{
+					background: 'radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255,255,255,0.15) 0%, transparent 50%)',
+				}}
+				aria-hidden="true"
+			/>
+
 			<div
 				ref={cardRef}
-				className="relative w-[min(92vw,420px)] max-h-[90vh] rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-center text-center overflow-visible"
+				className="relative w-[min(92vw,440px)] max-h-[90vh] rounded-3xl p-8 md:p-12 flex flex-col items-center text-center overflow-visible"
 				style={{
-					backgroundColor: '#0f766e',
-					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.08)',
+					background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%)',
+					backdropFilter: 'blur(12px)',
+					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.15)',
 				}}
 			>
 				<p
 					className="font-display text-xl md:text-2xl lg:text-3xl font-semibold leading-snug text-white mb-8 md:mb-10"
 					style={{
-						textShadow: '0 2px 8px rgba(0,0,0,0.2)',
+						textShadow: '0 2px 12px rgba(0,0,0,0.25)',
+						letterSpacing: '0.01em',
 					}}
 				>
 					Mi cachetona, (¿quieres ser mi Valentín o mi San Valentín?)
@@ -98,19 +106,17 @@ export default function ValentineIntroOverlay() {
 					<button
 						type="button"
 						onClick={handleYes}
-						className="px-8 py-3 rounded-xl font-display text-lg font-semibold text-white transition-all duration-300 ease-out hover:scale-105 hover:brightness-110 active:scale-[0.98]"
+						className="px-8 py-3.5 rounded-xl font-display text-lg font-semibold text-white transition-all duration-300 ease-out hover:scale-105 hover:brightness-110 active:scale-[0.98]"
 						style={{
 							backgroundColor: '#16a34a',
-							boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)',
+							boxShadow: '0 4px 20px rgba(22, 163, 74, 0.45)',
 						}}
 					>
 						Sí
 					</button>
-					{/* Espacio reservado para que el botón No no colapse el layout */}
 					<div className="w-[100px] h-[48px] flex-shrink-0" aria-hidden="true" />
 				</div>
 
-				{/* Botón No evasivo: posicionado respecto a la tarjeta */}
 				<button
 					ref={noButtonRef}
 					type="button"
@@ -120,7 +126,7 @@ export default function ValentineIntroOverlay() {
 						top: `${noButtonPos.y}%`,
 						transform: 'translate(-50%, -50%)',
 						backgroundColor: '#dc2626',
-						boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)',
+						boxShadow: '0 4px 16px rgba(220, 38, 38, 0.4)',
 					}}
 					tabIndex={-1}
 					aria-hidden="true"
