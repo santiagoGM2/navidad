@@ -136,7 +136,9 @@ export default function Navbar() {
 										whileTap={{ scale: 0.95 }}
 										className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-500/30 flex items-center gap-2"
 									>
-										<span>✨</span> Admin
+										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+										</svg> Admin
 									</motion.button>
 									<motion.button
 										onClick={() => setShowLogoutConfirm(true)}
@@ -168,7 +170,9 @@ export default function Navbar() {
 									whileTap={{ scale: 0.95 }}
 									className="px-3 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-lg shadow-violet-500/30 flex items-center gap-1"
 								>
-									<span>✨</span>
+									<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+									</svg>
 								</motion.button>
 							) : (
 								<motion.button
@@ -359,7 +363,10 @@ function LoginModal({
 							}}
 							className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-medium transition-all flex items-center justify-center gap-3 shadow-lg group"
 						>
-							<span className="text-2xl group-hover:scale-110 transition-transform">📸</span>
+							<svg className="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+							</svg>
 							Subir a recuerdos
 						</button>
 						<button
@@ -369,7 +376,9 @@ function LoginModal({
 							}}
 							className="w-full py-4 px-6 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium transition-all flex items-center justify-center gap-3 group"
 						>
-							<span className="text-2xl group-hover:scale-110 transition-transform">🔒</span>
+							<svg className="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+							</svg>
 							Guardar recuerdo
 						</button>
 					</div>
