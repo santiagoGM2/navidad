@@ -42,6 +42,7 @@ export default function Navbar() {
 			await fetch('/api/auth/logout', { method: 'POST' })
 			setUser(null)
 			setShowLogoutConfirm(false)
+			window.dispatchEvent(new Event('auth-change'))
 		} catch {
 			// Silently fail
 		}
@@ -126,27 +127,59 @@ export default function Navbar() {
 								</button>
 							))}
 
-							{/* Botón Acceder/Salir */}
-							<motion.button
-								onClick={handleAuthClick}
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
-								className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-500/30"
-							>
-								{user ? 'Salir' : 'Acceder'}
-							</motion.button>
+							{/* Botones Auth Desktop */}
+							{user ? (
+								<>
+									<motion.button
+										onClick={() => setShowLoginModal(true)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+										className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-500/30 flex items-center gap-2"
+									>
+										<span>✨</span> Admin
+									</motion.button>
+									<motion.button
+										onClick={() => setShowLogoutConfirm(true)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+										className="ml-2 px-4 py-2 rounded-full border border-white/20 hover:bg-white/10 text-white text-sm font-medium transition-all"
+									>
+										Salir
+									</motion.button>
+								</>
+							) : (
+								<motion.button
+									onClick={() => setShowLoginModal(true)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-500/30"
+								>
+									Acceder
+								</motion.button>
+							)}
 						</div>
 
 						{/* Mobile Menu Button + Auth Button */}
 						<div className="md:hidden flex items-center gap-2">
-							<motion.button
-								onClick={handleAuthClick}
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
-								className="px-4 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-lg shadow-violet-500/30"
-							>
-								{user ? 'Salir' : 'Acceder'}
-							</motion.button>
+							{user ? (
+								<motion.button
+									onClick={() => setShowLoginModal(true)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									className="px-3 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-lg shadow-violet-500/30 flex items-center gap-1"
+								>
+									<span>✨</span>
+								</motion.button>
+							) : (
+								<motion.button
+									onClick={() => setShowLoginModal(true)}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									className="px-4 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-lg shadow-violet-500/30"
+								>
+									Acceder
+								</motion.button>
+							)}
 
 							<button
 								onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -178,7 +211,7 @@ export default function Navbar() {
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: 'auto' }}
 							exit={{ opacity: 0, height: 0 }}
-							className="md:hidden backdrop-blur-xl bg-slate-900/90 border-t border-white/10"
+							className="md:hidden backdrop-blur-xl bg-slate-900/90 border-t border-white/10 bg-opacity-95"
 						>
 							<div className="px-4 py-4 space-y-2">
 								{navItems.map((item) => (
@@ -190,21 +223,43 @@ export default function Navbar() {
 										{item.label}
 									</button>
 								))}
+								{user && (
+									<>
+										<button
+											onClick={() => {
+												setShowLoginModal(true)
+												setIsMobileMenuOpen(false)
+											}}
+											className="block w-full px-4 py-3 rounded-lg text-left text-violet-300 hover:text-violet-100 hover:bg-white/10 transition-all border-t border-white/10 mt-2"
+										>
+											Panel de Administración
+										</button>
+										<button
+											onClick={() => {
+												setShowLogoutConfirm(true)
+												setIsMobileMenuOpen(false)
+											}}
+											className="block w-full px-4 py-3 rounded-lg text-left text-rose-300 hover:text-rose-100 hover:bg-white/10 transition-all"
+										>
+											Cerrar Sesión
+										</button>
+									</>
+								)}
 							</div>
 						</motion.div>
 					)}
 				</AnimatePresence>
 			</motion.nav>
 
-			{/* Modal de Login */}
+			{/* Modal de Login / Admin */}
 			<AnimatePresence>
 				{showLoginModal && (
 					<LoginModal
 						onClose={() => setShowLoginModal(false)}
 						onSuccess={(username) => {
 							setUser(username)
-							setShowLoginModal(false)
 						}}
+						isLoggedIn={!!user}
 					/>
 				)}
 			</AnimatePresence>
@@ -225,8 +280,15 @@ export default function Navbar() {
 	)
 }
 
-// Modal de Login
-function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (username: string) => void }) {
+function LoginModal({
+	onClose,
+	onSuccess,
+	isLoggedIn
+}: {
+	onClose: () => void;
+	onSuccess: (username: string) => void;
+	isLoggedIn: boolean;
+}) {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [error, setError] = useState('')
@@ -234,6 +296,12 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 	const [success, setSuccess] = useState(false)
 	const [showOptions, setShowOptions] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
+
+	useEffect(() => {
+		if (isLoggedIn) {
+			setShowOptions(true)
+		}
+	}, [isLoggedIn])
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -255,6 +323,7 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 
 			setSuccess(true)
 			onSuccess(data.username)
+			window.dispatchEvent(new Event('auth-change'))
 			setTimeout(() => setShowOptions(true), 1000)
 		} catch {
 			setError('Error de conexión')
@@ -284,14 +353,20 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 					</h2>
 					<div className="grid gap-4">
 						<button
-							onClick={() => document.getElementById('btn-collage')?.click()}
+							onClick={() => {
+								document.getElementById('btn-collage')?.click()
+								onClose()
+							}}
 							className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-medium transition-all flex items-center justify-center gap-3 shadow-lg group"
 						>
 							<span className="text-2xl group-hover:scale-110 transition-transform">📸</span>
 							Subir a recuerdos
 						</button>
 						<button
-							onClick={() => document.getElementById('btn-private')?.click()}
+							onClick={() => {
+								document.getElementById('btn-private')?.click()
+								onClose()
+							}}
 							className="w-full py-4 px-6 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium transition-all flex items-center justify-center gap-3 group"
 						>
 							<span className="text-2xl group-hover:scale-110 transition-transform">🔒</span>
@@ -302,7 +377,7 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 						onClick={onClose}
 						className="mt-6 text-white/50 hover:text-white text-sm transition-colors"
 					>
-						Cerrar
+						Cerrar Panel
 					</button>
 				</motion.div>
 			</motion.div>
@@ -428,7 +503,6 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 	)
 }
 
-// Confirmación de Logout
 function LogoutConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
 	return (
 		<motion.div
@@ -443,27 +517,26 @@ function LogoutConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCance
 				animate={{ scale: 1, opacity: 1 }}
 				exit={{ scale: 0.9, opacity: 0 }}
 				onClick={(e) => e.stopPropagation()}
-				className="w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl"
+				className="w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl text-center"
 			>
-				<h2 className="font-display text-xl font-bold text-white mb-3 text-center">
+				<h3 className="font-display text-xl font-bold text-white mb-2">
 					¿Cerrar sesión?
-				</h2>
-				<p className="text-white/70 text-sm text-center mb-6">
-					¿Seguro que quieres salir?
+				</h3>
+				<p className="text-white/70 text-sm mb-6">
+					Tendrás que ingresar tus credenciales nuevamente.
 				</p>
-
 				<div className="flex gap-3">
 					<button
 						onClick={onCancel}
-						className="flex-1 py-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+						className="flex-1 py-2.5 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
 					>
 						Cancelar
 					</button>
 					<button
 						onClick={onConfirm}
-						className="flex-1 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 transition-all"
+						className="flex-1 py-2.5 rounded-xl font-medium text-white bg-rose-600 hover:bg-rose-500 transition-all shadow-lg shadow-rose-500/20"
 					>
-						Cerrar sesión
+						Salir
 					</button>
 				</div>
 			</motion.div>

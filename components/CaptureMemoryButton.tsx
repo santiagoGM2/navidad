@@ -14,6 +14,13 @@ export default function CaptureMemoryButton() {
 
 	useEffect(() => {
 		checkSession()
+
+		const handleAuthChange = () => {
+			checkSession()
+		}
+
+		window.addEventListener('auth-change', handleAuthChange)
+		return () => window.removeEventListener('auth-change', handleAuthChange)
 	}, [])
 
 	const checkSession = async () => {
@@ -198,8 +205,8 @@ export default function CaptureMemoryButton() {
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 50 }}
 						className={`fixed bottom-6 left-6 z-[60] px-6 py-4 rounded-xl shadow-2xl ${message.type === 'success'
-								? 'bg-emerald-500/90 text-white'
-								: 'bg-rose-500/90 text-white'
+							? 'bg-emerald-500/90 text-white'
+							: 'bg-rose-500/90 text-white'
 							}`}
 					>
 						{message.text}
