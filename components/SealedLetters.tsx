@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCountdown } from '@/hooks/useCountdown'
 
-// Fecha del aniversario: 6 de abril de 2026
 const ANNIVERSARY_DATE = '2026-04-06'
 
 interface SealedLetter {
@@ -15,6 +14,8 @@ interface SealedLetter {
 	unlockDate?: string
 	password?: string
 	content: string
+	hint?: string
+	hints?: string[]
 }
 
 const SEALED_LETTERS: SealedLetter[] = [
@@ -33,7 +34,7 @@ Este año ha sido el más hermoso de mi vida porque has estado en él. Cada día
 Te amo más de lo que las palabras pueden expresar.
 
 Para siempre,
-Tu amor eterno ❤️`
+Tu amor eterno.`
 	},
 	{
 		id: 'discussion',
@@ -52,36 +53,68 @@ Porque tú vales más que cualquier orgullo. Porque nuestro amor es más fuerte 
 Perdón si te lastimé. Perdón si no supe expresarme bien.
 
 Siempre te amaré,
-Tu amor ❤️`
-	}
+Tu amor.`
+	},
+	{
+		id: 'when-happy',
+		type: 'password',
+		title: 'Cuando esté feliz',
+		description: 'Abre cuando estés feliz',
+		password: 'estoyfeliz',
+		content: `Qué bueno que estés feliz. Eso me hace feliz a mí también.
+
+Quiero ser parte de esa felicidad siempre. Gracias por compartirla conmigo.
+
+Te amo.`
+	},
+	{
+		id: 'when-miss',
+		type: 'password',
+		title: 'Cuando me extrañe',
+		description: 'Abre cuando me extrañes',
+		password: 'codigo',
+		content: `Cuando me extrañes, acuérdate de esto: yo también te extraño todo el tiempo.
+
+No estás sola. Estoy contigo aunque no nos veamos. Te amo y te estaré esperando.
+
+Pronto nos vemos, mi vida.`
+	},
 ]
 
 export default function SealedLetters() {
 	const [unlockedLetters, setUnlockedLetters] = useState<Set<string>>(new Set())
-	const [passwordInput, setPasswordInput] = useState<{ [key: string]: string }>({})
-	const [showPasswordInput, setShowPasswordInput] = useState<{ [key: string]: boolean }>({})
-	const [error, setError] = useState<{ [key: string]: boolean }>({})
+	const [passwordInput, setPasswordInput] = useState<Record<string, string>>({})
+	const [showPasswordInput, setShowPasswordInput] = useState<Record<string, boolean>>({})
+	const [error, setError] = useState<Record<string, boolean>>({})
+	const [hintLevel, setHintLevel] = useState<Record<string, number>>({})
 
-	const countdown = useCountdown(ANNIVERSARY_DATE)
-	const isAnniversaryUnlocked = countdown.isExpired
+	const countdownAnniversary = useCountdown(ANNIVERSARY_DATE)
 
-	// Verificar si las cartas basadas en fecha están desbloqueadas
 	useEffect(() => {
-		if (isAnniversaryUnlocked && !unlockedLetters.has('anniversary')) {
-			setUnlockedLetters(prev => new Set([...prev, 'anniversary']))
+		if (countdownAnniversary.isExpired && !unlockedLetters.has('anniversary')) {
+			setUnlockedLetters((prev) => new Set([...prev, 'anniversary']))
 		}
-	}, [isAnniversaryUnlocked, unlockedLetters])
+	}, [countdownAnniversary.isExpired, unlockedLetters])
+
+	function getCountdown(letter: SealedLetter) {
+		return countdownAnniversary
+	}
+
+	function isDateUnlocked(letter: SealedLetter) {
+		return letter.unlockDate ? getCountdown(letter).isExpired : false
+	}
 
 	const handlePasswordSubmit = (letterId: string, correctPassword: string) => {
-		const input = passwordInput[letterId]?.toLowerCase().trim()
-		
-		if (input === correctPassword.toLowerCase()) {
-			setUnlockedLetters(prev => new Set([...prev, letterId]))
-			setShowPasswordInput(prev => ({ ...prev, [letterId]: false }))
-			setError(prev => ({ ...prev, [letterId]: false }))
+		const input = passwordInput[letterId]?.toLowerCase().trim() ?? ''
+		const normalized = correctPassword.toLowerCase().trim()
+		if (input === normalized) {
+			setUnlockedLetters((prev) => new Set([...prev, letterId]))
+			setShowPasswordInput((prev) => ({ ...prev, [letterId]: false }))
+			setError((prev) => ({ ...prev, [letterId]: false }))
 		} else {
-			setError(prev => ({ ...prev, [letterId]: true }))
-			setTimeout(() => setError(prev => ({ ...prev, [letterId]: false })), 2000)
+			setError((prev) => ({ ...prev, [letterId]: true }))
+			setHintLevel((prev) => ({ ...prev, [letterId]: (prev[letterId] ?? 0) + 1 }))
+			setTimeout(() => setError((prev) => ({ ...prev, [letterId]: false })), 2000)
 		}
 	}
 
@@ -108,7 +141,7 @@ export default function SealedLetters() {
 							textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
 						}}
 					>
-						Cartas Selladas en el Tiempo
+						Cartas cerradas en el tiempo
 					</h2>
 					<p 
 						className="text-base md:text-lg font-light"
@@ -127,6 +160,11 @@ export default function SealedLetters() {
 						const isUnlocked = unlockedLetters.has(letter.id)
 						const isDateLocked = letter.type === 'date' && !isUnlocked
 						const showInput = showPasswordInput[letter.id]
+						const countdown = letter.type === 'date' ? getCountdown(letter) : null
+						const level = hintLevel[letter.id] ?? 0
+						const hintText = letter.hint
+							? (level > 0 ? letter.hint : null)
+							: (letter.hints && level > 0 ? letter.hints[Math.min(level - 1, letter.hints.length - 1)] : null)
 
 						return (
 							<motion.div
@@ -189,10 +227,10 @@ export default function SealedLetters() {
 												{letter.title}
 											</h3>
 
-											{isDateLocked && (
+											{isDateLocked && countdown && (
 												<motion.div
 													className="mb-4"
-													key={`${countdown.days}-${countdown.hours}-${countdown.minutes}-${countdown.seconds}`}
+													key={`${letter.id}-${countdown.days}-${countdown.hours}-${countdown.minutes}-${countdown.seconds}`}
 													initial={{ scale: 1.05 }}
 													animate={{ scale: 1 }}
 													transition={{ duration: 0.3 }}
@@ -201,10 +239,9 @@ export default function SealedLetters() {
 														className="text-sm md:text-base mb-3"
 														style={{ color: 'rgba(255, 255, 255, 0.7)' }}
 													>
-														🔒 Esta carta se abrirá el 6 de abril de 2026
+														Esta carta se abrirá el 6 de abril de 2026
 													</p>
 													<div className="flex flex-wrap justify-center gap-3 md:gap-4">
-														{/* Días */}
 														<div className="text-center">
 															<div 
 																className="text-2xl md:text-3xl font-bold"
@@ -276,7 +313,7 @@ export default function SealedLetters() {
 													className="text-sm md:text-base"
 													style={{ color: 'rgba(255, 255, 255, 0.7)' }}
 												>
-													🔒 {letter.description}
+													{letter.description}
 												</p>
 											)}
 
@@ -287,17 +324,19 @@ export default function SealedLetters() {
 													className="mt-4"
 												>
 													<input
-														type="text"
-														value={passwordInput[letter.id] || ''}
-														onChange={(e) => setPasswordInput(prev => ({ ...prev, [letter.id]: e.target.value }))}
-														onKeyPress={(e) => e.key === 'Enter' && letter.password && handlePasswordSubmit(letter.id, letter.password)}
-														placeholder="Escribe la palabra..."
-														className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-amber-400 transition-colors"
+														type="password"
+														autoComplete="off"
+														value={passwordInput[letter.id] ?? ''}
+														onChange={(e) => setPasswordInput((prev) => ({ ...prev, [letter.id]: e.target.value }))}
+														onKeyDown={(e) => e.key === 'Enter' && letter.password && handlePasswordSubmit(letter.id, letter.password)}
+														placeholder="Contraseña"
+														className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all"
 														autoFocus
 													/>
 													<motion.button
+														type="button"
 														onClick={() => letter.password && handlePasswordSubmit(letter.id, letter.password)}
-														className="mt-2 w-full px-4 py-2 bg-amber-400/20 border border-amber-400/40 rounded-lg text-amber-300 hover:bg-amber-400/30 transition-colors"
+														className="mt-3 w-full px-4 py-3 rounded-xl font-medium text-white bg-cyan-500/30 border border-cyan-400/40 hover:bg-cyan-500/40 transition-colors"
 														whileHover={{ scale: 1.02 }}
 														whileTap={{ scale: 0.98 }}
 													>
@@ -309,7 +348,16 @@ export default function SealedLetters() {
 															animate={{ opacity: 1, y: 0 }}
 															className="mt-2 text-sm text-rose-400 text-center"
 														>
-															Palabra incorrecta
+															Incorrecto.
+														</motion.p>
+													)}
+													{hintText && (
+														<motion.p
+															initial={{ opacity: 0 }}
+															animate={{ opacity: 1 }}
+															className="mt-2 text-sm text-amber-300/90 text-center"
+														>
+															Pista: {hintText}
 														</motion.p>
 													)}
 												</motion.div>

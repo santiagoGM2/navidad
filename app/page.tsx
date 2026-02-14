@@ -14,6 +14,7 @@ import SealedLetters from '@/components/SealedLetters'
 import HowISeeYou from '@/components/HowISeeYou'
 import UnlockableHeart from '@/components/UnlockableHeart'
 import AnniversarySection from '@/components/AnniversarySection'
+import ValentineSection from '@/components/ValentineSection'
 
 export default function Home() {
 	return (
@@ -205,7 +206,7 @@ export default function Home() {
 				<HowISeeYou />
 
 				{/* ═══════════════════════════════════════════════════════════
-				    CARTAS SELLADAS EN EL TIEMPO
+				    CARTAS CERRADAS EN EL TIEMPO
 				═══════════════════════════════════════════════════════════ */}
 				<SealedLetters />
 
@@ -218,6 +219,11 @@ export default function Home() {
 				    10 MESES — Aniversario especial
 				═══════════════════════════════════════════════════════════ */}
 				<AnniversarySection />
+
+				{/* ═══════════════════════════════════════════════════════════
+				    SAN VALENTÍN — Carta romántica
+				═══════════════════════════════════════════════════════════ */}
+				<ValentineSection />
 
 				{/* ═══════════════════════════════════════════════════════════
 				    CARTA FINAL — El Tesoro
