@@ -65,8 +65,8 @@ export default function ValentineIntroOverlay() {
 					<motion.span
 						key={i}
 						className="absolute"
-						style={{ color: 'rgba(13, 148, 136, 0.35)' }}
 						style={{
+							color: 'rgba(13, 148, 136, 0.35)',
 							left: `${15 + i * 16}%`,
 							top: `${20 + (i % 3) * 25}%`,
 							fontSize: 'clamp(20px, 4vw, 36px)',
