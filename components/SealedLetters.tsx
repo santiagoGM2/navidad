@@ -72,7 +72,7 @@ Te amo.`
 		type: 'password',
 		title: 'Cuando me extrañe',
 		description: 'Abre cuando me extrañes',
-		password: 'codigo',
+		password: 'teextrano',
 		content: `Cuando me extrañes, acuérdate de esto: yo también te extraño todo el tiempo.
 
 No estás sola. Estoy contigo aunque no nos veamos. Te amo y te estaré esperando.
@@ -135,17 +135,17 @@ export default function SealedLetters() {
 					transition={{ duration: 0.8 }}
 					viewport={{ once: true }}
 				>
-					<h2 
+					<h2
 						className="font-display text-3xl md:text-5xl text-white font-bold mb-4"
-						style={{ 
+						style={{
 							textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
 						}}
 					>
 						Cartas cerradas en el tiempo
 					</h2>
-					<p 
+					<p
 						className="text-base md:text-lg font-light"
-						style={{ 
+						style={{
 							color: 'rgba(255, 255, 255, 0.85)',
 							textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)'
 						}}
@@ -177,11 +177,10 @@ export default function SealedLetters() {
 							>
 								{/* Carta sellada */}
 								<motion.div
-									className={`relative backdrop-blur-xl rounded-2xl p-8 border-2 transition-all duration-500 cursor-pointer ${
-										isUnlocked
+									className={`relative backdrop-blur-xl rounded-2xl p-8 border-2 transition-all duration-500 cursor-pointer ${isUnlocked
 											? 'bg-white/15 border-white/40 shadow-2xl'
 											: 'bg-white/5 border-white/20 hover:border-white/30'
-									}`}
+										}`}
 									whileHover={!isUnlocked ? { scale: 1.02 } : {}}
 									whileTap={!isUnlocked ? { scale: 0.98 } : {}}
 									onClick={() => !isUnlocked && handleLetterClick(letter)}
@@ -190,11 +189,11 @@ export default function SealedLetters() {
 									{!isUnlocked && (
 										<motion.div
 											className="absolute top-4 right-4"
-											animate={{ 
+											animate={{
 												scale: [1, 1.1, 1],
 												rotate: [0, -5, 5, 0]
 											}}
-											transition={{ 
+											transition={{
 												duration: 2,
 												repeat: Infinity,
 												repeatDelay: 3
@@ -220,7 +219,7 @@ export default function SealedLetters() {
 												</svg>
 											</motion.div>
 
-											<h3 
+											<h3
 												className="font-display text-xl md:text-2xl text-white font-semibold mb-2"
 												style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)' }}
 											>
@@ -235,7 +234,7 @@ export default function SealedLetters() {
 													animate={{ scale: 1 }}
 													transition={{ duration: 0.3 }}
 												>
-													<p 
+													<p
 														className="text-sm md:text-base mb-3"
 														style={{ color: 'rgba(255, 255, 255, 0.7)' }}
 													>
@@ -243,61 +242,61 @@ export default function SealedLetters() {
 													</p>
 													<div className="flex flex-wrap justify-center gap-3 md:gap-4">
 														<div className="text-center">
-															<div 
+															<div
 																className="text-2xl md:text-3xl font-bold"
 																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
 															>
 																{countdown.days}
 															</div>
-															<div 
+															<div
 																className="text-xs md:text-sm uppercase tracking-wider mt-1"
 																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
 															>
 																{countdown.days === 1 ? 'Día' : 'Días'}
 															</div>
 														</div>
-														
+
 														{/* Horas */}
 														<div className="text-center">
-															<div 
+															<div
 																className="text-2xl md:text-3xl font-bold"
 																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
 															>
 																{countdown.hours}
 															</div>
-															<div 
+															<div
 																className="text-xs md:text-sm uppercase tracking-wider mt-1"
 																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
 															>
 																{countdown.hours === 1 ? 'Hora' : 'Horas'}
 															</div>
 														</div>
-														
+
 														{/* Minutos */}
 														<div className="text-center">
-															<div 
+															<div
 																className="text-2xl md:text-3xl font-bold"
 																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
 															>
 																{countdown.minutes}
 															</div>
-															<div 
+															<div
 																className="text-xs md:text-sm uppercase tracking-wider mt-1"
 																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
 															>
 																{countdown.minutes === 1 ? 'Min' : 'Min'}
 															</div>
 														</div>
-														
+
 														{/* Segundos */}
 														<div className="text-center">
-															<div 
+															<div
 																className="text-2xl md:text-3xl font-bold"
 																style={{ color: 'rgba(251, 191, 36, 0.95)', textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)' }}
 															>
 																{countdown.seconds}
 															</div>
-															<div 
+															<div
 																className="text-xs md:text-sm uppercase tracking-wider mt-1"
 																style={{ color: 'rgba(255, 255, 255, 0.6)' }}
 															>
@@ -309,7 +308,7 @@ export default function SealedLetters() {
 											)}
 
 											{letter.type === 'password' && !showInput && (
-												<p 
+												<p
 													className="text-sm md:text-base"
 													style={{ color: 'rgba(255, 255, 255, 0.7)' }}
 												>
@@ -386,14 +385,14 @@ export default function SealedLetters() {
 													</svg>
 												</motion.div>
 
-												<h3 
+												<h3
 													className="font-display text-xl md:text-2xl text-white font-semibold mb-4"
 													style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)' }}
 												>
 													{letter.title}
 												</h3>
 
-												<div 
+												<div
 													className="prose prose-invert max-w-none text-left"
 													style={{ color: 'rgba(255, 255, 255, 0.9)' }}
 												>

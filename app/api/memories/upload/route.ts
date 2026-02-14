@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 		// Obtener archivo
 		const formData = await request.formData()
 		const file = formData.get('file') as File
-		
+
 		if (!file) {
 			return NextResponse.json({ error: 'No se envió archivo' }, { status: 400 })
 		}
@@ -26,29 +26,15 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Solo se permiten imágenes' }, { status: 400 })
 		}
 
-		// Validar tamaño (5MB)
-		if (file.size > 5 * 1024 * 1024) {
-			return NextResponse.json({ error: 'Imagen muy grande (máx 5MB)' }, { status: 400 })
+		// Validar tamaño (10MB)
+		if (file.size > 10 * 1024 * 1024) {
+			return NextResponse.json({ error: 'Imagen muy grande (máx 10MB)' }, { status: 400 })
 		}
 
-		// Verificar límite diario (1 foto por día por usuario)
+		// Crear cliente Supabase
 		const supabase = createClient(supabaseUrl, supabaseServiceKey)
-		
-		const today = new Date().toISOString().split('T')[0]
-		const { data: existing } = await supabase
-			.from('daily_memories')
-			.select('id')
-			.eq('username', session.username)
-			.gte('created_at', `${today}T00:00:00`)
-			.lte('created_at', `${today}T23:59:59`)
-			.single()
 
-		if (existing) {
-			return NextResponse.json(
-				{ error: 'Ya subiste una foto hoy. Vuelve mañana 💕' },
-				{ status: 429 }
-			)
-		}
+		const today = new Date().toISOString().split('T')[0]
 
 		// Subir a Storage
 		const fileExt = file.name.split('.').pop()
@@ -86,9 +72,8 @@ export async function POST(request: NextRequest) {
 
 		if (dbError) {
 			console.error('DB error:', dbError)
-			// Intentar eliminar la imagen subida
-			await supabase.storage.from('daily-memories').remove([filePath])
-			return NextResponse.json({ error: 'Error al guardar' }, { status: 500 })
+			// No borramos la imagen por seguridad, pero logueamos error
+			return NextResponse.json({ error: 'Error al guardar metadatos' }, { status: 500 })
 		}
 
 		return NextResponse.json({

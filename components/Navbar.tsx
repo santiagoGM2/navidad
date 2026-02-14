@@ -125,7 +125,7 @@ export default function Navbar() {
 									/>
 								</button>
 							))}
-							
+
 							{/* Botón Acceder/Salir */}
 							<motion.button
 								onClick={handleAuthClick}
@@ -147,7 +147,7 @@ export default function Navbar() {
 							>
 								{user ? 'Salir' : 'Acceder'}
 							</motion.button>
-							
+
 							<button
 								onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 								className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all"
@@ -231,6 +231,8 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 	const [password, setPassword] = useState('')
 	const [error, setError] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [success, setSuccess] = useState(false)
+	const [showOptions, setShowOptions] = useState(false)
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -250,12 +252,60 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 				return
 			}
 
+			setSuccess(true)
 			onSuccess(data.username)
+			setTimeout(() => setShowOptions(true), 1000)
 		} catch {
 			setError('Error de conexión')
 		} finally {
 			setLoading(false)
 		}
+	}
+
+	if (showOptions) {
+		return (
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				onClick={onClose}
+				className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+			>
+				<motion.div
+					initial={{ scale: 0.9, opacity: 0 }}
+					animate={{ scale: 1, opacity: 1 }}
+					exit={{ scale: 0.9, opacity: 0 }}
+					onClick={(e) => e.stopPropagation()}
+					className="w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl text-center"
+				>
+					<h2 className="font-display text-2xl font-bold text-white mb-6">
+						Panel de Administración
+					</h2>
+					<div className="grid gap-4">
+						<button
+							onClick={() => document.getElementById('btn-collage')?.click()}
+							className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-medium transition-all flex items-center justify-center gap-3 shadow-lg group"
+						>
+							<span className="text-2xl group-hover:scale-110 transition-transform">📸</span>
+							Subir a recuerdos
+						</button>
+						<button
+							onClick={() => document.getElementById('btn-private')?.click()}
+							className="w-full py-4 px-6 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium transition-all flex items-center justify-center gap-3 group"
+						>
+							<span className="text-2xl group-hover:scale-110 transition-transform">🔒</span>
+							Guardar recuerdo
+						</button>
+					</div>
+					<button
+						onClick={onClose}
+						className="mt-6 text-white/50 hover:text-white text-sm transition-colors"
+					>
+						Cerrar
+					</button>
+				</motion.div>
+			</motion.div>
+		)
 	}
 
 	return (
@@ -273,71 +323,86 @@ function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (u
 				onClick={(e) => e.stopPropagation()}
 				className="w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl"
 			>
-				<div className="text-center mb-6">
-					<h2 className="font-display text-2xl font-bold text-white mb-2">
-						Acceso privado
-					</h2>
-					<p className="text-white/70 text-sm">
-						Solo para vos dos
-					</p>
-				</div>
+				{success ? (
+					<motion.div
+						initial={{ opacity: 0, scale: 0.8 }}
+						animate={{ opacity: 1, scale: 1 }}
+						className="text-center py-8"
+					>
+						<div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+							<svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+							</svg>
+						</div>
+						<h3 className="text-xl font-bold text-white mb-2">Acceso concedido</h3>
+						<p className="text-white/70">Sesión iniciada correctamente</p>
+					</motion.div>
+				) : (
+					<>
+						<div className="text-center mb-6">
+							<h2 className="font-display text-2xl font-bold text-white mb-2">
+								Acceso privado
+							</h2>
+						</div>
 
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div>
-						<label htmlFor="username" className="block text-sm font-medium text-white/90 mb-1.5">
-							Usuario
-						</label>
-						<input
-							id="username"
-							type="text"
-							autoComplete="username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-							placeholder="Tefy o Santi"
-							required
-						/>
-					</div>
+						<form onSubmit={handleSubmit} className="space-y-4">
+							<div>
+								<label htmlFor="username" className="block text-sm font-medium text-white/90 mb-1.5">
+									Usuario
+								</label>
+								<input
+									id="username"
+									type="text"
+									autoComplete="username"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+									className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+									placeholder="Usuario"
+									required
+								/>
+							</div>
 
-					<div>
-						<label htmlFor="password" className="block text-sm font-medium text-white/90 mb-1.5">
-							Contraseña
-						</label>
-						<input
-							id="password"
-							type="password"
-							autoComplete="current-password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-							placeholder="••••••••"
-							required
-						/>
-					</div>
+							<div>
+								<label htmlFor="password" className="block text-sm font-medium text-white/90 mb-1.5">
+									Contraseña
+								</label>
+								<input
+									id="password"
+									type="password"
+									autoComplete="current-password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+									placeholder="Contraseña"
+									required
+								/>
+							</div>
 
-					{error && (
-						<p className="text-sm text-rose-300 bg-rose-500/20 rounded-lg px-3 py-2">
-							{error}
-						</p>
-					)}
+							{error && (
+								<p className="text-sm text-rose-300 bg-rose-500/20 rounded-lg px-3 py-2">
+									{error}
+								</p>
+							)}
 
-					<div className="flex gap-3 pt-2">
-						<button
-							type="button"
-							onClick={onClose}
-							className="flex-1 py-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
-						>
-							Cancelar
-						</button>
-						<button
-							type="submit"
-							disabled={loading}
-							className="flex-1 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-60 transition-all"
-						>
-							{loading ? 'Entrando...' : 'Ingresar'}
-						</button>
-					</div>
-				</form>
+							<div className="flex gap-3 pt-2">
+								<button
+									type="button"
+									onClick={onClose}
+									className="flex-1 py-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+								>
+									Cancelar
+								</button>
+								<button
+									type="submit"
+									disabled={loading}
+									className="flex-1 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-60 transition-all"
+								>
+									{loading ? 'Entrando...' : 'Ingresar'}
+								</button>
+							</div>
+						</form>
+					</>
+				)}
 			</motion.div>
 		</motion.div>
 	)

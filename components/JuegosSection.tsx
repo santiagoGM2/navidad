@@ -2,49 +2,60 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { saveScrollPosition } from '@/components/ScrollRestore'
 
 export default function JuegosSection() {
+	const pathname = usePathname()
+
+	const handleClick = () => {
+		if (pathname) {
+			saveScrollPosition(pathname)
+		}
+	}
+
 	return (
-		<section id="juegos" className="py-32 md:py-48 px-6 relative z-10">
-			<div className="max-w-4xl mx-auto">
+		<section id="juegos" className="py-24 md:py-32 px-6 relative z-10">
+			<div className="max-w-4xl mx-auto flex justify-center">
 				<motion.div
-					className="text-center"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8 }}
+					initial={{ opacity: 0, scale: 0.9 }}
+					whileInView={{ opacity: 1, scale: 1 }}
+					transition={{ duration: 0.8, type: 'spring' }}
 					viewport={{ once: true }}
 				>
-					<Link href="/juegos" className="block group">
-						<motion.div
-							className="rounded-2xl overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md p-8 md:p-12 text-center max-w-lg mx-auto hover:bg-white/10 hover:border-white/30 transition-all duration-500"
-							whileHover={{ scale: 1.02, y: -6 }}
-							whileTap={{ scale: 0.98 }}
+					<Link
+						href="/juegos"
+						onClick={handleClick}
+						className="group relative block"
+					>
+						{/* Glow effect */}
+						<div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
+
+						<motion.button
+							className="relative py-6 px-12 md:py-8 md:px-16 rounded-2xl bg-slate-900 ring-1 ring-white/10 leading-none flex items-center gap-4 overflow-hidden"
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
 						>
-							<div
-								className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6"
-								style={{
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(236, 72, 153, 0.25))',
-									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.25)',
-								}}
-							>
-								<span className="group-hover:scale-110 transition-transform duration-300">🎮</span>
-							</div>
-							<h2
-								className="font-display text-3xl md:text-4xl text-white font-bold mb-3"
-								style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)' }}
-							>
-								Juguemos
-							</h2>
-							<p
-								className="text-base md:text-lg font-light mb-4"
-								style={{ color: 'rgba(255, 255, 255, 0.85)', textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}
-							>
-								Pequeñas dinámicas para compartir. Entra y elige un juego.
-							</p>
-							<span className="text-white/70 text-sm font-medium group-hover:text-white transition-colors">
-								Entrar a juegos →
+							<span className="text-3xl md:text-4xl filter drop-shadow-lg group-hover:rotate-12 transition-transform duration-300">
+								🎮
 							</span>
-						</motion.div>
+							<div className="text-left">
+								<span className="block text-white font-display text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-200 to-pink-200 group-hover:from-white group-hover:to-white transition-all">
+									Juguemos
+								</span>
+								<span className="text-violet-200/60 text-sm font-medium tracking-wide group-hover:text-violet-200/90 transition-colors">
+									Click para entrar
+								</span>
+							</div>
+
+							{/* Shine effect */}
+							<motion.div
+								className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+								initial={{ x: '-100%' }}
+								whileHover={{ x: '100%' }}
+								transition={{ duration: 0.7 }}
+							/>
+						</motion.button>
 					</Link>
 				</motion.div>
 			</div>

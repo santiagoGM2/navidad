@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 export default function CaptureMemoryButton() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false)
 	const [showPanel, setShowPanel] = useState(false)
+	const [uploadMode, setUploadMode] = useState<'collage' | 'private'>('private')
 	const [uploading, setUploading] = useState(false)
 	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
@@ -27,15 +28,22 @@ export default function CaptureMemoryButton() {
 	const handleFileUpload = async (file: File) => {
 		if (!file) return
 
-		// Validar tipo
-		if (!file.type.startsWith('image/')) {
-			setMessage({ type: 'error', text: 'Solo se permiten imágenes' })
+		const isVideo = file.type.startsWith('video/')
+		const isImage = file.type.startsWith('image/')
+
+		if (!isImage && !isVideo) {
+			setMessage({ type: 'error', text: 'Solo imágenes o videos' })
 			return
 		}
 
-		// Validar tamaño (5MB)
-		if (file.size > 5 * 1024 * 1024) {
-			setMessage({ type: 'error', text: 'La imagen es muy grande (máx 5MB)' })
+		if (uploadMode === 'private' && isVideo) {
+			setMessage({ type: 'error', text: 'Por ahora solo fotos en recuerdos privados' })
+			return
+		}
+
+		const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024
+		if (file.size > maxSize) {
+			setMessage({ type: 'error', text: `Archivo muy grande (máx ${isVideo ? '100MB' : '10MB'})` })
 			return
 		}
 
@@ -46,7 +54,11 @@ export default function CaptureMemoryButton() {
 			const formData = new FormData()
 			formData.append('file', file)
 
-			const res = await fetch('/api/memories/upload', {
+			const endpoint = uploadMode === 'collage'
+				? '/api/collage/upload'
+				: '/api/memories/upload'
+
+			const res = await fetch(endpoint, {
 				method: 'POST',
 				body: formData,
 			})
@@ -57,31 +69,56 @@ export default function CaptureMemoryButton() {
 				throw new Error(data.error || 'Error al subir')
 			}
 
-			setMessage({ type: 'success', text: '¡Momento capturado! 💕' })
+			setMessage({ type: 'success', text: uploadMode === 'collage' ? '¡Subido al collage!' : '¡Recuerdo guardado!' })
 			setShowPanel(false)
-			
-			// Limpiar mensaje después de 3s
+
 			setTimeout(() => setMessage(null), 3000)
 		} catch (err) {
-			setMessage({ 
-				type: 'error', 
-				text: err instanceof Error ? err.message : 'Error al subir la foto' 
+			setMessage({
+				type: 'error',
+				text: err instanceof Error ? err.message : 'Error al subir'
 			})
 		} finally {
 			setUploading(false)
 		}
 	}
 
-	if (!isLoggedIn) return null
+	if (!isLoggedIn) return (
+		<>
+			<button id="btn-collage" className="hidden" onClick={() => { }} />
+			<button id="btn-private" className="hidden" onClick={() => { }} />
+		</>
+	)
 
 	return (
 		<>
-			{/* Botón flotante */}
+			{/* Botones invisibles para activar desde Navbar */}
+			<button
+				id="btn-collage"
+				className="hidden"
+				onClick={() => {
+					setUploadMode('collage')
+					setShowPanel(true)
+				}}
+			/>
+			<button
+				id="btn-private"
+				className="hidden"
+				onClick={() => {
+					setUploadMode('private')
+					setShowPanel(true)
+				}}
+			/>
+
+			{/* Botón flotante siempre visible para acceso rápido (default private) */}
 			<motion.button
 				initial={{ scale: 0, opacity: 0 }}
 				animate={{ scale: 1, opacity: 1 }}
 				transition={{ delay: 0.5, type: 'spring' }}
-				onClick={() => setShowPanel(!showPanel)}
+				onClick={() => {
+					setUploadMode('private')
+					setShowPanel(!showPanel)
+				}}
 				className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 shadow-2xl shadow-pink-500/50 flex items-center justify-center text-white hover:scale-110 transition-transform"
 				whileHover={{ scale: 1.1 }}
 				whileTap={{ scale: 0.95 }}
@@ -99,13 +136,18 @@ export default function CaptureMemoryButton() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 20 }}
-						className="fixed bottom-24 right-6 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl"
+						className="fixed bottom-24 right-6 z-50 w-72 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
 					>
-						<h3 className="font-display text-lg font-bold text-white mb-3">
-							Capturar momento
+						<h3 className="font-display text-lg font-bold text-white mb-1">
+							{uploadMode === 'collage' ? 'Subir a Recuerdos (Collage)' : 'Guardar Recuerdo (Privado)'}
 						</h3>
-						
-						<div className="space-y-2">
+						<p className="text-white/60 text-xs mb-4">
+							{uploadMode === 'collage'
+								? 'Visible en la página pública del collage'
+								: 'Solo visible para administradores'}
+						</p>
+
+						<div className="space-y-3">
 							<button
 								onClick={() => cameraInputRef.current?.click()}
 								disabled={uploading}
@@ -125,14 +167,24 @@ export default function CaptureMemoryButton() {
 								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
 								</svg>
-								Subir desde galería
+								Subir archivo
 							</button>
 						</div>
 
 						{uploading && (
-							<p className="text-white/70 text-xs text-center mt-3">
-								Subiendo...
-							</p>
+							<div className="mt-4">
+								<div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+									<motion.div
+										className="h-full bg-gradient-to-r from-pink-500 to-violet-500"
+										initial={{ width: '0%' }}
+										animate={{ width: '100%' }}
+										transition={{ duration: 1.5, repeat: Infinity }}
+									/>
+								</div>
+								<p className="text-white/70 text-xs text-center mt-2">
+									Subiendo {uploadMode === 'collage' ? 'al collage' : 'recuerdo'}...
+								</p>
+							</div>
 						)}
 					</motion.div>
 				)}
@@ -145,11 +197,10 @@ export default function CaptureMemoryButton() {
 						initial={{ opacity: 0, y: 50 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 50 }}
-						className={`fixed bottom-6 left-6 z-50 px-6 py-4 rounded-xl shadow-2xl ${
-							message.type === 'success'
+						className={`fixed bottom-6 left-6 z-[60] px-6 py-4 rounded-xl shadow-2xl ${message.type === 'success'
 								? 'bg-emerald-500/90 text-white'
 								: 'bg-rose-500/90 text-white'
-						}`}
+							}`}
 					>
 						{message.text}
 					</motion.div>
@@ -160,7 +211,7 @@ export default function CaptureMemoryButton() {
 			<input
 				ref={fileInputRef}
 				type="file"
-				accept="image/*"
+				accept={uploadMode === 'collage' ? "image/*,video/*" : "image/*"}
 				className="hidden"
 				onChange={(e) => {
 					const file = e.target.files?.[0]
