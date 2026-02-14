@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { saveScrollPosition } from '@/components/ScrollRestore'
 
 export default function ValentineSection() {
+	const pathname = usePathname()
 	return (
 		<section
 			id="san-valentin"
@@ -81,6 +84,7 @@ export default function ValentineSection() {
 					{/* Carta interactiva */}
 					<Link
 						href="/san-valentin"
+						onClick={() => pathname && saveScrollPosition(pathname)}
 						className="block w-full max-w-md mx-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50 rounded-2xl"
 					>
 						<motion.div

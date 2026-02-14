@@ -3,8 +3,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
 import ConstellationBackground from '@/components/ConstellationBackground'
+import BackButton from '@/components/BackButton'
 
 // Lista completa de TODOS los archivos en /public/images
 // Incluye imágenes Y videos
@@ -196,7 +196,7 @@ export default function CollagePage() {
 					const type = getFileType(filename)
 					
 					if (type === 'image') {
-						// Cargar imagen para obtener dimensiones
+						// Cargar imagen para obtener dimensiones REALES
 						const img = new window.Image()
 						await new Promise((resolve) => {
 							img.onload = resolve
@@ -209,13 +209,27 @@ export default function CollagePage() {
 						
 						if (!img.complete || img.naturalWidth === 0) continue
 						
-						// Calcular dimensiones manteniendo proporción
+						// RESPETAR orientación original
+						const isHorizontal = img.naturalWidth > img.naturalHeight
 						const aspectRatio = img.naturalHeight / img.naturalWidth
-						const baseWidth = isMobile 
-							? Math.random() * 200 + 200 // Mobile: 200-400px
-							: Math.random() * 300 + 220 // Desktop: 220-520px
-						const width = Math.min(baseWidth, maxWidth * (isMobile ? 0.8 : 0.35))
-						const height = width * aspectRatio
+						
+						// Calcular dimensiones manteniendo proporción REAL
+						let width: number
+						let height: number
+						
+						if (isHorizontal) {
+							// Imagen horizontal
+							width = isMobile 
+								? Math.min(maxWidth * 0.85, 350)
+								: Math.min(400, maxWidth * 0.35)
+							height = width * aspectRatio
+						} else {
+							// Imagen vertical
+							height = isMobile 
+								? Math.min(400, maxWidth * 0.85 * 1.3)
+								: Math.min(450, maxWidth * 0.3 * 1.3)
+							width = height / aspectRatio
+						}
 						
 						// Distribución en columnas alternadas
 						if (!isMobile) {
@@ -254,13 +268,26 @@ export default function CollagePage() {
 							currentY = Math.max(...columnHeights)
 						}
 					} else if (type === 'video') {
-						// Para videos, usar dimensiones estándar
-						const aspectRatio = 16 / 9
-						const baseWidth = isMobile 
-							? Math.random() * 200 + 220 // Mobile: 220-420px
-							: Math.random() * 350 + 280 // Desktop: 280-630px
-						const width = Math.min(baseWidth, maxWidth * (isMobile ? 0.8 : 0.4))
-						const height = width * aspectRatio
+						// Para videos, detectar orientación del archivo si es posible
+						// Por ahora usar dimensiones estándar pero permitir variación
+						const isLikelyHorizontal = !filename.toLowerCase().includes('vertical')
+						
+						let width: number
+						let height: number
+						
+						if (isLikelyHorizontal) {
+							// Video horizontal (16:9 típico)
+							width = isMobile 
+								? Math.min(maxWidth * 0.85, 350)
+								: Math.min(450, maxWidth * 0.4)
+							height = width * (9 / 16)
+						} else {
+							// Video vertical (9:16 típico)
+							height = isMobile 
+								? Math.min(450, maxWidth * 0.85 * 1.3)
+								: Math.min(500, maxWidth * 0.3 * 1.5)
+							width = height * (9 / 16)
+						}
 						
 						if (!isMobile) {
 							columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
@@ -417,22 +444,8 @@ export default function CollagePage() {
 		<ConstellationBackground>
 			<div className="fixed inset-0 bg-gradient-to-b from-slate-900 via-purple-900/20 to-slate-900 z-0" />
 			
-			{/* Botón de regreso */}
-			<motion.div
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				className="fixed top-6 left-6 z-50"
-			>
-				<Link href="/">
-					<motion.button
-						className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all text-white font-medium"
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-					>
-						← Volver
-					</motion.button>
-				</Link>
-			</motion.div>
+			{/* Botón de regreso unificado */}
+			<BackButton label="Volver" />
 
 			{/* Título */}
 			<motion.div
@@ -498,10 +511,10 @@ export default function CollagePage() {
 												src={item.src}
 												alt={`Recuerdo ${index + 1}`}
 												fill
-												className="object-cover group-hover:scale-105 transition-transform duration-700"
+												className="object-contain group-hover:scale-105 transition-transform duration-700"
 												sizes="(max-width: 768px) 85vw, 500px"
 												loading="lazy"
-												quality={85}
+												quality={90}
 											/>
 											<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 										</>
@@ -509,7 +522,7 @@ export default function CollagePage() {
 										<>
 											<video
 												src={item.src}
-												className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+												className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
 												loop
 												muted
 												playsInline

@@ -2,7 +2,9 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
+import { saveScrollPosition } from '@/components/ScrollRestore'
 
 function FloatingParticles() {
 	const particles = useMemo(
@@ -51,6 +53,7 @@ function FloatingParticles() {
 
 export default function AnniversarySection() {
 	const reduceMotion = useReducedMotion()
+	const pathname = usePathname()
 
 	return (
 		<section
@@ -109,6 +112,7 @@ export default function AnniversarySection() {
 
 					<Link
 						href="/10-meses"
+						onClick={() => pathname && saveScrollPosition(pathname)}
 						className="w-full max-w-md mx-auto block text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a0f2e] rounded-2xl"
 						aria-label="Ir al espacio de 10 meses"
 					>

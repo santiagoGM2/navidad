@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 import AnniversaryFlowerIntro from '@/components/anniversary/AnniversaryFlowerIntro'
 import AnniversaryHub from '@/components/anniversary/AnniversaryHub'
+import BackButton from '@/components/BackButton'
 
 export default function TenMesesPage() {
 	const [showIntro, setShowIntro] = useState(true)
@@ -37,13 +37,9 @@ export default function TenMesesPage() {
 						transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
 						className="relative py-16 md:py-24 px-4 md:px-6"
 					>
+						<BackButton label="Volver" />
+						
 						<div className="max-w-2xl mx-auto">
-							<Link
-								href="/#anniversary"
-								className="inline-block text-sm text-white/60 hover:text-white/90 transition-colors mb-10"
-							>
-								Volver
-							</Link>
 							<p
 								className="text-sm md:text-base uppercase tracking-[0.2em] mb-10"
 								style={{ color: 'rgba(255, 255, 255, 0.6)' }}

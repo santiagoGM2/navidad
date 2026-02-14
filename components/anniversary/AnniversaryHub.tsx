@@ -3,7 +3,6 @@
 import { useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ANNIVERSARY_LETTER } from '@/constants/anniversary'
-import QuienEsMasGame from './QuienEsMasGame'
 
 function HubPetals({ reduceMotion }: { reduceMotion: boolean | null }) {
 	const petals = useMemo(
@@ -95,16 +94,6 @@ export default function AnniversaryHub() {
 						</motion.div>
 					</motion.div>
 				</motion.div>
-			</section>
-
-			<section
-				className="backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-8 md:p-10 max-w-2xl mx-auto"
-				aria-labelledby="game-heading"
-			>
-				<div id="game-heading" className="sr-only">
-					Quien es mas
-				</div>
-				<QuienEsMasGame />
 			</section>
 		</div>
 	)

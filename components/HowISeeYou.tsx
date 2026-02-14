@@ -24,45 +24,73 @@ const WORDS = [
 	'Mi persona',
 	'Mi risa',
 	'Mi abrazo',
+	'Mi cómplice',
+	'Mi apoyo',
+	'Mi ancla',
 ]
 
-const WORDS_PER_BLOCK = 3
-const BLOCKS_COUNT = 9
+const CONSTELLATION_COUNT = 6
+const WORDS_PER_CONSTELLATION = 3
 
-function getDayOfYear(): number {
-	const now = new Date()
-	const start = new Date(now.getFullYear(), 0, 0)
-	const diff = now.getTime() - start.getTime()
-	const oneDay = 1000 * 60 * 60 * 24
-	return Math.min(Math.floor(diff / oneDay) + 1, 365)
+interface Point {
+	x: number
+	y: number
+	word: string
+	index: number
 }
 
-/**
- * Selección determinística de palabras por día (solo en cliente).
- * Devuelve 9 bloques de hasta 3 palabras cada uno.
- */
-function getBlocksForToday(): string[][] {
-	const day = getDayOfYear()
-	const n = WORDS.length
-	const blocks: string[][] = []
-	for (let b = 0; b < BLOCKS_COUNT; b++) {
-		const block: string[] = []
-		for (let w = 0; w < WORDS_PER_BLOCK; w++) {
-			const idx = (day * 7 + b * 3 + w) % n
-			block.push(WORDS[idx])
-		}
-		blocks.push(block)
+interface Constellation {
+	points: Point[]
+	connections: [number, number][]
+}
+
+function buildConstellations(): Constellation[] {
+	const result: Constellation[] = []
+	const used = new Set<number>()
+	const shuffled = [...WORDS].map((w, i) => ({ w, i }))
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
 	}
-	return blocks
+	let wordIdx = 0
+
+	for (let c = 0; c < CONSTELLATION_COUNT; c++) {
+		const points: Point[] = []
+		const take = WORDS_PER_CONSTELLATION
+		for (let t = 0; t < take && wordIdx < shuffled.length; t++) {
+			const { w, i } = shuffled[wordIdx++]
+			points.push({
+				x: 15 + Math.random() * 70,
+				y: 15 + Math.random() * 70,
+				word: w,
+				index: points.length,
+			})
+		}
+		if (points.length < 2) break
+		const connections: [number, number][] = []
+		for (let i = 0; i < points.length; i++) {
+			for (let j = i + 1; j < points.length; j++) {
+				if (Math.random() < 0.75) connections.push([i, j])
+			}
+		}
+		if (connections.length === 0) connections.push([0, 1])
+		result.push({ points, connections })
+	}
+	return result
 }
 
 export default function HowISeeYou() {
-	const [blocks, setBlocks] = useState<string[][]>([])
-	useEffect(() => setBlocks(getBlocksForToday()), [])
+	const [constellations, setConstellations] = useState<Constellation[]>([])
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setMounted(true)
+		setConstellations(buildConstellations())
+	}, [])
 
 	return (
-		<section className="py-32 md:py-48 px-6 relative z-10">
-			<div className="max-w-4xl mx-auto">
+		<section className="py-32 md:py-48 px-6 relative z-10 overflow-hidden">
+			<div className="max-w-5xl mx-auto">
 				<motion.div
 					className="text-center mb-14 md:mb-16"
 					initial={{ opacity: 0, y: 20 }}
@@ -85,42 +113,90 @@ export default function HowISeeYou() {
 							textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
 						}}
 					>
-						Una constelación que cambia cada día
+						Constelaciones que cambian cada vez
 					</p>
 				</motion.div>
 
-				<motion.div
-					className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-					initial={{ opacity: 0 }}
-					whileInView={{ opacity: 1 }}
-					transition={{ duration: 0.6 }}
-					viewport={{ once: true }}
-				>
-					{(blocks.length > 0 ? blocks : Array.from({ length: BLOCKS_COUNT }, () => [])).map(
-						(blockWords, blockIndex) => (
+				{!mounted ? (
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[280px]" aria-hidden="true" />
+				) : (
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+						{constellations.map((constellation, cIdx) => (
 							<motion.div
-								key={blockIndex}
-								initial={{ opacity: 0, y: 12 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ delay: blockIndex * 0.06, duration: 0.4 }}
-								viewport={{ once: true }}
-								className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-5 md:p-6 text-center min-h-[88px] flex flex-col justify-center"
+								key={cIdx}
+								initial={{ opacity: 0, y: 16 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: cIdx * 0.08, duration: 0.5 }}
+								className="relative aspect-[1.1] max-w-sm mx-auto w-full"
 							>
-								{blockWords.length > 0 && (
-									<p
-										className="font-display text-base md:text-lg font-medium leading-snug"
-										style={{
-											color: 'rgba(255, 255, 255, 0.95)',
-											textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-										}}
-									>
-										{blockWords.slice(0, 3).join(' · ')}
-									</p>
-								)}
+								<svg
+									className="w-full h-full"
+									viewBox="0 0 100 100"
+									preserveAspectRatio="xMidYMid meet"
+									style={{ overflow: 'visible' }}
+								>
+									{constellation.connections.map(([a, b], i) => {
+										const p1 = constellation.points[a]
+										const p2 = constellation.points[b]
+										if (!p1 || !p2) return null
+										return (
+											<motion.line
+												key={`line-${cIdx}-${i}`}
+												x1={p1.x}
+												y1={p1.y}
+												x2={p2.x}
+												y2={p2.y}
+												stroke="rgba(167, 139, 250, 0.5)"
+												strokeWidth="0.4"
+												initial={{ pathLength: 0, opacity: 0 }}
+												animate={{ pathLength: 1, opacity: 1 }}
+												transition={{ duration: 0.8, delay: cIdx * 0.08 + i * 0.06 }}
+											/>
+										)
+									})}
+									{constellation.points.map((point, pIdx) => (
+										<g key={`p-${cIdx}-${pIdx}`}>
+											<motion.circle
+												cx={point.x}
+												cy={point.y}
+												r={2.2}
+												fill="rgba(255,255,255,0.95)"
+												initial={{ scale: 0, opacity: 0 }}
+												animate={{ scale: 1, opacity: 1 }}
+												transition={{
+													delay: cIdx * 0.08 + 0.2 + pIdx * 0.05,
+													type: 'spring',
+													stiffness: 200,
+													damping: 18,
+												}}
+											/>
+											<foreignObject
+												x={point.x - 28}
+												y={point.y - 8}
+												width={56}
+												height={20}
+												style={{ overflow: 'visible' }}
+											>
+												<motion.div
+													initial={{ opacity: 0 }}
+													animate={{ opacity: 1 }}
+													transition={{ delay: cIdx * 0.08 + 0.35 + pIdx * 0.05 }}
+													className="text-center text-[10px] md:text-xs font-display font-medium leading-tight w-full h-full flex items-center justify-center"
+													style={{
+														color: 'rgba(255, 255, 255, 0.95)',
+														textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+													}}
+												>
+													{point.word}
+												</motion.div>
+											</foreignObject>
+										</g>
+									))}
+								</svg>
 							</motion.div>
-						)
-					)}
-				</motion.div>
+						))}
+					</div>
+				)}
 			</div>
 		</section>
 	)

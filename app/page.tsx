@@ -2,7 +2,9 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import ConstellationBackground from '@/components/ConstellationBackground'
+import { saveScrollPosition } from '@/components/ScrollRestore'
 import TimeCounter from '@/components/TimeCounter'
 import EmotionalDailyPhrase from '@/components/EmotionalDailyPhrase'
 import GlobalInteractions from '@/components/GlobalInteractions'
@@ -17,6 +19,7 @@ import AnniversarySection from '@/components/AnniversarySection'
 import ValentineSection from '@/components/ValentineSection'
 
 export default function Home() {
+	const pathname = usePathname()
 	return (
 		<ConstellationBackground>
 			{/* Interacciones globales */}
@@ -110,7 +113,7 @@ export default function Home() {
 							viewport={{ once: true }}
 							className="w-full"
 						>
-							<Link href="/collage">
+							<Link href="/collage" onClick={() => pathname && saveScrollPosition(pathname)}>
 								<motion.button
 									className="w-full py-6 md:py-8 px-8 md:px-12 rounded-full bg-gradient-to-r from-violet-600/20 via-purple-600/20 to-pink-600/20 backdrop-blur-md border border-white/20 hover:border-white/40 transition-all duration-500 relative overflow-hidden group"
 									whileHover={{ scale: 1.02 }}
@@ -209,6 +212,29 @@ export default function Home() {
 				    CARTAS CERRADAS EN EL TIEMPO
 				═══════════════════════════════════════════════════════════ */}
 				<SealedLetters />
+
+				{/* ═══════════════════════════════════════════════════════════
+				    JUEGOS — Enlace a /juegos
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-16 md:py-24 px-6 relative z-10">
+					<div className="max-w-4xl mx-auto flex justify-center">
+						<Link
+							href="/juegos"
+							onClick={() => pathname && saveScrollPosition(pathname)}
+							className="block w-full max-w-md"
+						>
+							<motion.button
+								type="button"
+								className="w-full py-5 px-8 rounded-2xl font-display text-lg md:text-xl font-semibold text-white border border-white/20 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-white/30 transition-all duration-300"
+								style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}
+								whileHover={{ scale: 1.02, y: -2 }}
+								whileTap={{ scale: 0.98 }}
+							>
+								Juegos
+							</motion.button>
+						</Link>
+					</div>
+				</section>
 
 				{/* ═══════════════════════════════════════════════════════════
 				    RETO DEL CORAZÓN

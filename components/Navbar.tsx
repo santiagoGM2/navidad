@@ -9,25 +9,50 @@ const navItems = [
 	{ href: '#', label: 'Inicio' },
 	{ href: '#timeline', label: 'Historia' },
 	{ href: '#moments', label: 'Momentos' },
-	{ href: '#final', label: 'Carta' },
 ]
 
 export default function Navbar() {
 	const pathname = usePathname()
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+	const [user, setUser] = useState<string | null>(null)
+	const [showLoginModal, setShowLoginModal] = useState(false)
+	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 	const { scrollYProgress } = useScroll()
 
-	const navOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1])
 	const navBlur = useTransform(scrollYProgress, [0, 0.05], [0, 1])
 
-	// Ocultar navbar en la página de collage
+	useEffect(() => {
+		checkSession()
+	}, [])
+
+	const checkSession = async () => {
+		try {
+			const res = await fetch('/api/auth/session')
+			if (res.ok) {
+				const data = await res.json()
+				setUser(data.user || null)
+			}
+		} catch {
+			setUser(null)
+		}
+	}
+
+	const handleLogout = async () => {
+		try {
+			await fetch('/api/auth/logout', { method: 'POST' })
+			setUser(null)
+			setShowLogoutConfirm(false)
+		} catch {
+			// Silently fail
+		}
+	}
+
 	if (pathname === '/collage') {
 		return null
 	}
 
 	const handleNavClick = (href: string) => {
 		if (href === '#') {
-			// Scroll suave al inicio absoluto de la página
 			window.scrollTo({ top: 0, behavior: 'smooth' })
 		} else if (href.startsWith('#')) {
 			const element = document.querySelector(href)
@@ -36,6 +61,14 @@ export default function Navbar() {
 			}
 		}
 		setIsMobileMenuOpen(false)
+	}
+
+	const handleAuthClick = () => {
+		if (user) {
+			setShowLogoutConfirm(true)
+		} else {
+			setShowLoginModal(true)
+		}
 	}
 
 	return (
@@ -92,28 +125,49 @@ export default function Navbar() {
 									/>
 								</button>
 							))}
+							
+							{/* Botón Acceder/Salir */}
+							<motion.button
+								onClick={handleAuthClick}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-500/30"
+							>
+								{user ? 'Salir' : 'Acceder'}
+							</motion.button>
 						</div>
 
-						{/* Mobile Menu Button */}
-						<button
-							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-							className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all"
-							aria-label="Toggle menu"
-						>
-							<motion.svg
-								animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
-								className="w-6 h-6"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
+						{/* Mobile Menu Button + Auth Button */}
+						<div className="md:hidden flex items-center gap-2">
+							<motion.button
+								onClick={handleAuthClick}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								className="px-4 py-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-lg shadow-violet-500/30"
 							>
-								{isMobileMenuOpen ? (
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-								) : (
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-								)}
-							</motion.svg>
-						</button>
+								{user ? 'Salir' : 'Acceder'}
+							</motion.button>
+							
+							<button
+								onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+								className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all"
+								aria-label="Toggle menu"
+							>
+								<motion.svg
+									animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
+									className="w-6 h-6"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									{isMobileMenuOpen ? (
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+									) : (
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+									)}
+								</motion.svg>
+							</button>
+						</div>
 					</div>
 				</div>
 
@@ -142,8 +196,192 @@ export default function Navbar() {
 				</AnimatePresence>
 			</motion.nav>
 
+			{/* Modal de Login */}
+			<AnimatePresence>
+				{showLoginModal && (
+					<LoginModal
+						onClose={() => setShowLoginModal(false)}
+						onSuccess={(username) => {
+							setUser(username)
+							setShowLoginModal(false)
+						}}
+					/>
+				)}
+			</AnimatePresence>
+
+			{/* Confirmación de Logout */}
+			<AnimatePresence>
+				{showLogoutConfirm && (
+					<LogoutConfirm
+						onConfirm={handleLogout}
+						onCancel={() => setShowLogoutConfirm(false)}
+					/>
+				)}
+			</AnimatePresence>
+
 			{/* Spacer */}
 			<div className="h-16 md:h-20" />
 		</>
+	)
+}
+
+// Modal de Login
+function LoginModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (username: string) => void }) {
+	const [username, setUsername] = useState('')
+	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
+	const [loading, setLoading] = useState(false)
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		setError('')
+		setLoading(true)
+
+		try {
+			const res = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ username, password }),
+			})
+			const data = await res.json()
+
+			if (!res.ok) {
+				setError(data.error || 'Error al iniciar sesión')
+				return
+			}
+
+			onSuccess(data.username)
+		} catch {
+			setError('Error de conexión')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			onClick={onClose}
+			className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+		>
+			<motion.div
+				initial={{ scale: 0.9, opacity: 0 }}
+				animate={{ scale: 1, opacity: 1 }}
+				exit={{ scale: 0.9, opacity: 0 }}
+				onClick={(e) => e.stopPropagation()}
+				className="w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl"
+			>
+				<div className="text-center mb-6">
+					<h2 className="font-display text-2xl font-bold text-white mb-2">
+						Acceso privado
+					</h2>
+					<p className="text-white/70 text-sm">
+						Solo para vos dos
+					</p>
+				</div>
+
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<div>
+						<label htmlFor="username" className="block text-sm font-medium text-white/90 mb-1.5">
+							Usuario
+						</label>
+						<input
+							id="username"
+							type="text"
+							autoComplete="username"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+							placeholder="Tefy o Santi"
+							required
+						/>
+					</div>
+
+					<div>
+						<label htmlFor="password" className="block text-sm font-medium text-white/90 mb-1.5">
+							Contraseña
+						</label>
+						<input
+							id="password"
+							type="password"
+							autoComplete="current-password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+							placeholder="••••••••"
+							required
+						/>
+					</div>
+
+					{error && (
+						<p className="text-sm text-rose-300 bg-rose-500/20 rounded-lg px-3 py-2">
+							{error}
+						</p>
+					)}
+
+					<div className="flex gap-3 pt-2">
+						<button
+							type="button"
+							onClick={onClose}
+							className="flex-1 py-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+						>
+							Cancelar
+						</button>
+						<button
+							type="submit"
+							disabled={loading}
+							className="flex-1 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-60 transition-all"
+						>
+							{loading ? 'Entrando...' : 'Ingresar'}
+						</button>
+					</div>
+				</form>
+			</motion.div>
+		</motion.div>
+	)
+}
+
+// Confirmación de Logout
+function LogoutConfirm({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			onClick={onCancel}
+			className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+		>
+			<motion.div
+				initial={{ scale: 0.9, opacity: 0 }}
+				animate={{ scale: 1, opacity: 1 }}
+				exit={{ scale: 0.9, opacity: 0 }}
+				onClick={(e) => e.stopPropagation()}
+				className="w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl"
+			>
+				<h2 className="font-display text-xl font-bold text-white mb-3 text-center">
+					¿Cerrar sesión?
+				</h2>
+				<p className="text-white/70 text-sm text-center mb-6">
+					¿Seguro que quieres salir?
+				</p>
+
+				<div className="flex gap-3">
+					<button
+						onClick={onCancel}
+						className="flex-1 py-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+					>
+						Cancelar
+					</button>
+					<button
+						onClick={onConfirm}
+						className="flex-1 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 transition-all"
+					>
+						Cerrar sesión
+					</button>
+				</div>
+			</motion.div>
+		</motion.div>
 	)
 }

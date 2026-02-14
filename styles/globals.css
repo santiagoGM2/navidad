@@ -206,3 +206,24 @@
 .animate-pulse-soft {
 	animation: pulse-soft 4s ease-in-out infinite;
 }
+
+/* Estrella fugaz sin rastro: solo punto que se mueve y desvanece */
+@keyframes shooting-star {
+	0% {
+		opacity: 0;
+		transform: translate(0, 0) scale(1);
+	}
+	5% {
+		opacity: 0.9;
+		transform: translate(0, 0) scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(var(--shoot-x, 120px), var(--shoot-y, 80px)) scale(0.3);
+	}
+}
+
+.animate-shooting-star {
+	animation: shooting-star 1.8s ease-out forwards;
+	pointer-events: none;
+}

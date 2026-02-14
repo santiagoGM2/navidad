@@ -79,8 +79,7 @@ export default function UnlockableHeart() {
 	const timeProgress = Math.min(((TIME_LIMIT - timeRemaining) / TIME_LIMIT) * 100, 100)
 
 	return (
-		<section className="py-32 md:py-48 px-6 relative z-10">
-			<div className="max-w-2xl mx-auto text-center">
+		<div className="max-w-2xl mx-auto text-center">
 				<AnimatePresence mode="wait">
 					{showInvitation ? (
 						// Pantalla de invitación
@@ -171,7 +170,7 @@ export default function UnlockableHeart() {
 								>
 									{!isUnlocked 
 										? '100 clicks en menos de 10 segundos'
-										: '¡Lo lograste! ❤️'
+										: 'Lo lograste.'
 									}
 								</p>
 							</motion.div>
@@ -295,9 +294,11 @@ export default function UnlockableHeart() {
 											initial={{ scale: 0 }}
 											animate={{ scale: 1 }}
 											transition={{ delay: 0.2, type: 'spring' }}
-											className="text-6xl mb-4"
+											className="mb-4"
 										>
-											❤️
+											<svg className="w-16 h-16 mx-auto text-rose-400" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+											</svg>
 										</motion.div>
 										<motion.p
 											initial={{ opacity: 0 }}
@@ -314,7 +315,6 @@ export default function UnlockableHeart() {
 						</motion.div>
 					)}
 				</AnimatePresence>
-			</div>
-		</section>
+		</div>
 	)
 }
