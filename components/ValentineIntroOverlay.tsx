@@ -46,17 +46,17 @@ export default function ValentineIntroOverlay() {
 			}}
 			transition={{ duration: 0.5 }}
 		>
-			{/* Fondo: gradiente romántico + luz suave */}
+			{/* Fondo: gradiente azul aguamarina + luz suave */}
 			<div
 				className="absolute inset-0"
 				style={{
-					background: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 25%, #f9a8d4 50%, #ec4899 100%)',
+					background: 'linear-gradient(135deg, #ccfbf1 0%, #99f6e4 25%, #5eead4 50%, #14b8a6 75%, #0d9488 100%)',
 				}}
 			/>
 			<div
 				className="absolute inset-0 opacity-60"
 				style={{
-					background: 'radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255,255,255,0.9) 0%, transparent 55%)',
+					background: 'radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255,255,255,0.85) 0%, transparent 55%)',
 				}}
 			/>
 			{/* Corazones flotantes sutiles */}
@@ -64,7 +64,8 @@ export default function ValentineIntroOverlay() {
 				{[...Array(6)].map((_, i) => (
 					<motion.span
 						key={i}
-						className="absolute text-pink-300/40"
+						className="absolute"
+						style={{ color: 'rgba(13, 148, 136, 0.35)' }}
 						style={{
 							left: `${15 + i * 16}%`,
 							top: `${20 + (i % 3) * 25}%`,
@@ -103,19 +104,19 @@ export default function ValentineIntroOverlay() {
 							style={{
 								background: 'linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.88) 100%)',
 								boxShadow: `
-									0 0 0 2px rgba(236, 72, 153, 0.2),
+									0 0 0 2px rgba(20, 184, 166, 0.25),
 									0 0 0 4px rgba(255, 255, 255, 0.8),
-									0 25px 50px -12px rgba(190, 24, 93, 0.25),
-									0 8px 24px -8px rgba(0,0,0,0.12)
+									0 25px 50px -12px rgba(13, 148, 136, 0.28),
+									0 8px 24px -8px rgba(0,0,0,0.1)
 								`,
-								border: '2px solid rgba(251, 207, 232, 0.9)',
+								border: '2px solid rgba(94, 234, 212, 0.7)',
 							}}
 						>
 							{/* Detalle superior tipo cinta */}
 							<div
 								className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl opacity-90"
 								style={{
-									background: 'linear-gradient(90deg, transparent, #f472b6, #ec4899, #f472b6, transparent)',
+									background: 'linear-gradient(90deg, transparent, #5eead4, #14b8a6, #0d9488, #5eead4, transparent)',
 								}}
 							/>
 
@@ -181,13 +182,13 @@ export default function ValentineIntroOverlay() {
 						<div
 							className="relative rounded-3xl p-8 md:p-10 flex flex-col items-center text-center"
 							style={{
-								background: 'linear-gradient(165deg, rgba(255,255,255,0.98) 0%, rgba(254, 242, 242, 0.95) 100%)',
+								background: 'linear-gradient(165deg, rgba(255,255,255,0.98) 0%, rgba(236, 253, 245, 0.95) 100%)',
 								boxShadow: `
-									0 0 0 2px rgba(16, 185, 129, 0.25),
+									0 0 0 2px rgba(20, 184, 166, 0.25),
 									0 0 0 4px rgba(255, 255, 255, 0.9),
-									0 25px 50px -12px rgba(5, 150, 105, 0.3)
+									0 25px 50px -12px rgba(13, 148, 136, 0.28)
 								`,
-								border: '2px solid rgba(167, 243, 208, 0.8)',
+								border: '2px solid rgba(94, 234, 212, 0.7)',
 							}}
 						>
 							<motion.span
@@ -204,15 +205,15 @@ export default function ValentineIntroOverlay() {
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.25, duration: 0.4 }}
 							>
-								¡Cómo te amo mucho, cachetes!
+								Te amo mucho cachetes
 							</motion.p>
 							<motion.button
 								type="button"
 								onClick={closeOverlay}
 								className="px-8 py-3 rounded-xl font-display text-base font-semibold text-white"
 								style={{
-									background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-									boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
+									background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
+									boxShadow: '0 4px 16px rgba(20, 184, 166, 0.45)',
 								}}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
@@ -238,13 +239,13 @@ export default function ValentineIntroOverlay() {
 						<div
 							className="relative rounded-3xl p-8 md:p-10 flex flex-col items-center text-center"
 							style={{
-								background: 'linear-gradient(165deg, rgba(255,255,255,0.98) 0%, rgba(254, 242, 242, 0.95) 100%)',
+								background: 'linear-gradient(165deg, rgba(255,255,255,0.98) 0%, rgba(236, 253, 245, 0.95) 100%)',
 								boxShadow: `
-									0 0 0 2px rgba(244, 114, 182, 0.3),
+									0 0 0 2px rgba(20, 184, 166, 0.25),
 									0 0 0 4px rgba(255, 255, 255, 0.9),
-									0 25px 50px -12px rgba(190, 24, 93, 0.2)
+									0 25px 50px -12px rgba(13, 148, 136, 0.25)
 								`,
-								border: '2px solid rgba(251, 207, 232, 0.8)',
+								border: '2px solid rgba(94, 234, 212, 0.7)',
 							}}
 						>
 							<motion.span
@@ -256,28 +257,20 @@ export default function ValentineIntroOverlay() {
 								😢
 							</motion.span>
 							<motion.p
-								className="font-display text-xl md:text-2xl font-semibold text-gray-800 mb-2 leading-snug"
+								className="font-display text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-snug"
 								initial={{ opacity: 0, y: 8 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.25, duration: 0.4 }}
 							>
 								¿En serio? Gracias…
 							</motion.p>
-							<motion.p
-								className="text-sm text-gray-500 mb-6"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.4 }}
-							>
-								(igual eres mi favorita)
-							</motion.p>
 							<motion.button
 								type="button"
 								onClick={() => setScreen('question')}
 								className="px-8 py-3 rounded-xl font-display text-base font-semibold text-white"
 								style={{
-									background: 'linear-gradient(135deg, #db2777 0%, #ec4899 100%)',
-									boxShadow: '0 4px 16px rgba(236, 72, 153, 0.4)',
+									background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
+									boxShadow: '0 4px 16px rgba(20, 184, 166, 0.45)',
 								}}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
