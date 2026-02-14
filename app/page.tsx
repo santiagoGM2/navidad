@@ -14,7 +14,7 @@ import DepthTimeline from '@/components/DepthTimeline'
 import HeartbeatLetter from '@/components/HeartbeatLetter'
 import SealedLetters from '@/components/SealedLetters'
 import HowISeeYou from '@/components/HowISeeYou'
-import UnlockableHeart from '@/components/UnlockableHeart'
+
 import AnniversarySection from '@/components/AnniversarySection'
 import ValentineSection from '@/components/ValentineSection'
 
@@ -126,10 +126,10 @@ export default function Home() {
 										whileHover={{ x: '100%' }}
 										transition={{ duration: 0.6 }}
 									/>
-									
-									<span 
+
+									<span
 										className="relative z-10 font-display text-lg md:text-xl lg:text-2xl font-semibold text-white"
-										style={{ 
+										style={{
 											textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
 										}}
 									>
@@ -216,30 +216,55 @@ export default function Home() {
 				{/* ═══════════════════════════════════════════════════════════
 				    JUEGOS — Enlace a /juegos
 				═══════════════════════════════════════════════════════════ */}
-				<section className="py-16 md:py-24 px-6 relative z-10">
-					<div className="max-w-4xl mx-auto flex justify-center">
-						<Link
-							href="/juegos"
-							onClick={() => pathname && saveScrollPosition(pathname)}
-							className="block w-full max-w-md"
+				<section className="py-24 md:py-32 px-6 relative z-10">
+					<div className="max-w-5xl mx-auto">
+						<motion.div
+							initial={{ opacity: 0, scale: 0.95 }}
+							whileInView={{ opacity: 1, scale: 1 }}
+							transition={{ duration: 0.8 }}
+							viewport={{ once: true }}
 						>
-							<motion.button
-								type="button"
-								className="w-full py-5 px-8 rounded-2xl font-display text-lg md:text-xl font-semibold text-white border border-white/20 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-white/30 transition-all duration-300"
-								style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}
-								whileHover={{ scale: 1.02, y: -2 }}
-								whileTap={{ scale: 0.98 }}
+							<Link
+								href="/juegos"
+								onClick={() => pathname && saveScrollPosition(pathname)}
+								className="block w-full group relative"
 							>
-								Juegos
-							</motion.button>
-						</Link>
+								{/* Glow effect */}
+								<div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-400 opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500 rounded-3xl" />
+
+								<div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl p-10 md:p-16 text-center transition-all duration-500 group-hover:border-blue-400/30 group-hover:bg-white/10 group-hover:-translate-y-1 shadow-2xl shadow-black/20">
+
+									{/* Decorative background elements inside card */}
+									<div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+									<div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+									<div className="relative z-10 flex flex-col items-center">
+										<div className="mb-6 text-6xl md:text-7xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 inline-block drop-shadow-lg">
+											🎮
+										</div>
+
+										<h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight"
+											style={{ textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+											Nuestra Zona de Juegos
+										</h2>
+
+										<p className="text-lg md:text-xl text-blue-100/90 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
+											Un espacio especial donde la diversión y nuestros retos se encuentran.
+											¿Estás lista para jugar?
+										</p>
+
+										<span className="inline-flex items-center gap-3 py-4 px-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 group-hover:scale-105 transition-all duration-300">
+											Entrar a jugar
+											<svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+											</svg>
+										</span>
+									</div>
+								</div>
+							</Link>
+						</motion.div>
 					</div>
 				</section>
-
-				{/* ═══════════════════════════════════════════════════════════
-				    RETO DEL CORAZÓN
-				═══════════════════════════════════════════════════════════ */}
-				<UnlockableHeart />
 
 				{/* ═══════════════════════════════════════════════════════════
 				    10 MESES — Aniversario especial
