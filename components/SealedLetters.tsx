@@ -61,11 +61,11 @@ Tu amor.`
 		title: 'Cuando esté feliz',
 		description: 'Abre cuando estés feliz',
 		password: 'estoyfeliz',
-		content: `Qué bueno que estés feliz. Eso me hace feliz a mí también.
+		content: `Mi amor, me llena el alma saber que estás feliz. Tu sonrisa es, sin duda, mi paisaje favorito y la razón por la que el mundo se ve más bonito.
+		
+Si estás leyendo esto, quiero que sepas que celebro contigo este momento, que me encantaría estar ahí para abrazarte y ver esos ojitos brillar como tanto me gusta. Guarda este sentimiento en tu corazón y recuerda que te mereces toda la felicidad del universo.
 
-Quiero ser parte de esa felicidad siempre. Gracias por compartirla conmigo.
-
-Te amo.`
+Gracias por dejarme ser parte de tu vida y de tus alegrías. Te amo con todo mi ser, hoy y siempre.`
 	},
 	{
 		id: 'when-miss',
@@ -73,11 +73,11 @@ Te amo.`
 		title: 'Cuando me extrañe',
 		description: 'Abre cuando me extrañes',
 		password: 'teextrano',
-		content: `Cuando me extrañes, acuérdate de esto: yo también te extraño todo el tiempo.
+		content: `Mi vida, si estás leyendo esto porque me extrañas, quiero que cierres los ojos un momento e imagines que te estoy abrazando muy fuerte.
+		
+La distancia es solo física, porque en mi mente y en mi corazón estás presente en cada segundo. No hay momento del día en que no piense en ti, en tu risa, en tu voz y en lo afortunado que soy de tenerte.
 
-No estás sola. Estoy contigo aunque no nos veamos. Te amo y te estaré esperando.
-
-Pronto nos vemos, mi vida.`
+Esto es temporal, pronto volveremos a estar juntos para recuperar el tiempo perdido. Mientras tanto, mira al cielo, el mismo que nos cubre a los dos, y siente que te mando todo mi amor. Te amo infinitamente.`
 	},
 ]
 
@@ -178,8 +178,8 @@ export default function SealedLetters() {
 								{/* Carta sellada */}
 								<motion.div
 									className={`relative backdrop-blur-xl rounded-2xl p-8 border-2 transition-all duration-500 cursor-pointer ${isUnlocked
-											? 'bg-white/15 border-white/40 shadow-2xl'
-											: 'bg-white/5 border-white/20 hover:border-white/30'
+										? 'bg-white/15 border-white/40 shadow-2xl'
+										: 'bg-white/5 border-white/20 hover:border-white/30'
 										}`}
 									whileHover={!isUnlocked ? { scale: 1.02 } : {}}
 									whileTap={!isUnlocked ? { scale: 0.98 } : {}}
