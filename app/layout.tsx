@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import '@/styles/globals.css'
 import Navbar from '@/components/Navbar'
+import CaptureMemoryButton from '@/components/CaptureMemoryButton'
+import ScrollRestore from '@/components/ScrollRestore'
+import ValentineIntroOverlay from '@/components/ValentineIntroOverlay'
 
 // Optimización: Cargar fuentes con next/font para evitar render blocking
 const inter = Inter({
@@ -47,8 +50,17 @@ export default function RootLayout({
 				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 			</head>
 			<body className={`${inter.variable} ${playfairDisplay.variable} antialiased overflow-x-hidden`}>
+				{/* Overlay inicial tipo Valentín: primera pantalla al cargar */}
+				<ValentineIntroOverlay />
+
 				{/* Navbar floating */}
 				<Navbar />
+
+				{/* Botón de captura de momentos (solo logueados) */}
+				<CaptureMemoryButton />
+
+				{/* Scroll restoration */}
+				<ScrollRestore />
 
 				{/* Main content */}
 				{children}
