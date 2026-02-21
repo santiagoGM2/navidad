@@ -73,7 +73,8 @@ export default function CaptureMemoryButton() {
 			const data = await res.json()
 
 			if (!res.ok) {
-				throw new Error(data.error || 'Error al subir')
+				const errorMsg = data.details || data.error || 'Error al subir'
+				throw new Error(errorMsg)
 			}
 
 			setMessage({ type: 'success', text: uploadMode === 'collage' ? '¡Subido al collage!' : '¡Recuerdo guardado!' })

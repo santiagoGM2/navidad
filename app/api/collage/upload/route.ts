@@ -100,8 +100,11 @@ export async function POST(request: NextRequest) {
             success: true,
             message: 'Archivo subido al collage'
         })
-    } catch (err) {
+    } catch (err: any) {
         console.error('Upload error:', err)
-        return NextResponse.json({ error: 'Error interno' }, { status: 500 })
+        return NextResponse.json({
+            error: 'Error interno en el servidor',
+            details: err.message || String(err)
+        }, { status: 500 })
     }
 }

@@ -113,11 +113,11 @@ export async function POST(request: NextRequest) {
 		}
 
 		return NextResponse.json({ success: true, imageUrl })
-	} catch (err) {
+	} catch (err: any) {
 		console.error('upload-daily error:', err)
-		return NextResponse.json(
-			{ error: 'Error interno' },
-			{ status: 500 }
-		)
+		return NextResponse.json({
+			error: 'Error interno en el servidor',
+			details: err.message || String(err)
+		}, { status: 500 })
 	}
 }
