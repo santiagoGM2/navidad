@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie } from '@/lib/auth-server'
-import { supabaseAdmin } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
+import { getSupabaseConfig } from '@/lib/supabase-config'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,17 +17,16 @@ function getDayOfYear(d: Date): number {
 
 export async function POST(request: NextRequest) {
 	try {
+		const { url, key, usingServiceKey } = getSupabaseConfig()
+
 		const session = await getSessionFromCookie()
 		if (!session) {
 			return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 		}
 
-		const client = supabaseAdmin
-		if (!client) {
-			return NextResponse.json(
-				{ error: 'Storage no configurado (SUPABASE_SERVICE_ROLE_KEY)' },
-				{ status: 503 }
-			)
+		const client = createClient(url, key)
+		if (!client || !usingServiceKey) {
+			console.warn('[UPLOAD DAILY] Missing service key, using best available.')
 		}
 
 		const formData = await request.formData()

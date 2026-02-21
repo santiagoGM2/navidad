@@ -1,37 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie } from '@/lib/auth-server'
 import { createClient } from '@supabase/supabase-js'
+import { getSupabaseConfig } from '@/lib/supabase-config'
 
 export async function POST(request: NextRequest) {
     try {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        const { url, key: effectiveKey, usingServiceKey } = getSupabaseConfig()
 
         // DETERMINISMO DE KEYS (LOGS DE DEPURACIÓN)
         console.log('[DEBUG UPLOAD] Config check:', {
-            hasUrl: !!url,
-            urlPrefix: url ? url.substring(0, 10) : 'null',
-            hasServiceKey: !!serviceKey,
-            isServicePlaceholder: serviceKey?.includes('REEMPLAZAR'),
-            hasAnonKey: !!anonKey
+            urlPrefix: url.substring(0, 10),
+            usingServiceKey,
+            keyLength: effectiveKey.length
         })
-
-        // Determinar qué llave usar
-        const effectiveKey = (serviceKey && !serviceKey.includes('REEMPLAZAR'))
-            ? serviceKey
-            : anonKey;
-
-        // Verificar configuración básica
-        if (!url || !effectiveKey) {
-            return NextResponse.json(
-                {
-                    error: 'Error de configuración: Las claves de Supabase no están configuradas correctamente.',
-                    debug: { hasUrl: !!url, hasKey: !!effectiveKey }
-                },
-                { status: 500 }
-            )
-        }
 
         // Verificar sesión
         const session = await getSessionFromCookie()
