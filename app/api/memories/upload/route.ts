@@ -49,11 +49,10 @@ export async function POST(request: NextRequest) {
 		const filePath = `${today}/${fileName}`
 
 		const arrayBuffer = await file.arrayBuffer()
-		const buffer = Buffer.from(arrayBuffer)
 
 		const { error: uploadError } = await supabase.storage
 			.from('daily-memories')
-			.upload(filePath, buffer, {
+			.upload(filePath, arrayBuffer, {
 				contentType: file.type,
 				upsert: false,
 			})

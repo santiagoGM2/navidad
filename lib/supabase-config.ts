@@ -7,9 +7,9 @@ export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'e
  * Priority: SUPABASE_SERVICE_ROLE_KEY > NEXT_PUBLIC_SUPABASE_ANON_KEY > Hardcoded Fallback
  */
 export function getSupabaseConfig() {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY
+    const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL).trim()
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+    const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY).trim()
 
     let effectiveKey = anonKey
     let usingServiceKey = false

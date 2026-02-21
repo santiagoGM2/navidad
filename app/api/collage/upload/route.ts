@@ -58,12 +58,11 @@ export async function POST(request: NextRequest) {
         const filePath = `${fileName}`
 
         const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
 
         // Intentar subir a bucket 'collage'
         let { error: uploadError } = await supabase.storage
             .from(bucketName)
-            .upload(filePath, buffer, {
+            .upload(filePath, arrayBuffer, {
                 contentType: file.type,
                 upsert: false,
             })
@@ -74,7 +73,7 @@ export async function POST(request: NextRequest) {
             const fallbackPath = `collage/${fileName}`
             const { error: fallbackError } = await supabase.storage
                 .from(bucketName)
-                .upload(fallbackPath, buffer, {
+                .upload(fallbackPath, arrayBuffer, {
                     contentType: file.type,
                     upsert: false,
                 })
