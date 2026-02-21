@@ -46,7 +46,9 @@ export async function verifyPassword(password: string): Promise<boolean> {
 }
 
 export function isAllowedUsername(username: unknown): username is AllowedUsername {
-	return typeof username === 'string' && (ALLOWED_USERNAMES as readonly string[]).includes(username)
+	if (typeof username !== 'string') return false
+	const normalized = username.toLowerCase().trim()
+	return (ALLOWED_USERNAMES as readonly string[]).some(u => u.toLowerCase() === normalized)
 }
 
 /** Create signed session payload. */

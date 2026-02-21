@@ -2,21 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie } from '@/lib/auth-server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
 export async function POST(request: NextRequest) {
     try {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
         // Determinar qué llave usar
-        const effectiveKey = (supabaseServiceKey && !supabaseServiceKey.includes('REEMPLAZAR'))
-            ? supabaseServiceKey
-            : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        const effectiveKey = (serviceKey && !serviceKey.includes('REEMPLAZAR'))
+            ? serviceKey
+            : anonKey;
 
         // Verificar configuración básica
-        if (!supabaseUrl || !effectiveKey) {
-            console.error('Configuración de Supabase insuficiente')
+        if (!url || !effectiveKey) {
+            console.error('Configuración de Supabase insuficiente:', { hasUrl: !!url, hasKey: !!effectiveKey })
             return NextResponse.json(
-                { error: 'Error de configuración: Faltan las claves de Supabase.' },
+                { error: 'Error de configuración: Las claves de Supabase no están configuradas correctamente.' },
                 { status: 500 }
             )
         }
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Crear cliente Supabase con la llave efectiva
-        const supabase = createClient(supabaseUrl, effectiveKey)
+        const supabase = createClient(url, effectiveKey)
 
         // Subir a Storage
         // Usaremos el bucket 'collage-media' si existe, o una carpeta 'collage' en 'daily-memories' si no.
