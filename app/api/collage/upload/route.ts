@@ -8,6 +8,15 @@ export async function POST(request: NextRequest) {
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
         const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+        // DETERMINISMO DE KEYS (LOGS DE DEPURACIÓN)
+        console.log('[DEBUG UPLOAD] Config check:', {
+            hasUrl: !!url,
+            urlPrefix: url ? url.substring(0, 10) : 'null',
+            hasServiceKey: !!serviceKey,
+            isServicePlaceholder: serviceKey?.includes('REEMPLAZAR'),
+            hasAnonKey: !!anonKey
+        })
+
         // Determinar qué llave usar
         const effectiveKey = (serviceKey && !serviceKey.includes('REEMPLAZAR'))
             ? serviceKey
@@ -15,9 +24,11 @@ export async function POST(request: NextRequest) {
 
         // Verificar configuración básica
         if (!url || !effectiveKey) {
-            console.error('Configuración de Supabase insuficiente:', { hasUrl: !!url, hasKey: !!effectiveKey })
             return NextResponse.json(
-                { error: 'Error de configuración: Las claves de Supabase no están configuradas correctamente.' },
+                {
+                    error: 'Error de configuración: Las claves de Supabase no están configuradas correctamente.',
+                    debug: { hasUrl: !!url, hasKey: !!effectiveKey }
+                },
                 { status: 500 }
             )
         }
