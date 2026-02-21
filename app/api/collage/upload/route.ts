@@ -5,14 +5,7 @@ import { getSupabaseConfig } from '@/lib/supabase-config'
 
 export async function POST(request: NextRequest) {
     try {
-        const { url, key: effectiveKey, usingServiceKey } = getSupabaseConfig()
-
-        // DETERMINISMO DE KEYS (LOGS DE DEPURACIÓN)
-        console.log('[DEBUG UPLOAD] Config check:', {
-            urlPrefix: url.substring(0, 10),
-            usingServiceKey,
-            keyLength: effectiveKey.length
-        })
+        const { url, key: effectiveKey } = getSupabaseConfig()
 
         // Verificar sesión
         const session = await getSessionFromCookie()
