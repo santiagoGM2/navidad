@@ -81,11 +81,19 @@ export async function POST(request: NextRequest) {
 
             if (fallbackError) {
                 console.error('Fallback upload error:', fallbackError)
-                return NextResponse.json({ error: 'Error al subir archivo' }, { status: 500 })
+                return NextResponse.json({
+                    error: 'Error al subir archivo (fallback)',
+                    details: fallbackError.message,
+                    bucket: bucketName
+                }, { status: 500 })
             }
         } else if (uploadError) {
             console.error('Upload error:', uploadError)
-            return NextResponse.json({ error: 'Error al subir archivo' }, { status: 500 })
+            return NextResponse.json({
+                error: 'Error al subir archivo',
+                details: uploadError.message,
+                bucket: bucketName
+            }, { status: 500 })
         }
 
         return NextResponse.json({

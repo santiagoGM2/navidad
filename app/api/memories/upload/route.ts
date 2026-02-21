@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
 
 		if (uploadError) {
 			console.error('Upload error:', uploadError)
-			return NextResponse.json({ error: 'Error al subir imagen' }, { status: 500 })
+			return NextResponse.json({
+				error: 'Error al subir imagen',
+				details: uploadError.message
+			}, { status: 500 })
 		}
 
 		// Obtener URL pública
@@ -79,8 +82,10 @@ export async function POST(request: NextRequest) {
 
 		if (dbError) {
 			console.error('DB error:', dbError)
-			// No borramos la imagen por seguridad, pero logueamos error
-			return NextResponse.json({ error: 'Error al guardar metadatos' }, { status: 500 })
+			return NextResponse.json({
+				error: 'Error al guardar metadatos en la base de datos',
+				details: dbError.message
+			}, { status: 500 })
 		}
 
 		return NextResponse.json({
