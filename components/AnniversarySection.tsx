@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -54,6 +54,11 @@ function FloatingParticles() {
 export default function AnniversarySection() {
 	const reduceMotion = useReducedMotion()
 	const pathname = usePathname()
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setMounted(true)
+	}, [])
 
 	return (
 		<section
@@ -76,7 +81,7 @@ export default function AnniversarySection() {
 				}}
 			/>
 
-			{!reduceMotion && <FloatingParticles />}
+			{mounted && !reduceMotion && <FloatingParticles />}
 
 			<div className="relative z-10 w-full max-w-2xl mx-auto text-center">
 				<motion.div

@@ -54,8 +54,13 @@ export default function EmotionalDailyPhrase() {
 	const [viewedCount, setViewedCount] = useState<1 | 2>(1)
 	const [locked, setLocked] = useState(false)
 	const [error, setError] = useState(false)
+	const [hasMounted, setHasMounted] = useState(false)
 
 	const today = getTodayDateString()
+
+	useEffect(() => {
+		setHasMounted(true)
+	}, [])
 
 	const fetchPhrases = useCallback(async () => {
 		setLoading(true)
@@ -138,6 +143,8 @@ export default function EmotionalDailyPhrase() {
 	}, [phrases, viewedCount, currentIndex, today])
 
 	const currentPhrase = phrases[currentIndex]
+
+	if (!hasMounted) return <div className="min-h-[200px]" /> // Placeholder de altura similar
 
 	return (
 		<motion.div

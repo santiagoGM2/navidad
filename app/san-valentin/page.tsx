@@ -1,11 +1,17 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import BackButton from '@/components/BackButton'
 
 import Flowers from '@/components/Flowers'
 
 export default function SanValentinPage() {
+	const [mounted, setMounted] = useState(false)
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
 	return (
 		<div
 			className="min-h-screen relative overflow-hidden flex items-center justify-center"
@@ -17,7 +23,7 @@ export default function SanValentinPage() {
 
 			{/* Partículas de fondo */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
-				{Array.from({ length: 20 }).map((_, i) => (
+				{mounted && Array.from({ length: 20 }).map((_, i) => (
 					<motion.div
 						key={i}
 						className="absolute w-2 h-2 bg-rose-300/30 rounded-full"

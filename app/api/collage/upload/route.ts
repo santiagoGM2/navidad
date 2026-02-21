@@ -7,11 +7,16 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function POST(request: NextRequest) {
     try {
-        // Verificar configuración
-        if (!supabaseUrl || !supabaseServiceKey || supabaseServiceKey.includes('REEMPLAZAR')) {
-            console.error('Configuración de Supabase incompleta o con valores de ejemplo')
+        // Determinar qué llave usar
+        const effectiveKey = (supabaseServiceKey && !supabaseServiceKey.includes('REEMPLAZAR'))
+            ? supabaseServiceKey
+            : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+        // Verificar configuración básica
+        if (!supabaseUrl || !effectiveKey) {
+            console.error('Configuración de Supabase insuficiente')
             return NextResponse.json(
-                { error: 'Error de configuración: El administrador debe configurar las claves de Supabase correctamente.' },
+                { error: 'Error de configuración: Faltan las claves de Supabase.' },
                 { status: 500 }
             )
         }
@@ -45,8 +50,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: `Archivo muy grande (máx ${isVideo ? '100MB' : '10MB'})` }, { status: 400 })
         }
 
-        // Crear cliente Supabase
-        const supabase = createClient(supabaseUrl, supabaseServiceKey)
+        // Crear cliente Supabase con la llave efectiva
+        const supabase = createClient(supabaseUrl, effectiveKey)
 
         // Subir a Storage
         // Usaremos el bucket 'collage-media' si existe, o una carpeta 'collage' en 'daily-memories' si no.
