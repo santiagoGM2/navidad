@@ -266,6 +266,16 @@ export const MOMENTS: Moment[] = [
 		text: 'amor, eres muy cachetona',
 		delay: 1000,
 	},
+	{
+		id: 'moment-7',
+		text: 'perdón, pues si tú quieres',
+		delay: 1200,
+	},
+	{
+		id: 'moment-8',
+		text: 'mi amor, no haga fuerza y no te ensucies',
+		delay: 1400,
+	},
 ] as const
 
 // Album - Imagenes

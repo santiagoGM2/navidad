@@ -7,6 +7,15 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function POST(request: NextRequest) {
 	try {
+		// Verificar configuración
+		if (!supabaseUrl || !supabaseServiceKey || supabaseServiceKey.includes('REEMPLAZAR')) {
+			console.error('Configuración de Supabase incompleta o con valores de ejemplo')
+			return NextResponse.json(
+				{ error: 'Error de configuración: El administrador debe configurar las claves de Supabase correctamente.' },
+				{ status: 500 }
+			)
+		}
+
 		// Verificar sesión
 		const session = await getSessionFromCookie()
 		if (!session) {

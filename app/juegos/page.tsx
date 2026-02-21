@@ -7,10 +7,24 @@ import BackButton from '@/components/BackButton'
 import UnlockableHeart from '@/components/UnlockableHeart'
 import QuienEsMasGame from '@/components/anniversary/QuienEsMasGame'
 import PuzzleDeRecuerdos from '@/components/games/PuzzleDeRecuerdos'
+import TapRace from '@/components/games/TapRace'
+import HeartDuel from '@/components/games/HeartDuel'
 
-type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | null
+type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'tap-race' | 'heart-duel' | null
 
 const GAMES: { id: GameId; title: string; description: string; icon: string }[] = [
+	{
+		id: 'tap-race',
+		title: 'Carrera de Toques',
+		description: 'Duelo de velocidad. ¿Quién toca más rápido? Tefa vs Santi.',
+		icon: '🏁',
+	},
+	{
+		id: 'heart-duel',
+		title: 'Duelo de Besos',
+		description: 'Muévanse por la pantalla y demuestren su puntería. Un mini-juego para dos.',
+		icon: '⚔',
+	},
 	{
 		id: 'reto',
 		title: 'Reto del corazón',
@@ -38,7 +52,7 @@ export default function JuegosPage() {
 		<ConstellationBackground>
 			<div className="min-h-screen py-12 px-6 relative z-10">
 				<BackButton label="Volver" />
-				
+
 				<div className="max-w-4xl mx-auto">
 					{/* Cabecera */}
 					<motion.div
@@ -118,6 +132,28 @@ export default function JuegosPage() {
 										</motion.button>
 									))}
 								</div>
+							</motion.div>
+						) : selectedGame === 'tap-race' ? (
+							<motion.div
+								key="tap-race"
+								initial={{ opacity: 0, x: 20 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -20 }}
+								transition={{ duration: 0.3 }}
+								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
+							>
+								<TapRace />
+							</motion.div>
+						) : selectedGame === 'heart-duel' ? (
+							<motion.div
+								key="heart-duel"
+								initial={{ opacity: 0, x: 20 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -20 }}
+								transition={{ duration: 0.3 }}
+								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
+							>
+								<HeartDuel />
 							</motion.div>
 						) : selectedGame === 'reto' ? (
 							<motion.div

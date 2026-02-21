@@ -16,7 +16,6 @@ import SealedLetters from '@/components/SealedLetters'
 import HowISeeYou from '@/components/HowISeeYou'
 
 import AnniversarySection from '@/components/AnniversarySection'
-import ValentineSection from '@/components/ValentineSection'
 
 export default function Home() {
 	const pathname = usePathname()
@@ -271,10 +270,6 @@ export default function Home() {
 				═══════════════════════════════════════════════════════════ */}
 				<AnniversarySection />
 
-				{/* ═══════════════════════════════════════════════════════════
-				    SAN VALENTÍN — Carta romántica
-				═══════════════════════════════════════════════════════════ */}
-				<ValentineSection />
 
 				{/* ═══════════════════════════════════════════════════════════
 				    CARTA FINAL — El Tesoro
