@@ -4,16 +4,15 @@ import Image from 'next/image'
 
 export interface DailyMemoryRow {
 	id: string
-	image_url: string
-	created_at: string
-	uploaded_by: string
-	description: string | null
-	day_of_year: number
-	year: number
+	url: string
+	fecha_subida: string
+	usuario_subio: string
+	tipo: 'foto' | 'video'
+	description?: string | null
 }
 
-function formatDate(createdAt: string): string {
-	const d = new Date(createdAt)
+function formatDate(dateStr: string): string {
+	const d = new Date(dateStr)
 	return d.toLocaleDateString('es-AR', {
 		day: 'numeric',
 		month: 'long',
@@ -29,7 +28,7 @@ export default function RecuerdosGrid({
 	if (initialMemories.length === 0) {
 		return (
 			<p className="text-white/60 text-center py-12">
-				Aún no hay fotos. Subí la primera desde Subir foto diaria.
+				Aún no hay recuerdos. Subí el primero desde "Subir Recuerdo".
 			</p>
 		)
 	}
@@ -39,19 +38,36 @@ export default function RecuerdosGrid({
 			{initialMemories.map((m) => (
 				<div
 					key={m.id}
-					className="relative aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10"
+					className="relative aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10 group"
 				>
-					<Image
-						src={m.image_url}
-						alt={m.description || formatDate(m.created_at)}
-						fill
-						className="object-cover"
-						sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
-						unoptimized={m.image_url.startsWith('http') && new URL(m.image_url).hostname.includes('supabase')}
-					/>
-					<div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-xs">
-						{formatDate(m.created_at)} · {m.uploaded_by}
+					{m.tipo === 'foto' ? (
+						<Image
+							src={m.url}
+							alt={m.description || formatDate(m.fecha_subida)}
+							fill
+							className="object-cover group-hover:scale-105 transition-transform duration-500"
+							sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+							unoptimized={m.url.startsWith('http')}
+						/>
+					) : (
+						<video
+							src={m.url}
+							className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+							muted
+							loop
+							playsInline
+						/>
+					)}
+					<div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-[10px] leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+						{formatDate(m.fecha_subida)} <br /> {m.usuario_subio}
 					</div>
+					{m.tipo === 'video' && (
+						<div className="absolute top-2 right-2 p-1 bg-black/40 backdrop-blur-sm rounded-full pointer-events-none">
+							<svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+								<path d="M8 5v14l11-7z" />
+							</svg>
+						</div>
+					)}
 				</div>
 			))}
 		</div>

@@ -7,12 +7,11 @@ import { supabaseAdmin } from '@/lib/supabase-server'
 
 export interface DailyMemoryRow {
 	id: string
-	image_url: string
-	created_at: string
-	uploaded_by: string
-	description: string | null
-	day_of_year: number
-	year: number
+	url: string
+	fecha_subida: string
+	tipo: 'foto' | 'video'
+	usuario_subio: string
+	descripcion: string | null
 }
 
 export async function getDailyMemoriesStats(): Promise<{
@@ -26,30 +25,36 @@ export async function getDailyMemoriesStats(): Promise<{
 	}
 	try {
 		const year = new Date().getFullYear()
+		const startTime = `${year}-01-01T00:00:00Z`
+
 		const { count: totalPhotos } = await client
-			.from('daily_memories')
+			.from('collage_recuerdos')
 			.select('*', { count: 'exact', head: true })
+
 		const { count: photosThisYear } = await client
-			.from('daily_memories')
+			.from('collage_recuerdos')
 			.select('*', { count: 'exact', head: true })
-			.eq('year', year)
+			.gte('fecha_subida', startTime)
+
 		const { data: rows } = await client
-			.from('daily_memories')
-			.select('created_at')
+			.from('collage_recuerdos')
+			.select('fecha_subida')
 			.limit(5000)
-		const uniqueDays = new Set((rows ?? []).map((r) => String(r.created_at).slice(0, 10))).size
+
+		const uniqueDays = new Set((rows ?? []).map((r) => String(r.fecha_subida).slice(0, 10))).size
+
 		return {
 			totalPhotos: totalPhotos ?? 0,
 			activeDays: uniqueDays,
 			photosThisYear: photosThisYear ?? 0,
 		}
-	} catch {
+	} catch (err) {
+		console.error('Error getting stats:', err)
 		return { totalPhotos: 0, activeDays: 0, photosThisYear: 0 }
 	}
 }
 
 export async function listDailyMemories(options?: {
-	year?: number
 	limit?: number
 	offset?: number
 }): Promise<DailyMemoryRow[]> {
@@ -57,17 +62,23 @@ export async function listDailyMemories(options?: {
 	if (!client) return []
 	try {
 		let q = client
-			.from('daily_memories')
-			.select('id, image_url, created_at, uploaded_by, description, day_of_year, year')
-			.order('created_at', { ascending: false })
-		if (options?.year != null) {
-			q = q.eq('year', options.year)
-		}
+			.from('collage_recuerdos')
+			.select('id, url, fecha_subida, tipo, usuario_subio, descripcion')
+			.order('fecha_subida', { ascending: false })
+
 		if (options?.limit != null) q = q.limit(options.limit)
 		if (options?.offset != null) q = q.range(options.offset, options.offset + (options.limit ?? 50) - 1)
+
 		const { data, error } = await q
 		if (error || !data) return []
-		return data as DailyMemoryRow[]
+		return data.map(item => ({
+			id: item.id,
+			url: item.url,
+			fecha_subida: item.fecha_subida,
+			tipo: item.tipo as 'foto' | 'video',
+			usuario_subio: item.usuario_subio,
+			descripcion: item.descripcion
+		}))
 	} catch {
 		return []
 	}

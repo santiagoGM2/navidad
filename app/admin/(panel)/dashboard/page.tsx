@@ -10,10 +10,10 @@ export default async function DashboardPage() {
 		<div className="space-y-8">
 			<div>
 				<h1 className="font-display text-2xl md:text-3xl font-bold text-white mb-1">
-					Panel
+					Panel de Administración
 				</h1>
 				<p className="text-white/70 text-sm md:text-base">
-					Hola, {session?.username}. Aquí podés subir fotos diarias y ver el recap del año.
+					Hola, {session?.username}. Desde aquí podés gestionar los recuerdos del Collage.
 				</p>
 			</div>
 
@@ -38,19 +38,24 @@ export default async function DashboardPage() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<ActionCard
 					href="/admin/subir-foto"
-					title="Subir foto diaria"
-					description="Guardá el momento de hoy. Una foto por día."
+					title="Subir Recuerdo"
+					description="Subí una foto o video. Se publica directamente en el Collage público."
+					highlight
+				/>
+				<ActionCard
+					href="/collage"
+					title="Ver Collage"
+					description="Mirá todos los recuerdos publicados. Desde ahí podés eliminar si es necesario."
 				/>
 				<ActionCard
 					href="/admin/recuerdos"
-					title="Panel de recuerdos"
+					title="Historial de recuerdos"
 					description="Ver todas las fotos subidas por fecha."
 				/>
 				<ActionCard
 					href="/admin/recap"
 					title="Recap anual"
 					description="Recorré todas las fotos del año con una experiencia cinematográfica."
-					className="md:col-span-2"
 				/>
 			</div>
 		</div>
@@ -80,16 +85,21 @@ function ActionCard({
 	title,
 	description,
 	className = '',
+	highlight = false,
 }: {
 	href: string
 	title: string
 	description: string
 	className?: string
+	highlight?: boolean
 }) {
 	return (
 		<Link
 			href={href}
-			className={`block backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-6 hover:bg-white/10 hover:border-white/25 transition-all ${className}`}
+			className={`block backdrop-blur-md rounded-xl p-6 transition-all ${className} ${highlight
+					? 'bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-violet-400/30 hover:from-violet-500/30 hover:to-pink-500/30 hover:border-violet-400/50'
+					: 'bg-white/5 border border-white/15 hover:bg-white/10 hover:border-white/25'
+				}`}
 		>
 			<h2 className="font-display text-lg font-semibold text-white mb-2">{title}</h2>
 			<p className="text-white/70 text-sm">{description}</p>

@@ -8,10 +8,8 @@ import { triggerVibration } from '@/utils/vibration'
 
 export default function RecapSlideshow({
 	memories,
-	year,
 }: {
 	memories: DailyMemoryRow[]
-	year: number
 }) {
 	const [index, setIndex] = useState(0)
 	const [playing, setPlaying] = useState(true)
@@ -22,9 +20,11 @@ export default function RecapSlideshow({
 
 	useEffect(() => {
 		if (!playing || memories.length <= 1) return
-		const t = setInterval(next, 3500)
+		const current = memories[index]
+		const duration = current?.tipo === 'video' ? 6000 : 3500 // Give more time to videos
+		const t = setInterval(next, duration)
 		return () => clearInterval(t)
-	}, [playing, next, memories.length])
+	}, [playing, next, memories.length, index])
 
 	useEffect(() => {
 		if (index === 0 && memories.length) {
@@ -46,15 +46,25 @@ export default function RecapSlideshow({
 						transition={{ duration: 1.2, ease: 'easeInOut' }}
 						className="absolute inset-0"
 					>
-						<Image
-							src={current.image_url}
-							alt={current.description || `Recuerdo ${index + 1}`}
-							fill
-							className="object-contain"
-							sizes="90vw"
-							priority={index < 3}
-							unoptimized={current.image_url.startsWith('http') && new URL(current.image_url).hostname.includes('supabase')}
-						/>
+						{current.tipo === 'foto' ? (
+							<Image
+								src={current.url}
+								alt={current.description || `Recuerdo ${index + 1}`}
+								fill
+								className="object-contain"
+								sizes="90vw"
+								priority={index < 3}
+								unoptimized={current.url.startsWith('http')}
+							/>
+						) : (
+							<video
+								src={current.url}
+								className="w-full h-full object-contain"
+								autoPlay
+								muted
+								playsInline
+							/>
+						)}
 						<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 					</motion.div>
 				)}
@@ -66,19 +76,18 @@ export default function RecapSlideshow({
 				<button
 					type="button"
 					onClick={() => setPlaying((p) => !p)}
-					className="text-white/80 hover:text-white text-sm"
+					className="text-white/80 hover:text-white text-sm bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm"
 				>
 					{playing ? 'Pausar' : 'Reproducir'}
 				</button>
 			</div>
 			<div className="absolute top-4 left-4 right-4 text-center">
 				<motion.span
-					key={year}
 					initial={{ opacity: 0, y: -10 }}
 					animate={{ opacity: 1, y: 0 }}
 					className="text-white/90 font-display text-lg drop-shadow-lg"
 				>
-					Nuestro año juntos · {year}
+					Nuestro viaje juntos
 				</motion.span>
 			</div>
 		</div>

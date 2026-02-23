@@ -7,8 +7,9 @@ import type { AllowedUsername } from '@/lib/auth-constants'
 
 const LINKS = [
 	{ href: '/admin/dashboard', label: 'Panel' },
-	{ href: '/admin/subir-foto', label: 'Subir foto' },
-	{ href: '/admin/recuerdos', label: 'Recuerdos' },
+	{ href: '/admin/subir-foto', label: 'Subir Recuerdo' },
+	{ href: '/collage', label: 'Collage' },
+	{ href: '/admin/recuerdos', label: 'Historial' },
 	{ href: '/admin/recap', label: 'Recap' },
 ] as const
 
