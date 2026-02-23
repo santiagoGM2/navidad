@@ -2,12 +2,14 @@ import { redirect } from 'next/navigation'
 import { getSessionFromCookie } from '@/lib/auth-server'
 import AdminNav from '@/components/admin/AdminNav'
 
-export default async function PanelLayout({
+export const dynamic = 'force-dynamic'
+
+export default function PanelLayout({
 	children,
 }: {
 	children: React.ReactNode
 }) {
-	const session = await getSessionFromCookie()
+	const session = getSessionFromCookie()
 	if (!session) {
 		redirect('/admin/login')
 	}

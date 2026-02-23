@@ -102,8 +102,8 @@ export function parseSessionToken(token: string): SessionPayload | null {
 export { getCookieName } from '@/lib/auth-constants'
 
 /** Get session from request cookies (for API routes use cookies()). */
-export async function getSessionFromCookie(): Promise<SessionPayload | null> {
-	const cookieStore = await cookies()
+export function getSessionFromCookie(): SessionPayload | null {
+	const cookieStore = cookies()
 	const token = cookieStore.get(COOKIE_NAME)?.value
 	if (!token) return null
 	return parseSessionToken(token)

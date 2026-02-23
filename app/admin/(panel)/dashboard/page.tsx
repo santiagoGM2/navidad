@@ -3,7 +3,7 @@ import { getSessionFromCookie } from '@/lib/auth-server'
 import { getDailyMemoriesStats } from '@/lib/admin-db'
 
 export default async function DashboardPage() {
-	const session = await getSessionFromCookie()
+	const session = getSessionFromCookie()
 	const stats = await getDailyMemoriesStats()
 
 	return (
@@ -97,8 +97,8 @@ function ActionCard({
 		<Link
 			href={href}
 			className={`block backdrop-blur-md rounded-xl p-6 transition-all ${className} ${highlight
-					? 'bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-violet-400/30 hover:from-violet-500/30 hover:to-pink-500/30 hover:border-violet-400/50'
-					: 'bg-white/5 border border-white/15 hover:bg-white/10 hover:border-white/25'
+				? 'bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-violet-400/30 hover:from-violet-500/30 hover:to-pink-500/30 hover:border-violet-400/50'
+				: 'bg-white/5 border border-white/15 hover:bg-white/10 hover:border-white/25'
 				}`}
 		>
 			<h2 className="font-display text-lg font-semibold text-white mb-2">{title}</h2>

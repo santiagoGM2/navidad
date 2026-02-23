@@ -1,6 +1,3 @@
-import heic2any from 'heic2any'
-import exifr from 'exifr'
-
 const MAX_SIZE = 1200
 const QUALITY = 0.85
 
@@ -13,6 +10,10 @@ export interface UploadMetadata {
 }
 
 export async function processImageForUpload(file: File, isCamera: boolean, location: { lat: number, lng: number } | null) {
+    if (typeof window === 'undefined') return { finalFile: file, metadata: { isCamera, capturedAt: null, location, originalFormat: file.type, timezone: 'UTC' } }
+
+    const heic2any = (await import('heic2any')).default
+    const exifr = await import('exifr')
     let workingFile: File | Blob = file
     const metadata: UploadMetadata = {
         isCamera,
