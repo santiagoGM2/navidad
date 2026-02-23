@@ -136,7 +136,19 @@ export default function SubirFotoForm({ onSuccess }: SubirFotoFormProps) {
 							: 'bg-rose-500/20 border-rose-500/30 text-rose-200'
 							}`}
 					>
-						<p className="text-sm font-semibold">{status.message}</p>
+						<div className="flex flex-col gap-2">
+							<p className="text-sm font-semibold">{status.message}</p>
+							{status.type === 'success' && (
+								<motion.a
+									href="/collage"
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									className="text-xs text-white bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg inline-block self-center transition-colors"
+								>
+									Ver en Collage →
+								</motion.a>
+							)}
+						</div>
 					</motion.div>
 				)}
 			</AnimatePresence>

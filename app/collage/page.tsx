@@ -6,6 +6,7 @@ import Image from 'next/image'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import BackButton from '@/components/BackButton'
 import CaptureMemoryButton, { type CollageRecuerdo } from '@/components/CaptureMemoryButton'
+import { supabase } from '@/lib/supabase'
 
 const LOCAL_MEDIA_FILES = [
 	'cumpleaños.jpeg', 'fiesta 15.jpeg', 'halloween.jpeg', 'halloween2.jpeg',
@@ -91,45 +92,63 @@ export default function CollagePage() {
 	}, [])
 
 	// Load all items
-	useEffect(() => {
-		const loadItems = async () => {
-			setIsLoading(true)
+	const loadItems = async (showLoading = true) => {
+		if (showLoading) setIsLoading(true)
 
-			// 1. Local files as DisplayItems
-			const localItems: DisplayItem[] = LOCAL_MEDIA_FILES.map((filename, i) => ({
-				id: `local-${i}`,
-				url: `/images/${filename}`,
-				fecha_subida: '2025-01-01T12:00:00Z',
-				fecha_captura: '2025-01-01T12:00:00Z',
-				tipo: getFileType(filename),
-				usuario_subio: 'local',
-				isLocal: true,
-			}))
+		// 1. Local files
+		const localItems: DisplayItem[] = LOCAL_MEDIA_FILES.map((filename, i) => ({
+			id: `local-${i}`,
+			url: `/images/${filename}`,
+			fecha_subida: '2025-01-01T12:00:00Z',
+			fecha_captura: '2025-01-01T12:00:00Z',
+			tipo: getFileType(filename),
+			usuario_subio: 'local',
+			isLocal: true,
+		}))
 
-			// 2. Fetch from API (database records)
-			let dbItems: DisplayItem[] = []
-			try {
-				const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
-					cache: 'no-store',
-					headers: { 'Pragma': 'no-cache' }
-				})
-				if (res.ok) {
-					const data = await res.json()
-					dbItems = (data.recuerdos || []).map((r: any) => ({
-						...r,
-						isLocal: false,
-					}))
-				}
-			} catch (err) {
-				console.warn('Could not fetch collage from API:', err)
+		// 2. Fetch from DB
+		let dbItems: DisplayItem[] = []
+		try {
+			const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
+				cache: 'no-store',
+				headers: { 'Pragma': 'no-cache' }
+			})
+			if (res.ok) {
+				const data = await res.json()
+				dbItems = (data.recuerdos || []).map((r: any) => ({
+					...r,
+					isLocal: false,
+				}))
 			}
-
-			// 3. Combine: DB items first (they have real dates), then local
-			setAllItems([...dbItems, ...localItems])
-			setIsLoading(false)
+		} catch (err) {
+			console.warn('Could not fetch collage:', err)
 		}
 
+		setAllItems([...dbItems, ...localItems])
+		setIsLoading(false)
+	}
+
+	useEffect(() => {
 		loadItems()
+
+		// 🔔 Supabase REALTIME (Sincronización instantánea total)
+		// Esto soluciona el problema de que no se vea inmediatamente.
+		const channel = supabase
+			.channel('collage-changes')
+			.on(
+				'postgres_changes',
+				{ event: '*', schema: 'public', table: 'collage_recuerdos' },
+				(payload: any) => {
+					console.log('Cambio detectado en tiempo real:', payload)
+					// Recargar la lista completa para asegurar integridad y ordenamiento
+					loadItems(false)
+				}
+			)
+			.subscribe()
+
+		return () => {
+			supabase.removeChannel(channel)
+		}
 	}, [])
 
 	// Sort items by real capture date
@@ -386,6 +405,17 @@ export default function CollagePage() {
 							))}
 						</select>
 					)}
+
+					{/* Manual Refresh Button */}
+					<button
+						onClick={() => loadItems(true)}
+						className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white/70 hover:text-white transition-all shadow-lg active:scale-95"
+						title="Refrescar collage"
+					>
+						<svg className={`w-4 h-4 ${isLoading ? 'animate-spin text-violet-400' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+						</svg>
+					</button>
 				</div>
 			</motion.div>
 
