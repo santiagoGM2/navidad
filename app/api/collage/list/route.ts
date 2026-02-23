@@ -11,8 +11,8 @@ export async function GET() {
 
         const { data, error } = await supabase
             .from('collage_recuerdos')
-            .select('id, url, fecha_subida, tipo, usuario_subio')
-            .order('fecha_subida', { ascending: false })
+            .select('*') // Seleccionamos todo para tener la metadata completa
+            .order('fecha_captura', { ascending: false })
 
         if (error) {
             console.error('Error fetching collage:', error)

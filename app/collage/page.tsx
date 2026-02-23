@@ -54,8 +54,11 @@ interface DisplayItem {
 	id: string
 	url: string
 	fecha_subida: string
+	fecha_captura: string
+	hora_captura?: string
 	tipo: 'foto' | 'video'
 	usuario_subio: string
+	ubicacion?: { lat: number, lng: number } | null
 	file_path?: string
 	isLocal: boolean
 }
@@ -69,6 +72,8 @@ export default function CollagePage() {
 	const [lightboxItem, setLightboxItem] = useState<DisplayItem | null>(null)
 	const [itemToDelete, setItemToDelete] = useState<DisplayItem | null>(null)
 	const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+	const [filterType, setFilterType] = useState<'all' | 'foto' | 'video'>('all')
+	const [filterYear, setFilterYear] = useState<string>('all')
 
 	// Check admin status
 	useEffect(() => {
@@ -95,6 +100,7 @@ export default function CollagePage() {
 				id: `local-${i}`,
 				url: `/images/${filename}`,
 				fecha_subida: '2025-01-01T00:00:00Z',
+				fecha_captura: '2025-01-01T00:00:00Z',
 				tipo: getFileType(filename),
 				usuario_subio: 'local',
 				isLocal: true,
@@ -123,10 +129,10 @@ export default function CollagePage() {
 		loadItems()
 	}, [])
 
-	// Sort items
+	// Sort items by real capture date
 	const sortedItems = [...allItems].sort((a, b) => {
-		const dateA = new Date(a.fecha_subida).getTime()
-		const dateB = new Date(b.fecha_subida).getTime()
+		const dateA = new Date(a.fecha_captura || a.fecha_subida).getTime()
+		const dateB = new Date(b.fecha_captura || b.fecha_subida).getTime()
 		return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
 	})
 
@@ -134,10 +140,11 @@ export default function CollagePage() {
 	const handleRecuerdoSubido = useCallback((recuerdo: CollageRecuerdo) => {
 		const newItem: DisplayItem = {
 			...recuerdo,
+			fecha_captura: (recuerdo as any).fecha_captura || recuerdo.fecha_subida || new Date().toISOString(),
 			isLocal: false,
 		}
 		setAllItems(prev => [newItem, ...prev])
-		setToast({ message: '¡Nuevo recuerdo añadido!', type: 'success' })
+		setToast({ message: '¡Recuerdo optimizado y publicado!', type: 'success' })
 		setTimeout(() => setToast(null), 3000)
 	}, [])
 
@@ -241,6 +248,17 @@ export default function CollagePage() {
 		}
 	}, [])
 
+	const filteredItems = sortedItems.filter(item => {
+		if (filterType !== 'all' && item.tipo !== filterType) return false
+		if (filterYear !== 'all') {
+			const year = new Date(item.fecha_captura || item.fecha_subida).getFullYear().toString()
+			if (year !== filterYear) return false
+		}
+		return true
+	})
+
+	const availableYears = Array.from(new Set(allItems.map(i => new Date(i.fecha_captura || i.fecha_subida).getFullYear()))).sort((a, b) => b - a)
+
 	if (isLoading) {
 		return (
 			<ConstellationBackground>
@@ -277,45 +295,87 @@ export default function CollagePage() {
 				</p>
 			</motion.div>
 
-			{/* Filters bar */}
+			{/* Advanced Filters (Punto 5: Escalabilidad) */}
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.2 }}
-				className="relative z-20 px-4 pb-6"
+				className="relative z-20 px-4 pb-10"
 			>
-				<div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-3">
-					<div className="flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2.5">
-						<svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-						</svg>
-						<span className="text-white/70 text-sm mr-2">Orden:</span>
+				<div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-4">
+					{/* Sort Order */}
+					<div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
 						<button
 							onClick={() => setSortOrder('newest')}
-							className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${sortOrder === 'newest'
-								? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
-								: 'text-white/50 hover:text-white/80 hover:bg-white/5'
+							className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${sortOrder === 'newest'
+								? 'bg-white/20 text-white shadow-lg'
+								: 'text-white/40 hover:text-white/60'
 								}`}
 						>
-							Más reciente
+							RECIENTE
 						</button>
 						<button
 							onClick={() => setSortOrder('oldest')}
-							className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${sortOrder === 'oldest'
-								? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
-								: 'text-white/50 hover:text-white/80 hover:bg-white/5'
+							className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${sortOrder === 'oldest'
+								? 'bg-white/20 text-white shadow-lg'
+								: 'text-white/40 hover:text-white/60'
 								}`}
 						>
-							Más antiguo
+							ANTIGUO
 						</button>
 					</div>
+
+					{/* Media Type Filter */}
+					<div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
+						<button
+							onClick={() => setFilterType('all')}
+							className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${filterType === 'all'
+								? 'bg-violet-500/40 text-white shadow-lg'
+								: 'text-white/40 hover:text-white/60'
+								}`}
+						>
+							TODOS
+						</button>
+						<button
+							onClick={() => setFilterType('foto')}
+							className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${filterType === 'foto'
+								? 'bg-violet-500/40 text-white shadow-lg'
+								: 'text-white/40 hover:text-white/60'
+								}`}
+						>
+							FOTOS
+						</button>
+						<button
+							onClick={() => setFilterType('video')}
+							className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${filterType === 'video'
+								? 'bg-violet-500/40 text-white shadow-lg'
+								: 'text-white/40 hover:text-white/60'
+								}`}
+						>
+							VIDEOS
+						</button>
+					</div>
+
+					{/* Year Filter */}
+					{availableYears.length > 1 && (
+						<select
+							value={filterYear}
+							onChange={(e) => setFilterYear(e.target.value)}
+							className="bg-white/5 backdrop-blur-md text-white/70 text-xs font-bold rounded-2xl px-4 py-2 border border-white/10 outline-none focus:border-white/20 transition-all appearance-none cursor-pointer uppercase tracking-wider"
+						>
+							<option value="all" className="bg-slate-900">CUALQUIER AÑO</option>
+							{availableYears.map(year => (
+								<option key={year} value={year} className="bg-slate-900">{year}</option>
+							))}
+						</select>
+					)}
 				</div>
 			</motion.div>
 
 			{/* Grid Gallery */}
 			<div className="relative z-10 px-3 sm:px-4 md:px-8 pb-24 max-w-7xl mx-auto">
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-					{sortedItems.map((item, index) => (
+					{filteredItems.map((item, index) => (
 						<motion.div
 							key={item.id}
 							initial={{ opacity: 0, scale: 0.9 }}
@@ -360,18 +420,28 @@ export default function CollagePage() {
 								)}
 
 								{/* Date badge for DB items */}
-								{!item.isLocal && (
-									<div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-										<p className="text-white/90 text-xs font-medium">
-											{new Date(item.fecha_subida).toLocaleDateString('es-ES', {
-												day: 'numeric',
-												month: 'short',
-												year: 'numeric',
-											})}
-											{item.usuario_subio && ` · ${item.usuario_subio}`}
+								<div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+									<p className="text-white/90 text-[10px] md:text-xs font-medium flex items-center gap-1.5 uppercase tracking-wider">
+										<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+										</svg>
+										{new Date(item.fecha_captura || item.fecha_subida).toLocaleDateString('es-ES', {
+											day: 'numeric',
+											month: 'short',
+											year: 'numeric',
+										})}
+										{item.hora_captura && ` · ${item.hora_captura}`}
+									</p>
+									{item.ubicacion && (
+										<p className="text-white/50 text-[10px] mt-1 flex items-center gap-1">
+											<svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+											</svg>
+											{item.ubicacion.lat.toFixed(2)}, {item.ubicacion.lng.toFixed(2)}
 										</p>
-									</div>
-								)}
+									)}
+								</div>
 
 								{/* Admin delete button */}
 								{isAdmin && !item.isLocal && (
