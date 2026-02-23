@@ -192,12 +192,14 @@ export default function ValentineIntroOverlay() {
 							}}
 						>
 							<motion.span
-								className="text-5xl md:text-6xl mb-4"
+								className="text-5xl md:text-6xl mb-4 text-emerald-500"
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
 								transition={{ type: 'spring', delay: 0.15, stiffness: 300, damping: 18 }}
 							>
-								💕
+								<svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+								</svg>
 							</motion.span>
 							<motion.p
 								className="font-display text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-snug"
@@ -249,12 +251,14 @@ export default function ValentineIntroOverlay() {
 							}}
 						>
 							<motion.span
-								className="text-4xl md:text-5xl mb-4"
+								className="text-4xl md:text-5xl mb-4 text-rose-500"
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
 								transition={{ type: 'spring', delay: 0.15, stiffness: 300, damping: 18 }}
 							>
-								😢
+								<svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>
 							</motion.span>
 							<motion.p
 								className="font-display text-xl md:text-2xl font-semibold text-gray-800 mb-6 leading-snug"

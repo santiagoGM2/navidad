@@ -4,44 +4,42 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import BackButton from '@/components/BackButton'
-import UnlockableHeart from '@/components/UnlockableHeart'
 import QuienEsMasGame from '@/components/anniversary/QuienEsMasGame'
 import PuzzleDeRecuerdos from '@/components/games/PuzzleDeRecuerdos'
-import TapRace from '@/components/games/TapRace'
-import HeartDuel from '@/components/games/HeartDuel'
+import UnlockableHeart from '@/components/UnlockableHeart'
 
-type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'tap-race' | 'heart-duel' | null
+type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | null
 
-const GAMES: { id: GameId; title: string; description: string; icon: string }[] = [
-	{
-		id: 'tap-race',
-		title: 'Carrera de Toques',
-		description: 'Duelo de velocidad. ¿Quién toca más rápido? Tefa vs Santi.',
-		icon: '🏁',
-	},
-	{
-		id: 'heart-duel',
-		title: 'Duelo de Besos',
-		description: 'Muévanse por la pantalla y demuestren su puntería. Un mini-juego para dos.',
-		icon: '⚔',
-	},
+const GAMES: { id: GameId; title: string; description: string; icon: React.ReactNode }[] = [
 	{
 		id: 'reto',
-		title: 'Reto del corazón',
-		description: '100 toques en menos de 10 segundos. Si lo cumples, tendrás una recompensa.',
-		icon: '❤',
+		title: 'Reto del Corazón',
+		description: 'Cumple el reto de velocidad para desbloquear una recompensa especial.',
+		icon: (
+			<svg className="w-8 h-8 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+				<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+			</svg>
+		),
 	},
 	{
 		id: 'quien-es-mas',
 		title: '¿Quién es más...?',
-		description: 'Voten juntos. Sin prisa. ¿Quién es más divertido? 20 preguntas — Santi vs Tefa.',
-		icon: '⚖',
+		description: 'Voten juntos en esta dinámica de pareja. ¿Quién encaja mejor con cada frase?',
+		icon: (
+			<svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+			</svg>
+		),
 	},
 	{
 		id: 'puzzle',
-		title: 'Puzzle de recuerdos',
-		description: 'Armá la imagen. Elegí una y mové las piezas. Al completarla se desbloquea un mensaje.',
-		icon: '🧩',
+		title: 'Puzzle de Recuerdos',
+		description: 'Rearma nuestras fotos favoritas. Cada pieza cuenta una parte de nosotros.',
+		icon: (
+			<svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+			</svg>
+		),
 	},
 ]
 
@@ -91,7 +89,7 @@ export default function JuegosPage() {
 										className="font-display text-3xl md:text-5xl text-white font-bold mb-3"
 										style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(139, 92, 246, 0.3)' }}
 									>
-										Juegos
+										Zona de Juegos
 									</h1>
 									<p className="text-white/80 font-light text-base md:text-lg">
 										Pequeñas dinámicas para compartir
@@ -113,7 +111,7 @@ export default function JuegosPage() {
 										>
 											<div className="p-6 md:p-8">
 												<div
-													className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl mb-4"
+													className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
 													style={{
 														background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2))',
 														boxShadow: '0 4px 20px rgba(139, 92, 246, 0.2)',
@@ -132,28 +130,6 @@ export default function JuegosPage() {
 										</motion.button>
 									))}
 								</div>
-							</motion.div>
-						) : selectedGame === 'tap-race' ? (
-							<motion.div
-								key="tap-race"
-								initial={{ opacity: 0, x: 20 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: -20 }}
-								transition={{ duration: 0.3 }}
-								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
-							>
-								<TapRace />
-							</motion.div>
-						) : selectedGame === 'heart-duel' ? (
-							<motion.div
-								key="heart-duel"
-								initial={{ opacity: 0, x: 20 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: -20 }}
-								transition={{ duration: 0.3 }}
-								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
-							>
-								<HeartDuel />
 							</motion.div>
 						) : selectedGame === 'reto' ? (
 							<motion.div

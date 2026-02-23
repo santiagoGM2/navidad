@@ -67,6 +67,8 @@ export default function CollagePage() {
 	const [isAdmin, setIsAdmin] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [lightboxItem, setLightboxItem] = useState<DisplayItem | null>(null)
+	const [itemToDelete, setItemToDelete] = useState<DisplayItem | null>(null)
+	const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
 	// Check admin status
 	useEffect(() => {
@@ -81,16 +83,6 @@ export default function CollagePage() {
 			} catch { /* ignore */ }
 		}
 		checkAdmin()
-	}, [])
-
-	// Hide navbar
-	useEffect(() => {
-		const navbar = document.querySelector('nav')
-		if (navbar) navbar.style.display = 'none'
-		return () => {
-			const nav = document.querySelector('nav')
-			if (nav) nav.style.display = ''
-		}
 	}, [])
 
 	// Load all items
@@ -145,13 +137,23 @@ export default function CollagePage() {
 			isLocal: false,
 		}
 		setAllItems(prev => [newItem, ...prev])
+		setToast({ message: '¡Nuevo recuerdo añadido!', type: 'success' })
+		setTimeout(() => setToast(null), 3000)
 	}, [])
 
-	// Handle delete
-	const handleDelete = useCallback(async (item: DisplayItem) => {
-		if (!confirm('¿Eliminar este recuerdo del Collage?')) return
+	// Confirm delete
+	const confirmDelete = (item: DisplayItem) => {
+		setItemToDelete(item)
+	}
 
+	// Actual delete
+	const handleDelete = async () => {
+		if (!itemToDelete) return
+
+		const item = itemToDelete
+		setItemToDelete(null)
 		setDeletingId(item.id)
+
 		try {
 			const res = await fetch('/api/collage/delete', {
 				method: 'POST',
@@ -162,16 +164,18 @@ export default function CollagePage() {
 			if (res.ok) {
 				setAllItems(prev => prev.filter(i => i.id !== item.id))
 				if (lightboxItem?.id === item.id) setLightboxItem(null)
+				setToast({ message: 'Recuerdo eliminado con éxito', type: 'success' })
 			} else {
 				const data = await res.json()
-				alert(data.error || 'Error al eliminar')
+				setToast({ message: data.error || 'Error al eliminar', type: 'error' })
 			}
 		} catch {
-			alert('Error de conexión')
+			setToast({ message: 'Error de conexión', type: 'error' })
 		} finally {
 			setDeletingId(null)
+			setTimeout(() => setToast(null), 3000)
 		}
-	}, [lightboxItem])
+	}
 
 	// Shooting stars effect
 	useEffect(() => {
@@ -289,8 +293,8 @@ export default function CollagePage() {
 						<button
 							onClick={() => setSortOrder('newest')}
 							className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${sortOrder === 'newest'
-									? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
-									: 'text-white/50 hover:text-white/80 hover:bg-white/5'
+								? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
+								: 'text-white/50 hover:text-white/80 hover:bg-white/5'
 								}`}
 						>
 							Más reciente
@@ -298,8 +302,8 @@ export default function CollagePage() {
 						<button
 							onClick={() => setSortOrder('oldest')}
 							className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${sortOrder === 'oldest'
-									? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
-									: 'text-white/50 hover:text-white/80 hover:bg-white/5'
+								? 'bg-violet-500/30 text-violet-200 border border-violet-400/30'
+								: 'text-white/50 hover:text-white/80 hover:bg-white/5'
 								}`}
 						>
 							Más antiguo
@@ -371,23 +375,10 @@ export default function CollagePage() {
 
 								{/* Admin delete button */}
 								{isAdmin && !item.isLocal && (
-									<button
-										onClick={(e) => {
-											e.stopPropagation()
-											handleDelete(item)
-										}}
-										disabled={deletingId === item.id}
-										className="absolute top-2 left-2 bg-rose-500/80 hover:bg-rose-600 backdrop-blur-sm rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 disabled:opacity-50"
-										title="Eliminar recuerdo"
-									>
-										{deletingId === item.id ? (
-											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-										) : (
-											<svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-											</svg>
-										)}
-									</button>
+									<DeleteButton
+										onClick={() => confirmDelete(item)}
+										isLoading={deletingId === item.id}
+									/>
 								)}
 							</div>
 						</motion.div>
@@ -463,7 +454,7 @@ export default function CollagePage() {
 									</span>
 									{isAdmin && (
 										<button
-											onClick={() => handleDelete(lightboxItem)}
+											onClick={() => confirmDelete(lightboxItem)}
 											disabled={deletingId === lightboxItem.id}
 											className="flex items-center gap-2 px-4 py-2 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-400/30 rounded-xl text-rose-300 transition-all disabled:opacity-50"
 										>
@@ -480,8 +471,83 @@ export default function CollagePage() {
 				)}
 			</AnimatePresence>
 
+			{/* Custom Confirmation Modal */}
+			<AnimatePresence>
+				{itemToDelete && (
+					<div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+						<motion.div
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.9 }}
+							className="w-full max-w-sm bg-slate-900 border border-white/20 rounded-2xl p-6 shadow-2xl text-center"
+						>
+							<div className="w-12 h-12 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+								<svg className="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+								</svg>
+							</div>
+							<h3 className="text-xl font-bold text-white mb-2">¿Eliminar recuerdo?</h3>
+							<p className="text-white/60 mb-6 text-sm">Esta acción no se puede deshacer y el recuerdo desaparecerá del collage.</p>
+							<div className="flex gap-3">
+								<button
+									onClick={() => setItemToDelete(null)}
+									className="flex-1 py-2.5 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all border border-white/10"
+								>
+									Cancelar
+								</button>
+								<button
+									onClick={handleDelete}
+									className="flex-1 py-2.5 rounded-xl font-medium text-white bg-rose-600 hover:bg-rose-500 transition-all shadow-lg shadow-rose-500/20"
+								>
+									Eliminar
+								</button>
+							</div>
+						</motion.div>
+					</div>
+				)}
+			</AnimatePresence>
+
+			{/* Toast Notification */}
+			<AnimatePresence>
+				{toast && (
+					<motion.div
+						initial={{ opacity: 0, y: 50 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: 50 }}
+						className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-[110] px-6 py-3 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-3 border ${toast.type === 'success'
+							? 'bg-emerald-500/90 border-emerald-400/30'
+							: 'bg-rose-500/90 border-rose-400/30'
+							} text-white`}
+					>
+						<span className="text-sm font-medium">{toast.message}</span>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
 			{/* Floating upload button for admins */}
 			<CaptureMemoryButton onRecuerdoSubido={handleRecuerdoSubido} />
 		</ConstellationBackground>
+	)
+}
+
+function DeleteButton({ onClick, isLoading }: { onClick: () => void; isLoading: boolean }) {
+	return (
+		<button
+			onClick={(e) => {
+				e.stopPropagation()
+				onClick()
+			}}
+			disabled={isLoading}
+			className="absolute top-2 left-2 bg-rose-500/80 hover:bg-rose-600 backdrop-blur-sm rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 disabled:opacity-50"
+			title="Eliminar recuerdo"
+		>
+			{isLoading ? (
+				<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+			) : (
+				<svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+				</svg>
+			)}
+		</button>
 	)
 }

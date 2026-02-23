@@ -19,7 +19,7 @@ export default function ValentineSection() {
 					background: 'linear-gradient(180deg, #1a0f2e 0%, #2d1b3d 40%, #4a1942 100%)',
 				}}
 			/>
-			
+
 			{/* Partículas flotantes de corazones */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				{Array.from({ length: 15 }).map((_, i) => (
@@ -43,7 +43,9 @@ export default function ValentineSection() {
 							ease: 'linear',
 						}}
 					>
-						💕
+						<svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+							<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+						</svg>
 					</motion.div>
 				))}
 			</div>
@@ -97,28 +99,31 @@ export default function ValentineSection() {
 							whileTap={{ scale: 0.98 }}
 						>
 							{/* Sobre cerrado */}
-							<div className="relative">
+							<div className="relative flex flex-col items-center">
 								<motion.div
 									animate={{
 										rotateX: [0, 5, 0],
+										rotateY: [0, 5, 0],
 									}}
 									transition={{
 										duration: 3,
 										repeat: Infinity,
 										ease: 'easeInOut',
 									}}
-									className="text-6xl mb-4"
+									className="w-16 h-16 mb-4 text-white"
 								>
-									💌
+									<svg fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0l-10.5 6.75L3 6.75" />
+									</svg>
 								</motion.div>
-								
+
 								<p
 									className="font-display text-2xl md:text-3xl font-semibold text-white mb-3"
 									style={{ textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
 								>
 									Una carta para ti
 								</p>
-								
+
 								<p className="text-sm text-white/70">
 									Toca para abrir
 								</p>

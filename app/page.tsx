@@ -238,8 +238,10 @@ export default function Home() {
 									<div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
 									<div className="relative z-10 flex flex-col items-center">
-										<div className="mb-6 text-6xl md:text-7xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 inline-block drop-shadow-lg">
-											🎮
+										<div className="mb-6 w-16 h-16 md:w-20 md:h-20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 inline-block text-white">
+											<svg fill="currentColor" viewBox="0 0 24 24">
+												<path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2m-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+											</svg>
 										</div>
 
 										<h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight"

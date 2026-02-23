@@ -8,7 +8,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 const navItems = [
 	{ href: '#', label: 'Inicio' },
 	{ href: '#timeline', label: 'Historia' },
-	{ href: '#moments', label: 'Momentos' },
+	{ href: '#moments', label: 'Pequeños Instantes' },
 	{ href: '/collage', label: 'Collage' },
 ]
 
@@ -49,10 +49,6 @@ export default function Navbar() {
 		}
 	}
 
-	if (pathname === '/collage') {
-		return null
-	}
-
 	const handleNavClick = (href: string) => {
 		if (href === '#') {
 			window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -61,6 +57,9 @@ export default function Navbar() {
 			if (element) {
 				element.scrollIntoView({ behavior: 'smooth' })
 			}
+		} else {
+			// It's a real route, handle it normally (Link will handle it if we use it, but here we are in a button onClick)
+			window.location.href = href
 		}
 		setIsMobileMenuOpen(false)
 	}
@@ -216,7 +215,7 @@ export default function Navbar() {
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: 'auto' }}
 							exit={{ opacity: 0, height: 0 }}
-							className="md:hidden backdrop-blur-xl bg-slate-900/90 border-t border-white/10 bg-opacity-95"
+							className="md:hidden backdrop-blur-xl bg-black/90 border-t border-white/10"
 						>
 							<div className="px-4 py-4 space-y-2">
 								{navItems.map((item) => (
