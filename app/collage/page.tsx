@@ -507,31 +507,6 @@ export default function CollagePage() {
 									</div>
 								)}
 
-								{/* Date badge for DB items */}
-								<div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-									<p className="text-white/90 text-[10px] md:text-xs font-medium flex items-center gap-1.5 uppercase tracking-wider">
-										<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-										</svg>
-										{new Date(item.fecha_captura || item.fecha_subida).toLocaleDateString('es-CO', {
-											day: 'numeric',
-											month: 'short',
-											year: 'numeric',
-											timeZone: 'America/Bogota'
-										})}
-										{item.hora_captura && ` · ${item.hora_captura}`}
-									</p>
-									{item.ubicacion && (
-										<p className="text-white/50 text-[10px] mt-1 flex items-center gap-1">
-											<svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-											</svg>
-											{item.ubicacion.lat.toFixed(2)}, {item.ubicacion.lng.toFixed(2)}
-										</p>
-									)}
-								</div>
-
 								{/* Admin delete button */}
 								{isAdmin && !item.isLocal && (
 									<DeleteButton
@@ -600,64 +575,19 @@ export default function CollagePage() {
 								/>
 							)}
 
-							{/* Info bar */}
-							{!lightboxItem.isLocal && (
-								<div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-white/70 text-sm bg-white/5 p-4 rounded-xl border border-white/10">
-									<div className="flex flex-col gap-2">
-										<div className="flex items-center gap-3">
-											<div className="flex items-center gap-1.5">
-												<svg className="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-												</svg>
-												<span className="font-medium text-white">
-													{new Date(lightboxItem.fecha_captura || lightboxItem.fecha_subida).toLocaleDateString('es-CO', {
-														day: 'numeric',
-														month: 'long',
-														year: 'numeric',
-														timeZone: 'America/Bogota'
-													})}
-												</span>
-											</div>
-											{lightboxItem.hora_captura && (
-												<div className="flex items-center gap-1.5 border-l border-white/10 pl-3">
-													<svg className="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-													</svg>
-													<span>{lightboxItem.hora_captura}</span>
-												</div>
-											)}
-										</div>
-
-										{lightboxItem.ubicacion && (
-											<div className="flex items-center gap-1.5 text-xs text-white/40">
-												<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-												</svg>
-												<a
-													href={`https://www.google.com/maps?q=${lightboxItem.ubicacion.lat},${lightboxItem.ubicacion.lng}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="hover:text-violet-400 transition-colors"
-												>
-													Ver ubicación · {lightboxItem.ubicacion.lat.toFixed(4)}, {lightboxItem.ubicacion.lng.toFixed(4)}
-												</a>
-											</div>
-										)}
-									</div>
-
-									{isAdmin && (
-										<button
-											onClick={() => confirmDelete(lightboxItem)}
-											disabled={deletingId === lightboxItem.id}
-											className="flex items-center gap-2 px-6 py-2.5 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-400/30 rounded-xl text-rose-300 transition-all disabled:opacity-50 font-bold text-xs uppercase tracking-widest"
-										>
-											<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-											</svg>
-											Eliminar Recuerdo
-										</button>
-									)}
+							{/* Info bar - Solo botón de eliminar para admin */}
+							{!lightboxItem.isLocal && isAdmin && (
+								<div className="mt-4 flex justify-end">
+									<button
+										onClick={() => confirmDelete(lightboxItem)}
+										disabled={deletingId === lightboxItem.id}
+										className="flex items-center gap-2 px-6 py-2.5 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-400/30 rounded-xl text-rose-300 transition-all disabled:opacity-50 font-bold text-xs uppercase tracking-widest"
+									>
+										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+										</svg>
+										Eliminar Recuerdo
+									</button>
 								</div>
 							)}
 						</motion.div>
