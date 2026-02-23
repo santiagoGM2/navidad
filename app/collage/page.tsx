@@ -131,20 +131,42 @@ export default function CollagePage() {
 	useEffect(() => {
 		loadItems()
 
-		// 🔔 Supabase REALTIME (Sincronización instantánea total)
-		// Esto soluciona el problema de que no se vea inmediatamente.
+		// 🔔 Supabase REALTIME (Sincronización instantánea)
 		const channel = supabase
 			.channel('collage-changes')
 			.on(
 				'postgres_changes',
-				{ event: '*', schema: 'public', table: 'collage_recuerdos' },
+				{ event: 'INSERT', schema: 'public', table: 'collage_recuerdos' },
 				(payload: any) => {
-					console.log('Cambio detectado en tiempo real:', payload)
-					// Recargar la lista completa para asegurar integridad y ordenamiento
-					loadItems(false)
+					console.log('✅ Nuevo recuerdo detectado en tiempo real:', payload)
+					if (payload.new) {
+						// Agregar el nuevo item directamente al estado sin refetch
+						const newItem: DisplayItem = {
+							...payload.new,
+							isLocal: false,
+						}
+						setAllItems(prev => {
+							// Evitar duplicados
+							const exists = prev.some(item => item.id === newItem.id)
+							if (exists) return prev
+							return [newItem, ...prev]
+						})
+					}
 				}
 			)
-			.subscribe()
+			.on(
+				'postgres_changes',
+				{ event: 'DELETE', schema: 'public', table: 'collage_recuerdos' },
+				(payload: any) => {
+					console.log('🗑️ Recuerdo eliminado en tiempo real:', payload)
+					if (payload.old?.id) {
+						setAllItems(prev => prev.filter(item => item.id !== payload.old.id))
+					}
+				}
+			)
+			.subscribe((status) => {
+				console.log('📡 Estado de suscripción Realtime:', status)
+			})
 
 		return () => {
 			supabase.removeChannel(channel)
@@ -165,6 +187,8 @@ export default function CollagePage() {
 
 	// Handle new upload
 	const handleRecuerdoSubido = useCallback((recuerdo: CollageRecuerdo) => {
+		console.log('📸 Recuerdo subido, agregando al estado:', recuerdo)
+		
 		const newItem: DisplayItem = {
 			...recuerdo,
 			fecha_captura: recuerdo.fecha_captura || recuerdo.fecha_subida || new Date().toISOString(),
@@ -176,12 +200,29 @@ export default function CollagePage() {
 		setFilterYear('all')
 		setSortOrder('newest')
 
-		setAllItems(prev => [newItem, ...prev])
+		// Actualizar estado inmediatamente (optimistic update)
+		setAllItems(prev => {
+			// Evitar duplicados si el realtime ya lo agregó
+			const exists = prev.some(item => item.id === newItem.id)
+			if (exists) {
+				console.log('⚠️ Item ya existe en el estado, no duplicar')
+				return prev
+			}
+			console.log('✅ Agregando nuevo item al estado')
+			return [newItem, ...prev]
+		})
+
 		setToast({ message: '¡Recuerdo optimizado y publicado!', type: 'success' })
 		setTimeout(() => setToast(null), 3000)
 
-		// Opcional: scroll al inicio para ver la foto nueva
+		// Scroll al inicio para ver la foto nueva
 		window.scrollTo({ top: 0, behavior: 'smooth' })
+
+		// Refetch después de 2 segundos como backup (por si realtime falla)
+		setTimeout(() => {
+			console.log('🔄 Refetch de seguridad después de 2s')
+			loadItems(false)
+		}, 2000)
 	}, [])
 
 	// Confirm delete

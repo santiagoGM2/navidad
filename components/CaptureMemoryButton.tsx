@@ -95,11 +95,17 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 			const data = await res.json()
 			if (!res.ok) throw new Error(data.error || 'Error al subir')
 
+			console.log('✅ Upload exitoso, respuesta del servidor:', data)
+
 			setMessage({ type: 'success', text: '¡Recuerdo subido al Collage!' })
 			setShowPanel(false)
 
+			// Llamar al callback INMEDIATAMENTE con el objeto completo
 			if (data.recuerdo && onRecuerdoSubido) {
+				console.log('📤 Llamando a onRecuerdoSubido con:', data.recuerdo)
 				onRecuerdoSubido(data.recuerdo)
+			} else {
+				console.warn('⚠️ No se recibió data.recuerdo o no hay callback')
 			}
 		} catch (err) {
 			setMessage({
