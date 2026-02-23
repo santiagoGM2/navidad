@@ -24,7 +24,7 @@ export default function RecapSlideshow({
 		const duration = current?.tipo === 'video' ? 6000 : 3500 // Give more time to videos
 		const t = setInterval(next, duration)
 		return () => clearInterval(t)
-	}, [playing, next, memories.length, index])
+	}, [playing, next, memories, index])
 
 	useEffect(() => {
 		if (index === 0 && memories.length) {

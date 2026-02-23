@@ -28,7 +28,7 @@ export default function RecuerdosGrid({
 	if (initialMemories.length === 0) {
 		return (
 			<p className="text-white/60 text-center py-12">
-				Aún no hay recuerdos. Subí el primero desde "Subir Recuerdo".
+				Aún no hay recuerdos. Subí el primero desde &quot;Subir Recuerdo&quot;.
 			</p>
 		)
 	}
