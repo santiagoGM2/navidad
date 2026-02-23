@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { processImageForUpload } from '@/lib/upload-utils'
 
 export interface CollageRecuerdo {
 	id: string
 	url: string
 	fecha_subida: string
+	fecha_captura: string
 	tipo: 'foto' | 'video'
 	usuario_subio: string
 	file_path?: string
@@ -23,12 +25,10 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 	const cameraInputRef = useRef<HTMLInputElement>(null)
+	const [currentLocation, setCurrentLocation] = useState<{ lat: number, lng: number } | null>(null)
 
 	useEffect(() => {
 		checkSession()
-		const handleAuthChange = () => checkSession()
-		window.addEventListener('auth-change', handleAuthChange)
-		return () => window.removeEventListener('auth-change', handleAuthChange)
 	}, [])
 
 	const checkSession = async () => {
@@ -38,15 +38,11 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 				const data = await res.json()
 				const adminUsers = ['santi', 'tefy']
 				setIsAdmin(adminUsers.includes(data.user?.toLowerCase()))
-			} else {
-				setIsAdmin(false)
 			}
-		} catch {
-			setIsAdmin(false)
-		}
+		} catch { }
 	}
 
-	const handleFileUpload = useCallback(async (file: File) => {
+	const handleFileUpload = useCallback(async (file: File, isCamera: boolean) => {
 		if (!file) return
 
 		const isVideo = file.type.startsWith('video/')
@@ -57,18 +53,39 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 			return
 		}
 
-		const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024
-		if (file.size > maxSize) {
-			setMessage({ type: 'error', text: `Archivo muy grande (máx ${isVideo ? '100MB' : '10MB'})` })
-			return
-		}
-
 		setUploading(true)
 		setMessage(null)
 
 		try {
+			let loc = currentLocation
+			if (isCamera && !loc) {
+				try {
+					loc = await new Promise((resolve) => {
+						navigator.geolocation.getCurrentPosition(
+							(pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+							() => resolve(null),
+							{ timeout: 3000 }
+						)
+					})
+				} catch { }
+			}
+
+			let finalFile: File | Blob = file
+			let metadata: any = {
+				isCamera,
+				location: loc,
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+			}
+
+			if (isImage) {
+				const processed = await processImageForUpload(file, isCamera, loc)
+				finalFile = processed.finalFile
+				metadata = processed.metadata
+			}
+
 			const formData = new FormData()
-			formData.append('file', file)
+			formData.append('file', finalFile, file.name.replace(/\.[^/.]+$/, "") + (isImage ? ".webp" : ""))
+			formData.append('metadata', JSON.stringify(metadata))
 
 			const res = await fetch('/api/collage/upload', {
 				method: 'POST',
@@ -76,10 +93,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 			})
 
 			const data = await res.json()
-
-			if (!res.ok) {
-				throw new Error(data.details || data.error || 'Error al subir')
-			}
+			if (!res.ok) throw new Error(data.error || 'Error al subir')
 
 			setMessage({ type: 'success', text: '¡Recuerdo subido al Collage!' })
 			setShowPanel(false)
@@ -87,12 +101,6 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 			if (data.recuerdo && onRecuerdoSubido) {
 				onRecuerdoSubido(data.recuerdo)
 			}
-
-			if (typeof navigator !== 'undefined' && navigator.vibrate) {
-				navigator.vibrate(100)
-			}
-
-			setTimeout(() => setMessage(null), 4000)
 		} catch (err) {
 			setMessage({
 				type: 'error',
@@ -100,10 +108,9 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 			})
 		} finally {
 			setUploading(false)
-			if (fileInputRef.current) fileInputRef.current.value = ''
-			if (cameraInputRef.current) cameraInputRef.current.value = ''
+			setTimeout(() => setMessage(null), 4000)
 		}
-	}, [onRecuerdoSubido])
+	}, [currentLocation, onRecuerdoSubido])
 
 	if (!isAdmin) return null
 
@@ -176,7 +183,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 							</div>
 
 							{uploading && (
-								<div className="mt-5">
+								<div className="mt-5 space-y-3">
 									<div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
 										<motion.div
 											className="h-full bg-gradient-to-r from-violet-500 to-pink-500 rounded-full"
@@ -185,9 +192,14 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 											transition={{ duration: 2, repeat: Infinity }}
 										/>
 									</div>
-									<p className="text-white/70 text-xs text-center mt-2.5">
-										Subiendo al Collage...
-									</p>
+									<div className="flex flex-col items-center gap-1">
+										<p className="text-white font-bold text-[10px] uppercase tracking-widest animate-pulse">
+											Procesando Recuerdo
+										</p>
+										<p className="text-white/40 text-[9px]">
+											Optimizando para calidad máxima...
+										</p>
+									</div>
 								</div>
 							)}
 						</motion.div>
@@ -220,7 +232,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 				className="hidden"
 				onChange={(e) => {
 					const file = e.target.files?.[0]
-					if (file) handleFileUpload(file)
+					if (file) handleFileUpload(file, false)
 				}}
 			/>
 			<input
@@ -231,7 +243,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 				className="hidden"
 				onChange={(e) => {
 					const file = e.target.files?.[0]
-					if (file) handleFileUpload(file)
+					if (file) handleFileUpload(file, true)
 				}}
 			/>
 		</>

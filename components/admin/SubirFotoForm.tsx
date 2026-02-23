@@ -3,56 +3,16 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { triggerVibration } from '@/utils/vibration'
-import exifr from 'exifr'
-
-// Carga dinámica de heic2any para no pesar en el bundle inicial si no es necesario,
-// aunque al ser Admin Panel se podría importar directo. Lo pondremos directo por simplicidad en este flujo.
-import heic2any from 'heic2any'
+import { processImageForUpload } from '@/lib/upload-utils'
 
 const MAX_SIZE = 1200
 const QUALITY = 0.85
 
-function compressImageToWebP(file: File | Blob): Promise<Blob> {
-	return new Promise((resolve, reject) => {
-		const img = new Image()
-		const url = URL.createObjectURL(file)
-		img.onload = () => {
-			URL.revokeObjectURL(url)
-			const canvas = document.createElement('canvas')
-			let { width, height } = img
-			if (width > MAX_SIZE || height > MAX_SIZE) {
-				if (width > height) {
-					height = Math.round((height * MAX_SIZE) / width)
-					width = MAX_SIZE
-				} else {
-					width = Math.round((width * MAX_SIZE) / height)
-					height = MAX_SIZE
-				}
-			}
-			canvas.width = width
-			canvas.height = height
-			const ctx = canvas.getContext('2d')
-			if (!ctx) {
-				reject(new Error('Canvas not supported'))
-				return
-			}
-			ctx.drawImage(img, 0, 0, width, height)
-			// Forzamos formato WebP como prioridad
-			canvas.toBlob(
-				(blob) => (blob ? resolve(blob) : reject(new Error('Compress failed'))),
-				'image/webp',
-				QUALITY
-			)
-		}
-		img.onerror = () => {
-			URL.revokeObjectURL(url)
-			reject(new Error('Image load failed'))
-		}
-		img.src = url
-	})
+interface SubirFotoFormProps {
+	onSuccess?: (recuerdo: any) => void
 }
 
-export default function SubirFotoForm() {
+export default function SubirFotoForm({ onSuccess }: SubirFotoFormProps) {
 	const [file, setFile] = useState<File | null>(null)
 	const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' })
 	const [loading, setLoading] = useState(false)
@@ -97,7 +57,6 @@ export default function SubirFotoForm() {
 		}
 
 		if (fromCamera) {
-			// Intentar obtener ubicación mientras el usuario ve la previa
 			requestLocation().then(loc => setLocation(loc)).catch(() => { })
 		}
 
@@ -117,65 +76,25 @@ export default function SubirFotoForm() {
 		setLoading(true)
 
 		try {
-			let workingFile: File | Blob = file
-			const metadata: any = {
+			let finalFile: File | Blob = file
+			let metadata: any = {
 				isCamera,
-				capturedAt: null,
-				location: location,
-				originalFormat: file.type,
+				location,
 				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 			}
 
-			// 1. Manejo Crítico de HEIC
-			const isHEIC = file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic'
-			if (isHEIC) {
-				setStatus({ type: null, message: 'Convirtiendo formato de iPhone...' })
-				try {
-					const result = await heic2any({
-						blob: file,
-						toType: 'image/webp',
-						quality: QUALITY
-					})
-					workingFile = Array.isArray(result) ? result[0] : result
-					metadata.convertedFromHEIC = true
-				} catch (err) {
-					console.error('Error HEIC conversion:', err)
-					throw new Error('No se pudo convertir el archivo HEIC.')
-				}
-			}
-
-			// 2. Extracción de Metadata EXIF (para galería)
-			if (!isCamera && workingFile.type.startsWith('image/')) {
-				setStatus({ type: null, message: 'Extrayendo metadata original...' })
-				try {
-					const exif = await exifr.parse(workingFile, {
-						gps: true,
-						pick: ['DateTimeOriginal', 'latitude', 'longitude']
-					})
-
-					if (exif) {
-						if (exif.DateTimeOriginal) metadata.capturedAt = exif.DateTimeOriginal.toISOString()
-						if (exif.latitude && exif.longitude) {
-							metadata.location = { lat: exif.latitude, lng: exif.longitude }
-						}
-					}
-				} catch (e) {
-					console.warn('Metadata extraction skipped', e)
-				}
-			}
-
-			// 3. Compresión y Normalización a WebP
-			let finalFile: File | Blob = workingFile
-			if (workingFile.type.startsWith('image/')) {
-				setStatus({ type: null, message: 'Optimizando imagen...' })
-				finalFile = await compressImageToWebP(workingFile)
+			if (file.type.startsWith('image/')) {
+				setStatus({ type: null, message: 'Procesando imagen...' })
+				const processed = await processImageForUpload(file, isCamera, location)
+				finalFile = processed.finalFile
+				metadata = processed.metadata
 			}
 
 			const formData = new FormData()
-			formData.append('file', finalFile, file.name.replace(/\.[^/.]+$/, "") + ".webp")
+			formData.append('file', finalFile, file.name.replace(/\.[^/.]+$/, "") + (file.type.startsWith('image/') ? ".webp" : ""))
 			formData.append('metadata', JSON.stringify(metadata))
 
-			setStatus({ type: null, message: 'Subiendo archivo optimizado...' })
+			setStatus({ type: null, message: 'Subiendo recuerdo...' })
 			const res = await fetch('/api/collage/upload', {
 				method: 'POST',
 				body: formData,
@@ -188,6 +107,9 @@ export default function SubirFotoForm() {
 
 			triggerVibration(100)
 			setStatus({ type: 'success', message: '¡Recuerdo optimizado y publicado!' })
+			if (onSuccess && data.recuerdo) {
+				onSuccess(data.recuerdo)
+			}
 			setFile(null)
 			setPreview(null)
 			setIsCamera(false)

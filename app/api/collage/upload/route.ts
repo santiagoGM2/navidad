@@ -98,8 +98,13 @@ export async function POST(request: NextRequest) {
         const tipo = isImage ? 'foto' : 'video'
 
         // Extraer fecha y hora de captura real de los metadatos enviados
-        const now = new Date()
-        const captureDate = metadata.capturedAt ? new Date(metadata.capturedAt) : now
+        let now = new Date()
+        let captureDate = metadata.capturedAt ? new Date(metadata.capturedAt) : now
+
+        // Evitar el error de "31 de diciembre" forzando un mínimo de hora si es medianoche exacta en UTC
+        // o simplemente usando el locale de Colombia para la base.
+        const options: Intl.DateTimeFormatOptions = { timeZone: 'America/Bogota', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const horaBogota = new Intl.DateTimeFormat('es-CO', options).format(captureDate);
 
         const { data: insertedRow, error: dbError } = await supabase
             .from('collage_recuerdos')
@@ -108,10 +113,9 @@ export async function POST(request: NextRequest) {
                 tipo,
                 usuario_subio: session.username,
                 file_path: `${bucketName}/${filePath}`,
-                // Metadata Robusta (Punto 3 del requerimiento)
                 fecha_captura: captureDate.toISOString(),
-                hora_captura: captureDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                timezone: metadata.timezone || 'UTC',
+                hora_captura: horaBogota,
+                timezone: 'America/Bogota',
                 ubicacion: metadata.location || null,
                 tamano_optimizado: file.size,
                 formato_final: isImage ? 'image/webp' : file.type,
