@@ -23,8 +23,14 @@ export async function GET() {
             }, { status: 500 })
         }
 
-        return NextResponse.json({
+        return new NextResponse(JSON.stringify({
             recuerdos: data || [],
+        }), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            }
         })
     } catch (err: any) {
         console.error('List collage error:', err)

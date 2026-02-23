@@ -109,7 +109,10 @@ export default function CollagePage() {
 			// 2. Fetch from API (database records)
 			let dbItems: DisplayItem[] = []
 			try {
-				const res = await fetch('/api/collage/list')
+				const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
+					cache: 'no-store',
+					headers: { 'Pragma': 'no-cache' }
+				})
 				if (res.ok) {
 					const data = await res.json()
 					dbItems = (data.recuerdos || []).map((r: any) => ({
@@ -131,8 +134,13 @@ export default function CollagePage() {
 
 	// Sort items by real capture date
 	const sortedItems = [...allItems].sort((a, b) => {
-		const dateA = new Date(a.fecha_captura || a.fecha_subida).getTime()
-		const dateB = new Date(b.fecha_captura || b.fecha_subida).getTime()
+		const timeA = new Date(a.fecha_captura || a.fecha_subida).getTime()
+		const timeB = new Date(b.fecha_captura || b.fecha_subida).getTime()
+
+		// Fallback si la fecha no es válida
+		const dateA = isNaN(timeA) ? 0 : timeA
+		const dateB = isNaN(timeB) ? 0 : timeB
+
 		return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
 	})
 
@@ -140,12 +148,21 @@ export default function CollagePage() {
 	const handleRecuerdoSubido = useCallback((recuerdo: CollageRecuerdo) => {
 		const newItem: DisplayItem = {
 			...recuerdo,
-			fecha_captura: (recuerdo as any).fecha_captura || recuerdo.fecha_subida || new Date().toISOString(),
+			fecha_captura: recuerdo.fecha_captura || recuerdo.fecha_subida || new Date().toISOString(),
 			isLocal: false,
 		}
+
+		// Resetear filtros para que el usuario vea su nueva subida inmediatamente
+		setFilterType('all')
+		setFilterYear('all')
+		setSortOrder('newest')
+
 		setAllItems(prev => [newItem, ...prev])
 		setToast({ message: '¡Recuerdo optimizado y publicado!', type: 'success' })
 		setTimeout(() => setToast(null), 3000)
+
+		// Opcional: scroll al inicio para ver la foto nueva
+		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}, [])
 
 	// Confirm delete
