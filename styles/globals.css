@@ -24,7 +24,8 @@
 
 	body {
 		@apply font-sans;
-		background: #3b82f6; /* Color inicial más claro para mejor contraste */
+		background: #0a0a1a;
+		/* Color oscuro profundo para el espacio */
 		min-height: 100vh;
 		overflow-x: hidden;
 		/* Optimización de renderizado */
@@ -213,10 +214,12 @@
 		opacity: 0;
 		transform: translate(0, 0) scale(1);
 	}
+
 	5% {
 		opacity: 0.9;
 		transform: translate(0, 0) scale(1);
 	}
+
 	100% {
 		opacity: 0;
 		transform: translate(var(--shoot-x, 120px), var(--shoot-y, 80px)) scale(0.3);

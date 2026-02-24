@@ -237,7 +237,9 @@ export default function CollagePage() {
 
 		setAllItems(prev => {
 			if (prev.some(item => item.id === newItem.id)) return prev
-			return [newItem, ...prev]
+			const updated = [newItem, ...prev]
+			// Opcional: podrías re-ordenar aquí si quieres asegurar cronología
+			return updated
 		})
 
 		setToast({ message: 'Recuerdo publicado en el Collage', type: 'success' })
@@ -245,9 +247,8 @@ export default function CollagePage() {
 
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 
-		setTimeout(() => {
-			loadItemsRef.current(false)
-		}, 2000)
+		// Eliminamos el refetch automático inmediato para evitar inconsistencias de red
+		// El estado local y el Realtime ya se encargan de la inmediatez
 	}, [])
 
 	const confirmDelete = (item: DisplayItem) => {
@@ -519,9 +520,11 @@ export default function CollagePage() {
 								)}
 
 								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-									<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-										{formatDate(item.fecha_captura)}
-									</p>
+									{!item.isLocal && (
+										<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+											{formatDate(item.fecha_captura)}
+										</p>
+									)}
 								</div>
 
 								{item.tipo === 'video' && (
@@ -577,11 +580,13 @@ export default function CollagePage() {
 							className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center gap-6"
 							onClick={(e) => e.stopPropagation()}
 						>
-							<div className="text-center">
-								<h3 className="text-white text-lg md:text-2xl font-bold tracking-tight bg-white/5 px-6 py-2 rounded-full backdrop-blur-sm border border-white/10">
-									{formatDate(lightboxItem.fecha_captura)}
-								</h3>
-							</div>
+							{!lightboxItem.isLocal && (
+								<div className="text-center">
+									<h3 className="text-white text-lg md:text-2xl font-bold tracking-tight bg-white/5 px-6 py-2 rounded-full backdrop-blur-sm border border-white/10">
+										{formatDate(lightboxItem.fecha_captura)}
+									</h3>
+								</div>
+							)}
 
 							{lightboxItem.tipo === 'foto' ? (
 								<div className="relative w-full h-[80vh] rounded-xl overflow-hidden flex items-center justify-center">

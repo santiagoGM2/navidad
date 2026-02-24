@@ -6,9 +6,9 @@ import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'fr
 // ===== PALETA DE COLORES — PROFUNDIDAD CÓSMICA =====
 const SKY_COLORS = {
     dawn: {
-        top: '#3b82f6',      // Blue 500
-        mid: '#6366f1',      // Indigo 500
-        bottom: '#8b5cf6',   // Violet 500
+        top: '#050a14',      // Casi negro (igual que night)
+        mid: '#0f172a',      // Slate 900
+        bottom: '#1e1b4b',   // Indigo 950
     },
     dusk: {
         top: '#1e40af',      // Blue 800
