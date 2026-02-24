@@ -7,10 +7,9 @@ import BackButton from '@/components/BackButton'
 import QuienEsMasGame from '@/components/anniversary/QuienEsMasGame'
 import PuzzleDeRecuerdos from '@/components/games/PuzzleDeRecuerdos'
 import AhorcadoGame from '@/components/games/AhorcadoGame'
-import BillarOnline from '@/components/games/BillarOnline'
 import UnlockableHeart from '@/components/UnlockableHeart'
 
-type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'ahorcado' | 'billar' | null
+type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'ahorcado' | null
 
 const GAMES: { id: GameId; title: string; description: string; icon: React.ReactNode; gradient: string }[] = [
 	{
@@ -54,18 +53,6 @@ const GAMES: { id: GameId; title: string; description: string; icon: React.React
 		icon: (
 			<svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-			</svg>
-		),
-	},
-	{
-		id: 'billar',
-		title: 'Billar Online',
-		description: 'Juega billar en tiempo real contra otra persona. Crea una sala y comparte el código.',
-		gradient: 'from-emerald-500/20 to-teal-500/20',
-		icon: (
-			<svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<circle cx="12" cy="12" r="10" strokeWidth={2} />
-				<circle cx="12" cy="12" r="3" strokeWidth={2} />
 			</svg>
 		),
 	},
@@ -201,17 +188,6 @@ export default function JuegosPage() {
 								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
 							>
 								<AhorcadoGame />
-							</motion.div>
-						) : selectedGame === 'billar' ? (
-							<motion.div
-								key="billar"
-								initial={{ opacity: 0, x: 20 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: -20 }}
-								transition={{ duration: 0.3 }}
-								className="max-w-3xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
-							>
-								<BillarOnline />
 							</motion.div>
 						) : null}
 					</AnimatePresence>

@@ -471,16 +471,24 @@ export default function CollagePage() {
 						>
 							<div className="relative aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-violet-400/40 transition-all duration-300 shadow-lg hover:shadow-violet-500/20">
 								{item.tipo === 'foto' ? (
-									<Image
-										src={item.url}
-										alt={`Recuerdo ${index + 1}`}
-										fill
-										className="object-cover group-hover:scale-105 transition-transform duration-500"
-										sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-										loading="lazy"
-										quality={85}
-										unoptimized={item.url.startsWith('http')}
-									/>
+									item.url.startsWith('http') ? (
+										<img
+											src={item.url}
+											alt={`Recuerdo ${index + 1}`}
+											className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+											loading="lazy"
+										/>
+									) : (
+										<Image
+											src={item.url}
+											alt={`Recuerdo ${index + 1}`}
+											fill
+											className="object-cover group-hover:scale-105 transition-transform duration-500"
+											sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+											loading="lazy"
+											quality={85}
+										/>
+									)
 								) : (
 									<video
 										src={item.url}
@@ -546,16 +554,23 @@ export default function CollagePage() {
 							</button>
 
 							{lightboxItem.tipo === 'foto' ? (
-								<div className="relative w-full h-[80vh] rounded-xl overflow-hidden">
-									<Image
-										src={lightboxItem.url}
-										alt="Recuerdo ampliado"
-										fill
-										className="object-contain"
-										sizes="100vw"
-										quality={95}
-										unoptimized={lightboxItem.url.startsWith('http')}
-									/>
+								<div className="relative w-full h-[80vh] rounded-xl overflow-hidden flex items-center justify-center">
+									{lightboxItem.url.startsWith('http') ? (
+										<img
+											src={lightboxItem.url}
+											alt="Recuerdo ampliado"
+											className="max-w-full max-h-full object-contain"
+										/>
+									) : (
+										<Image
+											src={lightboxItem.url}
+											alt="Recuerdo ampliado"
+											fill
+											className="object-contain"
+											sizes="100vw"
+											quality={95}
+										/>
+									)}
 								</div>
 							) : (
 								<video
