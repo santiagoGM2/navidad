@@ -137,11 +137,13 @@ export default function CollagePage() {
 
 		let dbItems: DisplayItem[] = []
 		try {
-			const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
+			// Añadimos múltiples parámetros de bust-cache
+			const res = await fetch(`/api/collage/list?t=${Date.now()}&v=${Math.random()}`, {
 				cache: 'no-store',
+				next: { revalidate: 0 },
 				headers: {
 					'Pragma': 'no-cache',
-					'Cache-Control': 'no-cache, no-store',
+					'Cache-Control': 'no-cache, no-store, must-revalidate',
 				}
 			})
 			if (res.ok) {
@@ -149,14 +151,37 @@ export default function CollagePage() {
 				dbItems = (data.recuerdos || []).map(normalizeDbItem)
 				console.log(`✅ ${dbItems.length} recuerdos cargados desde Supabase`)
 			} else {
-				const errorData = await res.json().catch(() => ({}))
-				console.error('❌ Error en respuesta del collage:', res.status, errorData)
+				console.error('❌ Error en respuesta del collage:', res.status)
 			}
 		} catch (err) {
 			console.error('❌ Error fatal cargando collage:', err)
 		}
 
-		setAllItems([...dbItems, ...localItems])
+		// LOGICA DE MEZCLA INTELIGENTE:
+		// No sobrescribimos simplemente, sino que unimos para evitar que items recién 
+		// subidos desaparezcan si la API aún tiene retardo (race condition)
+		setAllItems(prev => {
+			// Mantener lo local de siempre
+			const locals = localItems;
+
+			// Los items que vienen de la DB son la verdad absoluta...
+			const newDbIds = new Set(dbItems.map(d => d.id));
+
+			// ...PERO, si tenemos items en "prev" que fueron subidos hace poco (< 30s)
+			// y NO están en la DB todavía, los mantenemos para evitar el parpadeo
+			const recentUnsynced = prev.filter(item =>
+				!item.isLocal &&
+				!newDbIds.has(item.id) &&
+				(Date.now() - new Date(item.fecha_subida).getTime() < 45000) // 45 segundos de gracia
+			);
+
+			if (recentUnsynced.length > 0) {
+				console.log(`🛡️ Protegiendo ${recentUnsynced.length} items no sincronizados aún`);
+			}
+
+			return [...dbItems, ...recentUnsynced, ...locals];
+		});
+
 		setIsLoading(false)
 	}, [])
 
