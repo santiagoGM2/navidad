@@ -76,6 +76,7 @@ interface DisplayItem {
 	ubicacion?: { lat: number, lng: number } | null
 	file_path?: string
 	isLocal: boolean
+	isFromCamera?: boolean
 }
 
 function normalizeDbItem(r: any): DisplayItem {
@@ -91,6 +92,7 @@ function normalizeDbItem(r: any): DisplayItem {
 		ubicacion: r.ubicacion,
 		file_path: r.file_path,
 		isLocal: false,
+		isFromCamera: r.descripcion === 'Capturado con cámara'
 	}
 }
 
@@ -254,6 +256,7 @@ export default function CollagePage() {
 			usuario_subio: recuerdo.usuario_subio,
 			file_path: recuerdo.file_path,
 			isLocal: false,
+			isFromCamera: (recuerdo as any).descripcion === 'Capturado con cámara',
 		}
 
 		setFilterType('all')
@@ -488,7 +491,7 @@ export default function CollagePage() {
 								)}
 
 								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-									{!item.isLocal && (
+									{item.isFromCamera && (
 										<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
 											{formatDate(item.fecha_captura)}
 										</p>
@@ -533,11 +536,11 @@ export default function CollagePage() {
 						{/* Botón cerrar flotante fijo en la esquina superior */}
 						<button
 							onClick={() => setLightboxItem(null)}
-							className="fixed top-6 right-6 md:top-10 md:right-10 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-[10000] group"
+							className="fixed top-4 right-4 md:top-10 md:right-10 text-white/40 hover:text-white transition-all p-3 md:p-5 hover:bg-white/10 rounded-full z-[10000] group bg-black/20 backdrop-blur-md border border-white/10"
 							title="Cerrar (Esc)"
 						>
-							<svg className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							<svg className="w-8 h-8 md:w-12 md:h-12 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
 							</svg>
 						</button>
 
@@ -545,12 +548,12 @@ export default function CollagePage() {
 							initial={{ scale: 0.9, opacity: 0 }}
 							animate={{ scale: 1, opacity: 1 }}
 							exit={{ scale: 0.9, opacity: 0 }}
-							className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center gap-6"
+							className="relative max-w-5xl max-h-screen w-full flex flex-col items-center gap-4 pt-16 md:pt-0"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{!lightboxItem.isLocal && (
-								<div className="text-center">
-									<h3 className="text-white text-lg md:text-2xl font-bold tracking-tight bg-white/5 px-6 py-2 rounded-full backdrop-blur-sm border border-white/10">
+							{lightboxItem.isFromCamera && (
+								<div className="text-center w-full px-4 mb-2">
+									<h3 className="text-white text-base md:text-2xl font-bold tracking-tight bg-white/10 px-6 py-2 rounded-full backdrop-blur-md border border-white/20 inline-block shadow-xl">
 										{formatDate(lightboxItem.fecha_captura)}
 									</h3>
 								</div>
