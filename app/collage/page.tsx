@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import ConstellationBackground from '@/components/ConstellationBackground'
@@ -64,6 +64,22 @@ interface DisplayItem {
 	isLocal: boolean
 }
 
+function normalizeDbItem(r: any): DisplayItem {
+	const now = new Date().toISOString()
+	return {
+		id: r.id || `db-${Date.now()}-${Math.random()}`,
+		url: r.url || '',
+		fecha_subida: r.fecha_subida || r.created_at || now,
+		fecha_captura: r.fecha_captura || r.fecha_subida || r.created_at || now,
+		hora_captura: r.hora_captura,
+		tipo: r.tipo || 'foto',
+		usuario_subio: r.usuario_subio || 'desconocido',
+		ubicacion: r.ubicacion,
+		file_path: r.file_path,
+		isLocal: false,
+	}
+}
+
 export default function CollagePage() {
 	const [allItems, setAllItems] = useState<DisplayItem[]>([])
 	const [isLoading, setIsLoading] = useState(true)
@@ -76,7 +92,8 @@ export default function CollagePage() {
 	const [filterType, setFilterType] = useState<'all' | 'foto' | 'video'>('all')
 	const [filterYear, setFilterYear] = useState<string>('all')
 
-	// Check admin status
+	const loadItemsRef = useRef<(showLoading?: boolean) => Promise<void>>(() => Promise.resolve())
+
 	useEffect(() => {
 		const checkAdmin = async () => {
 			try {
@@ -91,11 +108,9 @@ export default function CollagePage() {
 		checkAdmin()
 	}, [])
 
-	// Load all items
-	const loadItems = async (showLoading = true) => {
+	const loadItems = useCallback(async (showLoading = true) => {
 		if (showLoading) setIsLoading(true)
 
-		// 1. Local files
 		const localItems: DisplayItem[] = LOCAL_MEDIA_FILES.map((filename, i) => ({
 			id: `local-${i}`,
 			url: `/images/${filename}`,
@@ -106,19 +121,18 @@ export default function CollagePage() {
 			isLocal: true,
 		}))
 
-		// 2. Fetch from DB
 		let dbItems: DisplayItem[] = []
 		try {
 			const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
 				cache: 'no-store',
-				headers: { 'Pragma': 'no-cache' }
+				headers: {
+					'Pragma': 'no-cache',
+					'Cache-Control': 'no-cache, no-store',
+				}
 			})
 			if (res.ok) {
 				const data = await res.json()
-				dbItems = (data.recuerdos || []).map((r: any) => ({
-					...r,
-					isLocal: false,
-				}))
+				dbItems = (data.recuerdos || []).map(normalizeDbItem)
 			}
 		} catch (err) {
 			console.warn('Could not fetch collage:', err)
@@ -126,29 +140,25 @@ export default function CollagePage() {
 
 		setAllItems([...dbItems, ...localItems])
 		setIsLoading(false)
-	}
+	}, [])
+
+	useEffect(() => {
+		loadItemsRef.current = loadItems
+	}, [loadItems])
 
 	useEffect(() => {
 		loadItems()
 
-		// 🔔 Supabase REALTIME (Sincronización instantánea)
 		const channel = supabase
-			.channel('collage-changes')
+			.channel('collage-realtime-sync')
 			.on(
 				'postgres_changes',
 				{ event: 'INSERT', schema: 'public', table: 'collage_recuerdos' },
 				(payload: any) => {
-					console.log('✅ Nuevo recuerdo detectado en tiempo real:', payload)
 					if (payload.new) {
-						// Agregar el nuevo item directamente al estado sin refetch
-						const newItem: DisplayItem = {
-							...payload.new,
-							isLocal: false,
-						}
+						const newItem = normalizeDbItem(payload.new)
 						setAllItems(prev => {
-							// Evitar duplicados
-							const exists = prev.some(item => item.id === newItem.id)
-							if (exists) return prev
+							if (prev.some(item => item.id === newItem.id)) return prev
 							return [newItem, ...prev]
 						})
 					}
@@ -156,81 +166,76 @@ export default function CollagePage() {
 			)
 			.on(
 				'postgres_changes',
+				{ event: 'UPDATE', schema: 'public', table: 'collage_recuerdos' },
+				(payload: any) => {
+					if (payload.new) {
+						const updated = normalizeDbItem(payload.new)
+						setAllItems(prev => prev.map(item =>
+							item.id === updated.id ? updated : item
+						))
+					}
+				}
+			)
+			.on(
+				'postgres_changes',
 				{ event: 'DELETE', schema: 'public', table: 'collage_recuerdos' },
 				(payload: any) => {
-					console.log('🗑️ Recuerdo eliminado en tiempo real:', payload)
 					if (payload.old?.id) {
 						setAllItems(prev => prev.filter(item => item.id !== payload.old.id))
 					}
 				}
 			)
-			.subscribe((status) => {
-				console.log('📡 Estado de suscripción Realtime:', status)
-			})
+			.subscribe()
 
 		return () => {
 			supabase.removeChannel(channel)
 		}
-	}, [])
+	}, [loadItems])
 
-	// Sort items by real capture date
 	const sortedItems = [...allItems].sort((a, b) => {
 		const timeA = new Date(a.fecha_captura || a.fecha_subida).getTime()
 		const timeB = new Date(b.fecha_captura || b.fecha_subida).getTime()
-
-		// Fallback si la fecha no es válida
 		const dateA = isNaN(timeA) ? 0 : timeA
 		const dateB = isNaN(timeB) ? 0 : timeB
-
 		return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
 	})
 
-	// Handle new upload
 	const handleRecuerdoSubido = useCallback((recuerdo: CollageRecuerdo) => {
-		console.log('📸 Recuerdo subido, agregando al estado:', recuerdo)
-		
+		const now = new Date().toISOString()
 		const newItem: DisplayItem = {
-			...recuerdo,
-			fecha_captura: recuerdo.fecha_captura || recuerdo.fecha_subida || new Date().toISOString(),
+			id: recuerdo.id,
+			url: recuerdo.url,
+			fecha_subida: recuerdo.fecha_subida || now,
+			fecha_captura: recuerdo.fecha_captura || recuerdo.fecha_subida || now,
+			tipo: recuerdo.tipo,
+			usuario_subio: recuerdo.usuario_subio,
+			file_path: recuerdo.file_path,
 			isLocal: false,
 		}
 
-		// Resetear filtros para que el usuario vea su nueva subida inmediatamente
 		setFilterType('all')
 		setFilterYear('all')
 		setSortOrder('newest')
 
-		// Actualizar estado inmediatamente (optimistic update)
 		setAllItems(prev => {
-			// Evitar duplicados si el realtime ya lo agregó
-			const exists = prev.some(item => item.id === newItem.id)
-			if (exists) {
-				console.log('⚠️ Item ya existe en el estado, no duplicar')
-				return prev
-			}
-			console.log('✅ Agregando nuevo item al estado')
+			if (prev.some(item => item.id === newItem.id)) return prev
 			return [newItem, ...prev]
 		})
 
-		setToast({ message: '¡Recuerdo optimizado y publicado!', type: 'success' })
+		setToast({ message: 'Recuerdo publicado en el Collage', type: 'success' })
 		setTimeout(() => setToast(null), 3000)
 
-		// Scroll al inicio para ver la foto nueva
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 
-		// Refetch después de 2 segundos como backup (por si realtime falla)
 		setTimeout(() => {
-			console.log('🔄 Refetch de seguridad después de 2s')
-			loadItems(false)
+			loadItemsRef.current(false)
 		}, 2000)
 	}, [])
 
-	// Confirm delete
 	const confirmDelete = (item: DisplayItem) => {
 		setItemToDelete(item)
 	}
 
-	// Actual delete
 	const handleDelete = async () => {
 		if (!itemToDelete) return
 
@@ -261,7 +266,6 @@ export default function CollagePage() {
 		}
 	}
 
-	// Shooting stars effect
 	useEffect(() => {
 		if (typeof window === 'undefined') return
 		const canvas = document.createElement('canvas')
@@ -355,7 +359,6 @@ export default function CollagePage() {
 
 			<BackButton label="Volver" />
 
-			{/* Header */}
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -372,7 +375,6 @@ export default function CollagePage() {
 				</p>
 			</motion.div>
 
-			{/* Advanced Filters (Punto 5: Escalabilidad) */}
 			<motion.div
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -380,7 +382,6 @@ export default function CollagePage() {
 				className="relative z-20 px-4 pb-10"
 			>
 				<div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-4">
-					{/* Sort Order */}
 					<div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
 						<button
 							onClick={() => setSortOrder('newest')}
@@ -402,7 +403,6 @@ export default function CollagePage() {
 						</button>
 					</div>
 
-					{/* Media Type Filter */}
 					<div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
 						<button
 							onClick={() => setFilterType('all')}
@@ -433,7 +433,6 @@ export default function CollagePage() {
 						</button>
 					</div>
 
-					{/* Year Filter */}
 					{availableYears.length > 1 && (
 						<select
 							value={filterYear}
@@ -447,7 +446,6 @@ export default function CollagePage() {
 						</select>
 					)}
 
-					{/* Manual Refresh Button */}
 					<button
 						onClick={() => loadItems(true)}
 						className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white/70 hover:text-white transition-all shadow-lg active:scale-95"
@@ -460,7 +458,6 @@ export default function CollagePage() {
 				</div>
 			</motion.div>
 
-			{/* Grid Gallery */}
 			<div className="relative z-10 px-3 sm:px-4 md:px-8 pb-24 max-w-7xl mx-auto">
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
 					{filteredItems.map((item, index) => (
@@ -495,10 +492,8 @@ export default function CollagePage() {
 									/>
 								)}
 
-								{/* Hover overlay */}
 								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-								{/* Video badge */}
 								{item.tipo === 'video' && (
 									<div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm rounded-full p-1.5">
 										<svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -507,7 +502,6 @@ export default function CollagePage() {
 									</div>
 								)}
 
-								{/* Admin delete button */}
 								{isAdmin && !item.isLocal && (
 									<DeleteButton
 										onClick={() => confirmDelete(item)}
@@ -521,12 +515,11 @@ export default function CollagePage() {
 
 				{sortedItems.length === 0 && (
 					<div className="text-center py-20">
-						<p className="text-white/50 text-lg">No hay recuerdos aún. ¡Sube el primero!</p>
+						<p className="text-white/50 text-lg">No hay recuerdos aún. Sube el primero</p>
 					</div>
 				)}
 			</div>
 
-			{/* Lightbox */}
 			<AnimatePresence>
 				{lightboxItem && (
 					<motion.div
@@ -543,7 +536,6 @@ export default function CollagePage() {
 							className="relative max-w-4xl max-h-[90vh] w-full"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{/* Close button */}
 							<button
 								onClick={() => setLightboxItem(null)}
 								className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors p-2"
@@ -575,7 +567,6 @@ export default function CollagePage() {
 								/>
 							)}
 
-							{/* Info bar - Solo botón de eliminar para admin */}
 							{!lightboxItem.isLocal && isAdmin && (
 								<div className="mt-4 flex justify-end">
 									<button
@@ -595,7 +586,6 @@ export default function CollagePage() {
 				)}
 			</AnimatePresence>
 
-			{/* Custom Confirmation Modal */}
 			<AnimatePresence>
 				{itemToDelete && (
 					<div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
@@ -610,7 +600,7 @@ export default function CollagePage() {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 								</svg>
 							</div>
-							<h3 className="text-xl font-bold text-white mb-2">¿Eliminar recuerdo?</h3>
+							<h3 className="text-xl font-bold text-white mb-2">Eliminar recuerdo?</h3>
 							<p className="text-white/60 mb-6 text-sm">Esta acción no se puede deshacer y el recuerdo desaparecerá del collage.</p>
 							<div className="flex gap-3">
 								<button
@@ -631,7 +621,6 @@ export default function CollagePage() {
 				)}
 			</AnimatePresence>
 
-			{/* Toast Notification */}
 			<AnimatePresence>
 				{toast && (
 					<motion.div
@@ -648,7 +637,6 @@ export default function CollagePage() {
 				)}
 			</AnimatePresence>
 
-			{/* Floating upload button for admins */}
 			<CaptureMemoryButton onRecuerdoSubido={handleRecuerdoSubido} />
 		</ConstellationBackground>
 	)

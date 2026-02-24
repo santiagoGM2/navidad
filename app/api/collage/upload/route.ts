@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
                 tipo,
                 usuario_subio: session.username,
                 file_path: `${bucketName}/${filePath}`,
+                fecha_subida: now.toISOString(),
                 fecha_captura: captureDate.toISOString(),
                 hora_captura: horaBogota,
                 timezone: 'America/Bogota',
@@ -132,8 +133,10 @@ export async function POST(request: NextRequest) {
                     id: crypto.randomUUID(),
                     url: publicUrl,
                     fecha_subida: now.toISOString(),
+                    fecha_captura: captureDate.toISOString(),
                     tipo,
                     usuario_subio: session.username,
+                    file_path: `${bucketName}/${filePath}`,
                 },
                 warning: 'Archivo subido pero no se pudo guardar toda la metadata en DB'
             }, { status: 201 })
