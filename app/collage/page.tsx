@@ -247,8 +247,12 @@ export default function CollagePage() {
 
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 
-		// Eliminamos el refetch automático inmediato para evitar inconsistencias de red
-		// El estado local y el Realtime ya se encargan de la inmediatez
+		// REFETCH DE SEGURIDAD:
+		// Aunque el optimistic update y Realtime funcionan, forzamos una recarga limpia
+		// después de 2 segundos para asegurar que el estado sea 100% idéntico a la DB.
+		setTimeout(() => {
+			if (loadItemsRef.current) loadItemsRef.current(false)
+		}, 2000)
 	}, [])
 
 	const confirmDelete = (item: DisplayItem) => {
@@ -285,68 +289,7 @@ export default function CollagePage() {
 		}
 	}
 
-	useEffect(() => {
-		if (typeof window === 'undefined') return
-		const canvas = document.createElement('canvas')
-		canvas.style.position = 'fixed'
-		canvas.style.top = '0'
-		canvas.style.left = '0'
-		canvas.style.width = '100%'
-		canvas.style.height = '100%'
-		canvas.style.pointerEvents = 'none'
-		canvas.style.zIndex = '1'
-		document.body.appendChild(canvas)
-		const ctx = canvas.getContext('2d')
-		if (!ctx) return
-		canvas.width = window.innerWidth
-		canvas.height = window.innerHeight
-		const shootingStars: any[] = []
-		const createStar = () => {
-			shootingStars.push({
-				x: Math.random() * canvas.width,
-				y: Math.random() * canvas.height * 0.3,
-				vx: (Math.random() - 0.5) * 4 + 2,
-				vy: Math.random() * 2 + 1,
-				life: 0,
-				maxLife: 60 + Math.random() * 40,
-			})
-		}
-		let animId: number
-		const animate = () => {
-			ctx.fillStyle = 'rgba(10, 10, 26, 0.1)'
-			ctx.fillRect(0, 0, canvas.width, canvas.height)
-			for (let i = shootingStars.length - 1; i >= 0; i--) {
-				const s = shootingStars[i]
-				s.x += s.vx
-				s.y += s.vy
-				s.life++
-				if (s.life > s.maxLife || s.x > canvas.width || s.y > canvas.height) {
-					shootingStars.splice(i, 1)
-					continue
-				}
-				const alpha = 1 - s.life / s.maxLife
-				ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`
-				ctx.lineWidth = 2
-				ctx.beginPath()
-				ctx.moveTo(s.x, s.y)
-				ctx.lineTo(s.x - s.vx * 10, s.y - s.vy * 10)
-				ctx.stroke()
-			}
-			if (Math.random() < 0.02) createStar()
-			animId = requestAnimationFrame(animate)
-		}
-		animate()
-		const handleResize = () => {
-			canvas.width = window.innerWidth
-			canvas.height = window.innerHeight
-		}
-		window.addEventListener('resize', handleResize)
-		return () => {
-			cancelAnimationFrame(animId)
-			window.removeEventListener('resize', handleResize)
-			if (document.body.contains(canvas)) document.body.removeChild(canvas)
-		}
-	}, [])
+	// El fondo animado ya lo provee <ConstellationBackground />
 
 	const filteredItems = sortedItems.filter(item => {
 		if (filterType !== 'all' && item.tipo !== filterType) return false
