@@ -14,6 +14,20 @@ const getFileType = (filename: string): 'foto' | 'video' => {
 	return videoExts.includes(ext) ? 'video' : 'foto'
 }
 
+const formatDate = (dateStr: string) => {
+	try {
+		const d = new Date(dateStr)
+		if (isNaN(d.getTime())) return 'Fecha desconocida'
+		return new Intl.DateTimeFormat('es-CO', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		}).format(d)
+	} catch {
+		return 'Fecha desconocida'
+	}
+}
+
 type SortOrder = 'newest' | 'oldest'
 
 interface DisplayItem {
@@ -459,7 +473,14 @@ export default function CollagePage() {
 									/>
 								)}
 
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+									<p className="text-white font-display text-[10px] md:text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+										Capturado el
+									</p>
+									<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
+										{formatDate(item.fecha_captura)}
+									</p>
+								</div>
 
 								{item.tipo === 'video' && (
 									<div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm rounded-full p-1.5">
@@ -493,25 +514,35 @@ export default function CollagePage() {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className="fixed inset-0 z-[150] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+						className="fixed inset-0 z-[9999] bg-black/98 backdrop-blur-xl flex items-center justify-center p-4"
 						onClick={() => setLightboxItem(null)}
 					>
+						{/* Botón cerrar flotante fijo en la esquina superior */}
+						<button
+							onClick={() => setLightboxItem(null)}
+							className="fixed top-6 right-6 md:top-10 md:right-10 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-[10000] group"
+							title="Cerrar (Esc)"
+						>
+							<svg className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
+
 						<motion.div
-							initial={{ scale: 0.8, opacity: 0 }}
+							initial={{ scale: 0.9, opacity: 0 }}
 							animate={{ scale: 1, opacity: 1 }}
-							exit={{ scale: 0.8, opacity: 0 }}
-							className="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center"
+							exit={{ scale: 0.9, opacity: 0 }}
+							className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center gap-6"
 							onClick={(e) => e.stopPropagation()}
 						>
-							<button
-								onClick={() => setLightboxItem(null)}
-								className="absolute -top-14 md:-top-16 right-0 md:-right-12 text-white/70 hover:text-white transition-all p-3 hover:bg-white/10 rounded-full z-[160]"
-								title="Cerrar (Esc)"
-							>
-								<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-								</svg>
-							</button>
+							<div className="text-center space-y-1">
+								<p className="text-violet-400 font-display text-xs uppercase tracking-[0.3em] font-bold">
+									Momento Inmortalizado
+								</p>
+								<h3 className="text-white text-lg md:text-2xl font-bold">
+									{formatDate(lightboxItem.fecha_captura)}
+								</h3>
+							</div>
 
 							{lightboxItem.tipo === 'foto' ? (
 								<div className="relative w-full h-[80vh] rounded-xl overflow-hidden flex items-center justify-center">
@@ -563,7 +594,7 @@ export default function CollagePage() {
 
 			<AnimatePresence>
 				{itemToDelete && (
-					<div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+					<div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
 						<motion.div
 							initial={{ opacity: 0, scale: 0.9 }}
 							animate={{ opacity: 1, scale: 1 }}
