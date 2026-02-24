@@ -1,12 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase-config'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-project.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY
 
-// Validar que las credenciales existan solo en producción para evitar errores de build
-if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && process.env.NODE_ENV === 'development') {
-	console.warn('⚠️  Supabase no está configurado. Asegúrate de tener las variables de entorno.')
-}
-
-// Cliente robusto que no explota si faltan credenciales (útil para build)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
