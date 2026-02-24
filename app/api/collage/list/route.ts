@@ -9,19 +9,23 @@ export async function GET() {
         const { url, key } = getSupabaseConfig()
         const supabase = createClient(url, key)
 
+        console.log('--- Fetching collage memories ---')
         const { data, error } = await supabase
             .from('collage_recuerdos')
-            .select('*') // Seleccionamos todo para tener la metadata completa
+            .select('*')
             .order('fecha_captura', { ascending: false })
+            .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error fetching collage:', error)
+            console.error('❌ Supabase error fetching collage:', error)
             return NextResponse.json({
                 recuerdos: [],
                 error: 'Error al obtener recuerdos',
                 details: error.message,
             }, { status: 500 })
         }
+
+        console.log(`✅ Found ${data?.length || 0} items in DB`)
 
         return new NextResponse(JSON.stringify({
             recuerdos: data || [],
