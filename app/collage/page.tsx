@@ -8,6 +8,41 @@ import BackButton from '@/components/BackButton'
 import CaptureMemoryButton, { type CollageRecuerdo } from '@/components/CaptureMemoryButton'
 import { supabase } from '@/lib/supabase'
 
+const LOCAL_MEDIA_FILES = [
+	'cumpleaños.jpeg', 'fiesta 15.jpeg', 'halloween.jpeg', 'halloween2.jpeg',
+	'invitacion especial.jpeg', 'lagocalima.jpeg', 'noviazgo.jpg', 'lp_image.jpg',
+	'IMG_0390.jpg', 'IMG_0749.jpg', 'IMG_0751.jpg', 'IMG_0781.jpg', 'IMG_0816.jpg',
+	'IMG_0821.jpg', 'IMG_0855.jpg', 'IMG_0856.jpg', 'IMG_0863.jpg', 'IMG_0874.jpg',
+	'IMG_1125.jpg', 'IMG_1463.jpg', 'IMG_1553.jpg', 'IMG_1555.jpg', 'IMG_2284.jpg',
+	'IMG_2477.jpg', 'IMG_2796.jpg', 'IMG_2875.jpg', 'IMG_2877.jpg', 'IMG_2882.jpg',
+	'IMG_3160.jpg', 'IMG_3182.jpg', 'IMG_3183.jpg', 'IMG_3213.jpg', 'IMG_3214.jpg',
+	'IMG_3226.jpg', 'IMG_3257.jpg', 'IMG_3289.jpg', 'IMG_3296.jpg', 'IMG_3464.jpg',
+	'IMG_3467.jpg', 'IMG_3779.jpg', 'IMG_3986.jpg', 'IMG_4003.jpg', 'IMG_4005.jpg',
+	'IMG_4179.jpg', 'IMG_4414.jpg', 'IMG_4477.jpg', 'IMG_4533.jpg', 'IMG_5023.jpg',
+	'IMG_5091.jpg', 'IMG_5165.jpg', 'IMG_5293.jpg', 'IMG_5306.jpg', 'IMG_5636.jpg',
+	'IMG_5917.jpg', 'IMG_5927.jpg', 'IMG_6084.jpg', 'IMG_6087.jpg', 'IMG_6095.jpg',
+	'IMG_6100.jpg', 'IMG_6333.jpg', 'IMG_6581.jpg', 'IMG_6587.jpg', 'IMG_7995.jpg',
+	'IMG_8490.jpg', 'IMG_9060.jpg', 'IMG_9255.jpg', 'IMG_9395.jpg', 'IMG_9589.jpg',
+	'IMG_9718.jpg', 'IMG_9731.jpg', 'IMG_9800.jpg', 'IMG_9927.jpg', 'IMG_9940.jpg',
+	'0211B0E4-3B72-4ACB-B44A-A36D95B96D56.JPG', '0ADC408C-3C53-4AE4-91AA-BEBCA58B0EFC.JPG',
+	'12C1C17B-B62E-40CE-924A-C19A170C1D1E.JPG', '2AE0694E-EB05-48D6-A773-ED9061DCBE59.JPG',
+	'34842C8F-9BEB-4254-B5FF-80E0589B46AF.JPG', '35275508-BA2C-40B2-BD1D-A4B5D6653C36.JPG',
+	'3A0D2D3C-7A2B-4D79-9F17-B361FD272294.JPG', '412005BA-32B6-4D0A-BB11-1D2634BC33E6.JPG',
+	'48fe7811-7942-4346-b1c7-24ea1d7e7821.JPG', '4D711B1A-C190-40A0-B016-0C91DFA62367.JPG',
+	'552C0AEE-5BC4-4D2D-A6B2-E2830192F1AD.JPG', '69D53A13-D10A-42B4-AF94-6AC7600006A3.JPG',
+	'6c1b9754-b5d6-4e80-a00e-8422bcde5f77.JPG', '79271116-FCD8-43FE-9128-484A4BA0FC20.JPG',
+	'7ABE0C21-647B-49FC-89DB-090AE030D602.JPG', '8209CABD-58A5-494B-BF0B-D55985912CD7.JPG',
+	'822cea0c-708b-41b7-a389-705160aef8af.JPG', '9B446D33-E159-46F5-85EA-1A603EE9634C.JPG',
+	'A40B92B6-09FA-463A-AA31-1073261DC20F.JPG', 'bc2b5cea-b0a1-4db1-96f5-1f333d982cfd.JPG',
+	'BC8F5386-ECA1-4F49-988A-6996732C9300.JPG', 'BC9C06DA-EDD0-4E2C-96FA-81697762BFC6.JPG',
+	'BF9E7FE5-1054-425E-81FF-FF8FCB4C3B9D.JPG', 'C39DE8F1-940B-4ACA-ADA3-B249E17A497C.JPG',
+	'DD5D08B7-F6AD-4AB7-B61E-9E7E9550B3C1.JPG', 'E87B4D8E-434F-4936-8FD1-48FB8D726EFA.JPG',
+	'e8e5a79f-f095-4503-8703-ef226c160cf4.JPG', 'f04bdaa0-a21c-4992-825a-aa9ea087423f.JPG',
+	'f0c71440-6bc1-4fc4-8489-8d57549d4852.JPG', 'FAE2872C-916B-4852-BA64-6BD5087AC269.JPG',
+	'FF601B96-2108-43A7-BF3D-CB8FD25B09D5.jpg', 'IMG_6781.PNG',
+	'21b8b47ebefd421da244dc0211a9f3c2.MOV', 'IMG_2798.MOV',
+]
+
 const getFileType = (filename: string): 'foto' | 'video' => {
 	const ext = filename.toLowerCase().split('.').pop() || ''
 	const videoExts = ['mp4', 'mov', 'webm', 'avi', 'mkv']
@@ -90,6 +125,16 @@ export default function CollagePage() {
 	const loadItems = useCallback(async (showLoading = true) => {
 		if (showLoading) setIsLoading(true)
 
+		const localItems: DisplayItem[] = LOCAL_MEDIA_FILES.map((filename, i) => ({
+			id: `local-${i}`,
+			url: `/images/${filename}`,
+			fecha_subida: '2025-01-01T12:00:00Z',
+			fecha_captura: '2025-01-01T12:00:00Z',
+			tipo: getFileType(filename),
+			usuario_subio: 'local',
+			isLocal: true,
+		}))
+
 		let dbItems: DisplayItem[] = []
 		try {
 			const res = await fetch(`/api/collage/list?t=${Date.now()}`, {
@@ -111,7 +156,7 @@ export default function CollagePage() {
 			console.error('❌ Error fatal cargando collage:', err)
 		}
 
-		setAllItems(dbItems)
+		setAllItems([...dbItems, ...localItems])
 		setIsLoading(false)
 	}, [])
 
@@ -344,7 +389,7 @@ export default function CollagePage() {
 					Nuestra Historia en Imágenes
 				</h1>
 				<p className="text-white/60 text-sm md:text-base">
-					{allItems.length} recuerdos compartidos
+					{allItems.filter(i => !i.isLocal).length} recuerdos subidos · {allItems.filter(i => i.isLocal).length} fotos locales
 				</p>
 			</motion.div>
 
@@ -474,10 +519,7 @@ export default function CollagePage() {
 								)}
 
 								<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-									<p className="text-white font-display text-[10px] md:text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-										Capturado el
-									</p>
-									<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
+									<p className="text-white font-bold text-xs md:text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
 										{formatDate(item.fecha_captura)}
 									</p>
 								</div>
@@ -535,11 +577,8 @@ export default function CollagePage() {
 							className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center gap-6"
 							onClick={(e) => e.stopPropagation()}
 						>
-							<div className="text-center space-y-1">
-								<p className="text-violet-400 font-display text-xs uppercase tracking-[0.3em] font-bold">
-									Momento Inmortalizado
-								</p>
-								<h3 className="text-white text-lg md:text-2xl font-bold">
+							<div className="text-center">
+								<h3 className="text-white text-lg md:text-2xl font-bold tracking-tight bg-white/5 px-6 py-2 rounded-full backdrop-blur-sm border border-white/10">
 									{formatDate(lightboxItem.fecha_captura)}
 								</h3>
 							</div>

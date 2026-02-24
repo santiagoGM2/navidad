@@ -42,80 +42,97 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 		} catch { }
 	}
 
-	const handleFileUpload = useCallback(async (file: File, isCamera: boolean) => {
-		if (!file) return
+	const handleFileUpload = useCallback(async (files: FileList | File[] | null, isCamera: boolean) => {
+		if (!files || files.length === 0) return
 
-		const isVideo = file.type.startsWith('video/')
-		const isImage = file.type.startsWith('image/')
-
-		if (!isImage && !isVideo) {
-			setMessage({ type: 'error', text: 'Solo imágenes o videos' })
-			return
-		}
-
+		const fileArray = Array.from(files)
 		setUploading(true)
 		setMessage(null)
 
-		try {
-			let loc = currentLocation
-			if (isCamera && !loc) {
-				try {
-					loc = await new Promise((resolve) => {
-						navigator.geolocation.getCurrentPosition(
-							(pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-							() => resolve(null),
-							{ timeout: 3000 }
-						)
-					})
-				} catch { }
+		let successCount = 0
+		let errorCount = 0
+
+		for (let i = 0; i < fileArray.length; i++) {
+			const file = fileArray[i]
+			const isVideo = file.type.startsWith('video/')
+			const isImage = file.type.startsWith('image/')
+
+			if (!isImage && !isVideo) {
+				errorCount++
+				continue
 			}
 
-			let finalFile: File | Blob = file
-			let metadata: any = {
-				isCamera,
-				location: loc,
-				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+			// Actualizar mensaje de progreso
+			if (fileArray.length > 1) {
+				setMessage({ type: 'success', text: `Subiendo archivo ${i + 1} de ${fileArray.length}...` })
 			}
 
-			if (isImage) {
-				const processed = await processImageForUpload(file, isCamera, loc)
-				finalFile = processed.finalFile
-				metadata = processed.metadata
+			try {
+				let loc = currentLocation
+				if (isCamera && !loc) {
+					try {
+						loc = await new Promise((resolve) => {
+							navigator.geolocation.getCurrentPosition(
+								(pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+								() => resolve(null),
+								{ timeout: 3000 }
+							)
+						})
+					} catch { }
+				}
+
+				let finalFile: File | Blob = file
+				let metadata: any = {
+					isCamera,
+					location: loc,
+					timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+				}
+
+				if (isImage) {
+					const processed = await processImageForUpload(file, isCamera, loc)
+					finalFile = processed.finalFile
+					metadata = processed.metadata
+				}
+
+				const formData = new FormData()
+				formData.append('file', finalFile, file.name.replace(/\.[^/.]+$/, "") + (isImage ? ".webp" : ""))
+				formData.append('metadata', JSON.stringify(metadata))
+
+				const res = await fetch('/api/collage/upload', {
+					method: 'POST',
+					body: formData,
+				})
+
+				const data = await res.json()
+				if (!res.ok) throw new Error(data.error || 'Error al subir')
+
+				console.log(`✅ Upload exitoso (${i + 1}/${fileArray.length}):`, data)
+
+				if (data.recuerdo && onRecuerdoSubido) {
+					onRecuerdoSubido(data.recuerdo)
+				}
+				successCount++
+			} catch (err) {
+				console.error(`❌ Error subiendo archivo ${i + 1}:`, err)
+				errorCount++
 			}
-
-			const formData = new FormData()
-			formData.append('file', finalFile, file.name.replace(/\.[^/.]+$/, "") + (isImage ? ".webp" : ""))
-			formData.append('metadata', JSON.stringify(metadata))
-
-			const res = await fetch('/api/collage/upload', {
-				method: 'POST',
-				body: formData,
-			})
-
-			const data = await res.json()
-			if (!res.ok) throw new Error(data.error || 'Error al subir')
-
-			console.log('✅ Upload exitoso, respuesta del servidor:', data)
-
-			setMessage({ type: 'success', text: '¡Recuerdo subido al Collage!' })
-			setShowPanel(false)
-
-			// Llamar al callback INMEDIATAMENTE con el objeto completo
-			if (data.recuerdo && onRecuerdoSubido) {
-				console.log('📤 Llamando a onRecuerdoSubido con:', data.recuerdo)
-				onRecuerdoSubido(data.recuerdo)
-			} else {
-				console.warn('⚠️ No se recibió data.recuerdo o no hay callback')
-			}
-		} catch (err) {
-			setMessage({
-				type: 'error',
-				text: err instanceof Error ? err.message : 'Error al subir'
-			})
-		} finally {
-			setUploading(false)
-			setTimeout(() => setMessage(null), 4000)
 		}
+
+		setUploading(false)
+		setShowPanel(false)
+
+		if (successCount > 0) {
+			setMessage({
+				type: 'success',
+				text: fileArray.length > 1
+					? `¡${successCount} recuerdos subidos con éxito!${errorCount > 0 ? ` (${errorCount} fallaron)` : ''}`
+					: '¡Recuerdo subido con éxito!'
+			})
+		} else if (errorCount > 0) {
+			setMessage({ type: 'error', text: 'Error al subir los archivos' })
+		}
+
+		setTimeout(() => setMessage(null), 4000)
 	}, [currentLocation, onRecuerdoSubido])
 
 	if (!isAdmin) return null
@@ -173,7 +190,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
 									</svg>
-									Tomar foto con cámara
+									Cámara
 								</button>
 
 								<button
@@ -184,7 +201,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 									<svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
 									</svg>
-									Subir desde galería
+									Fototeca o Galería
 								</button>
 							</div>
 
@@ -200,10 +217,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 									</div>
 									<div className="flex flex-col items-center gap-1">
 										<p className="text-white font-bold text-[10px] uppercase tracking-widest animate-pulse">
-											Procesando Recuerdo
-										</p>
-										<p className="text-white/40 text-[9px]">
-											Optimizando para calidad máxima...
+											Subiendo recuerdos
 										</p>
 									</div>
 								</div>
@@ -235,10 +249,11 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 				ref={fileInputRef}
 				type="file"
 				accept="image/*,video/*"
+				multiple
 				className="hidden"
 				onChange={(e) => {
-					const file = e.target.files?.[0]
-					if (file) handleFileUpload(file, false)
+					handleFileUpload(e.target.files, false)
+					e.target.value = '' // Clear for same files
 				}}
 			/>
 			<input
@@ -248,8 +263,8 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 				capture="environment"
 				className="hidden"
 				onChange={(e) => {
-					const file = e.target.files?.[0]
-					if (file) handleFileUpload(file, true)
+					handleFileUpload(e.target.files, true)
+					e.target.value = ''
 				}}
 			/>
 		</>
