@@ -14,11 +14,12 @@ import DepthTimeline from '@/components/DepthTimeline'
 import HeartbeatLetter from '@/components/HeartbeatLetter'
 import SealedLetters from '@/components/SealedLetters'
 import HowISeeYou from '@/components/HowISeeYou'
-
 import AnniversarySection from '@/components/AnniversarySection'
+import { useAhorroProgress } from '@/hooks/useAhorroProgress'
 
 export default function Home() {
 	const pathname = usePathname()
+	const { data: ahorro } = useAhorroProgress()
 	return (
 		<ConstellationBackground>
 			{/* Interacciones globales */}
@@ -192,6 +193,63 @@ export default function Home() {
 					</div>
 				</section>
 
+
+				{/* ═══════════════════════════════════════════════════════════
+				    NUESTRO AHORRO — Preview / CTA
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-20 md:py-28 px-6 relative z-10">
+					<div className="max-w-4xl mx-auto">
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+							viewport={{ once: true }}
+						>
+							{/* Separador decorativo */}
+							<div
+								className="mb-10 h-px w-full"
+								style={{ background: 'linear-gradient(to right, transparent, #4F46E5, transparent)' }}
+							/>
+
+							<div className="text-center mb-8">
+								<h2
+									className="font-display text-3xl md:text-4xl font-bold text-white mb-3"
+									style={{ textShadow: '0 0 30px rgba(79,70,229,0.35)' }}
+								>
+									Nuestro Ahorro
+								</h2>
+								<p className="text-base" style={{ color: 'rgba(255,255,255,0.75)' }}>
+									Cada ✓ nos acerca más. Llevamos{' '}
+									<span className="font-semibold" style={{ color: '#818CF8' }}>
+										{ahorro.dias_listos}
+									</span>{' '}
+									días completados.
+								</p>
+							</div>
+
+							<Link href="/ahorros">
+								<motion.div
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+									className="group relative flex items-center justify-between rounded-2xl border border-white/10 hover:border-[#4F46E5] backdrop-blur-sm bg-white/5 hover:bg-[#4F46E5]/10 p-6 md:p-8 transition-all duration-300 cursor-pointer"
+								>
+									<div>
+										<p className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: '#818CF8' }}>
+											Meta · 80 días
+										</p>
+										<p className="text-xl md:text-2xl font-bold text-white">
+											Ver progreso completo
+										</p>
+									</div>
+									<span
+										className="text-2xl group-hover:translate-x-1 transition-transform duration-200"
+										style={{ color: '#818CF8' }}
+									>→</span>
+								</motion.div>
+							</Link>
+						</motion.div>
+					</div>
+				</section>
 
 				{/* ═══════════════════════════════════════════════════════════
 				    FRASE DEL DÍA (CON ESTADO EMOCIONAL)
