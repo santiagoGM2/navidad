@@ -214,16 +214,16 @@ export default function Home() {
 							{/* Encabezado */}
 							<div className="text-center mb-10">
 								<p className="text-xs uppercase tracking-[0.3em] font-semibold mb-3" style={{ color: '#818CF8' }}>
-									Meta conjunta
+									El viaje de nuestra vida
 								</p>
 								<h2
 									className="font-display text-3xl md:text-5xl font-bold text-white mb-4"
 									style={{ textShadow: '0 0 40px rgba(79,70,229,0.4)' }}
 								>
-									Nuestro Ahorro
+									Nos vamos a Europa
 								</h2>
 								<p className="text-base font-light" style={{ color: 'rgba(255,255,255,0.6)' }}>
-									Cada día marcado nos acerca a nuestro sueño compartido
+									Día a día construimos el camino hacia nuestro primer viaje juntos
 								</p>
 							</div>
 
@@ -279,12 +279,12 @@ export default function Home() {
 											{[
 												{ label: 'Meta', value: '$ 2.000.000', color: 'rgba(255,255,255,0.9)' },
 												{
-													label: 'Ahorrado',
+													label: 'Ya tenemos',
 													value: '$ ' + ahorro.ahorrado.toLocaleString('es-CO'),
 													color: '#10B981',
 												},
 												{
-													label: 'Días',
+													label: 'Días marcados',
 													value: `${ahorro.dias_listos} de 80`,
 													color: 'rgba(255,255,255,0.9)',
 												},
@@ -306,7 +306,7 @@ export default function Home() {
 										{/* CTA */}
 										<div className="flex items-center justify-between">
 											<p className="text-sm font-light" style={{ color: 'rgba(255,255,255,0.4)' }}>
-												Se actualiza en tiempo real
+												Actualización en tiempo real
 											</p>
 											<div
 												className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
@@ -316,7 +316,7 @@ export default function Home() {
 													boxShadow: '0 4px 20px rgba(79,70,229,0.4)',
 												}}
 											>
-												Ver detalles
+												Ver progreso
 												<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
 												</svg>
