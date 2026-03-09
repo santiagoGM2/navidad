@@ -10,6 +10,7 @@ const navItems = [
 	{ href: '#timeline', label: 'Historia' },
 	{ href: '#moments', label: 'Pequeños Instantes' },
 	{ href: '/collage', label: 'Collage' },
+	{ href: '/ahorros', label: 'Nuestro Ahorro' },
 ]
 
 export default function Navbar() {

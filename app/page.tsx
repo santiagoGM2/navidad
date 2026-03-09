@@ -200,51 +200,129 @@ export default function Home() {
 				<section className="py-20 md:py-28 px-6 relative z-10">
 					<div className="max-w-4xl mx-auto">
 						<motion.div
-							initial={{ opacity: 0, y: 20 }}
+							initial={{ opacity: 0, y: 24 }}
 							whileInView={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6 }}
+							transition={{ duration: 0.7 }}
 							viewport={{ once: true }}
 						>
-							{/* Separador decorativo */}
+							{/* Separador */}
 							<div
-								className="mb-10 h-px w-full"
+								className="mb-12 h-px w-full"
 								style={{ background: 'linear-gradient(to right, transparent, #4F46E5, transparent)' }}
 							/>
 
-							<div className="text-center mb-8">
+							{/* Encabezado */}
+							<div className="text-center mb-10">
+								<p className="text-xs uppercase tracking-[0.3em] font-semibold mb-3" style={{ color: '#818CF8' }}>
+									Meta conjunta
+								</p>
 								<h2
-									className="font-display text-3xl md:text-4xl font-bold text-white mb-3"
-									style={{ textShadow: '0 0 30px rgba(79,70,229,0.35)' }}
+									className="font-display text-3xl md:text-5xl font-bold text-white mb-4"
+									style={{ textShadow: '0 0 40px rgba(79,70,229,0.4)' }}
 								>
 									Nuestro Ahorro
 								</h2>
-								<p className="text-base" style={{ color: 'rgba(255,255,255,0.75)' }}>
-									Cada ✓ nos acerca más. Llevamos{' '}
-									<span className="font-semibold" style={{ color: '#818CF8' }}>
-										{ahorro.dias_listos}
-									</span>{' '}
-									días completados.
+								<p className="text-base font-light" style={{ color: 'rgba(255,255,255,0.6)' }}>
+									Cada día marcado nos acerca a nuestro sueño compartido
 								</p>
 							</div>
 
+							{/* Card principal */}
 							<Link href="/ahorros">
 								<motion.div
-									whileHover={{ scale: 1.02 }}
-									whileTap={{ scale: 0.98 }}
-									className="group relative flex items-center justify-between rounded-2xl border border-white/10 hover:border-[#4F46E5] backdrop-blur-sm bg-white/5 hover:bg-[#4F46E5]/10 p-6 md:p-8 transition-all duration-300 cursor-pointer"
+									whileHover={{ scale: 1.015, y: -2 }}
+									whileTap={{ scale: 0.99 }}
+									className="relative overflow-hidden rounded-3xl cursor-pointer"
+									style={{
+										background: 'linear-gradient(135deg, rgba(79,70,229,0.15) 0%, rgba(30,27,75,0.4) 50%, rgba(79,70,229,0.08) 100%)',
+										border: '1px solid rgba(79,70,229,0.35)',
+										boxShadow: '0 0 60px rgba(79,70,229,0.12), inset 0 1px 0 rgba(255,255,255,0.07)',
+									}}
 								>
-									<div>
-										<p className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: '#818CF8' }}>
-											Meta · 80 días
-										</p>
-										<p className="text-xl md:text-2xl font-bold text-white">
-											Ver progreso completo
-										</p>
+									{/* Brillo decorativo superior */}
+									<div
+										className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px"
+										style={{ background: 'linear-gradient(to right, transparent, rgba(129,140,248,0.6), transparent)' }}
+									/>
+
+									<div className="p-8 md:p-10">
+										{/* Barra de progreso */}
+										<div className="mb-8">
+											<div className="flex justify-between items-baseline mb-2">
+												<span className="text-xs uppercase tracking-widest font-semibold" style={{ color: '#818CF8' }}>
+													Progreso
+												</span>
+												<span className="text-sm font-bold" style={{ color: '#818CF8' }}>
+													{ahorro.porcentaje.toFixed(1)}%
+												</span>
+											</div>
+											<div
+												className="h-1.5 w-full rounded-full"
+												style={{ background: 'rgba(255,255,255,0.08)' }}
+											>
+												<motion.div
+													className="h-1.5 rounded-full"
+													style={{
+														background: 'linear-gradient(to right, #4F46E5, #818CF8)',
+														boxShadow: '0 0 10px rgba(79,70,229,0.6)',
+													}}
+													initial={{ width: 0 }}
+													whileInView={{ width: `${Math.min(ahorro.porcentaje, 100)}%` }}
+													transition={{ duration: 1.2, ease: 'easeOut' }}
+													viewport={{ once: true }}
+												/>
+											</div>
+										</div>
+
+										{/* Stats row */}
+										<div className="grid grid-cols-3 gap-4 mb-8">
+											{[
+												{ label: 'Meta', value: '$ 2.000.000', color: 'rgba(255,255,255,0.9)' },
+												{
+													label: 'Ahorrado',
+													value: '$ ' + ahorro.ahorrado.toLocaleString('es-CO'),
+													color: '#10B981',
+												},
+												{
+													label: 'Días',
+													value: `${ahorro.dias_listos} de 80`,
+													color: 'rgba(255,255,255,0.9)',
+												},
+											].map((stat) => (
+												<div key={stat.label} className="text-center">
+													<p
+														className="text-xs uppercase tracking-widest mb-1.5 font-semibold"
+														style={{ color: 'rgba(129,140,248,0.7)' }}
+													>
+														{stat.label}
+													</p>
+													<p className="text-lg md:text-xl font-bold leading-tight" style={{ color: stat.color }}>
+														{stat.value}
+													</p>
+												</div>
+											))}
+										</div>
+
+										{/* CTA */}
+										<div className="flex items-center justify-between">
+											<p className="text-sm font-light" style={{ color: 'rgba(255,255,255,0.4)' }}>
+												Se actualiza en tiempo real
+											</p>
+											<div
+												className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
+												style={{
+													background: 'linear-gradient(135deg, #4F46E5, #6366F1)',
+													color: 'white',
+													boxShadow: '0 4px 20px rgba(79,70,229,0.4)',
+												}}
+											>
+												Ver detalles
+												<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+												</svg>
+											</div>
+										</div>
 									</div>
-									<span
-										className="text-2xl group-hover:translate-x-1 transition-transform duration-200"
-										style={{ color: '#818CF8' }}
-									>→</span>
 								</motion.div>
 							</Link>
 						</motion.div>
