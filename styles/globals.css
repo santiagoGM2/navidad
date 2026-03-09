@@ -230,3 +230,8 @@
 	animation: shooting-star 1.8s ease-out forwards;
 	pointer-events: none;
 }
+
+/* Hide navbar when lightbox is open */
+body.lightbox-open nav {
+	display: none !important;
+}

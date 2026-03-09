@@ -237,6 +237,17 @@ export default function CollagePage() {
 		}
 	}, [loadItems])
 
+	useEffect(() => {
+		if (lightboxItem) {
+			document.body.classList.add('lightbox-open')
+		} else {
+			document.body.classList.remove('lightbox-open')
+		}
+		return () => {
+			document.body.classList.remove('lightbox-open')
+		}
+	}, [lightboxItem])
+
 	const sortedItems = [...allItems].sort((a, b) => {
 		const timeA = new Date(a.fecha_captura || a.fecha_subida).getTime()
 		const timeB = new Date(b.fecha_captura || b.fecha_subida).getTime()

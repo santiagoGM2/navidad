@@ -11,6 +11,8 @@ const navItems = [
 	{ href: '#moments', label: 'Pequeños Instantes' },
 	{ href: '/collage', label: 'Collage' },
 	{ href: '/ahorros', label: 'Nuestro Ahorro' },
+	{ href: '/planes', label: 'Sueños Juntos' },
+	{ href: '/cumpleanera', label: 'Cumpleañera' },
 ]
 
 export default function Navbar() {

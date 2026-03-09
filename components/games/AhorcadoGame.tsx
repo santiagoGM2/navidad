@@ -6,7 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 type GamePhase = 'setup' | 'playing' | 'won' | 'lost'
 
 const MAX_ERRORS = 7
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+const QWERTY_ROWS = [
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
+    ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+]
 
 function normalizeChar(c: string): string {
     return c
@@ -320,34 +324,39 @@ export default function AhorcadoGame() {
                         {/* Keyboard */}
                         {phase === 'playing' && (
                             <motion.div
-                                className="grid grid-cols-7 gap-1.5 px-1"
+                                className="flex flex-col gap-1.5 px-1"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                {ALPHABET.map((letter) => {
-                                    const isGuessed = guessedLetters.has(letter)
-                                    const isCorrect =
-                                        isGuessed && normalizedWord.includes(letter)
-                                    const isWrong = isGuessed && !normalizedWord.includes(letter)
+                                {QWERTY_ROWS.map((row, rowIndex) => (
+                                    <div key={rowIndex} className="flex justify-center gap-1.5">
+                                        {row.map((letter) => {
+                                            const isGuessed = guessedLetters.has(letter)
+                                            const isCorrect =
+                                                isGuessed && normalizedWord.includes(letter)
+                                            const isWrong = isGuessed && !normalizedWord.includes(letter)
 
-                                    return (
-                                        <motion.button
-                                            key={letter}
-                                            onClick={() => guessLetter(letter)}
-                                            disabled={isGuessed}
-                                            className={`py-2.5 rounded-lg font-bold text-sm transition-all duration-200 ${isCorrect
-                                                    ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-400/30'
-                                                    : isWrong
-                                                        ? 'bg-rose-500/20 text-rose-400/50 border border-rose-500/20'
-                                                        : 'bg-white/8 text-white/80 border border-white/10 hover:bg-white/15 hover:text-white active:scale-95'
-                                                } disabled:cursor-not-allowed`}
-                                            whileTap={!isGuessed ? { scale: 0.9 } : undefined}
-                                        >
-                                            {letter}
-                                        </motion.button>
-                                    )
-                                })}
+                                            return (
+                                                <motion.button
+                                                    key={letter}
+                                                    onClick={() => guessLetter(letter)}
+                                                    disabled={isGuessed}
+                                                    className={`py-3 px-2 sm:px-3 rounded-lg font-bold text-sm transition-all duration-200 flex-1 max-w-[40px] ${
+                                                        isCorrect
+                                                            ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-400/30'
+                                                            : isWrong
+                                                                ? 'bg-rose-500/20 text-rose-400/50 border border-rose-500/20'
+                                                                : 'bg-white/8 text-white/80 border border-white/10 hover:bg-white/15 hover:text-white active:scale-95'
+                                                    } disabled:cursor-not-allowed`}
+                                                    whileTap={!isGuessed ? { scale: 0.9 } : undefined}
+                                                >
+                                                    {letter}
+                                                </motion.button>
+                                            )
+                                        })}
+                                    </div>
+                                ))}
                             </motion.div>
                         )}
 

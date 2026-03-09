@@ -8,8 +8,11 @@ import QuienEsMasGame from '@/components/anniversary/QuienEsMasGame'
 import PuzzleDeRecuerdos from '@/components/games/PuzzleDeRecuerdos'
 import AhorcadoGame from '@/components/games/AhorcadoGame'
 import UnlockableHeart from '@/components/UnlockableHeart'
+import WordleGame from '@/components/games/WordleGame'
+import TrikiGame from '@/components/games/TrikiGame'
+import LongcatGame from '@/components/games/LongcatGame'
 
-type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'ahorcado' | null
+type GameId = 'reto' | 'quien-es-mas' | 'puzzle' | 'ahorcado' | 'wordle' | 'triki' | 'longcat' | null
 
 const GAMES: { id: GameId; title: string; description: string; icon: React.ReactNode; gradient: string }[] = [
 	{
@@ -53,6 +56,40 @@ const GAMES: { id: GameId; title: string; description: string; icon: React.React
 		icon: (
 			<svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+			</svg>
+		),
+	},
+	{
+		id: 'wordle',
+		title: 'Palabritas de Amor',
+		description: 'Adivina la palabra del día relacionada con nosotros. Tienes 6 intentos.',
+		gradient: 'from-emerald-500/20 to-teal-500/20',
+		icon: (
+			<svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+			</svg>
+		),
+	},
+	{
+		id: 'triki',
+		title: 'Triqui',
+		description: 'El clásico tres en línea para que compitamos un ratito juntos.',
+		gradient: 'from-indigo-500/20 to-blue-500/20',
+		icon: (
+			<svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20V4m6 16V4" />
+			</svg>
+		),
+	},
+	{
+		id: 'longcat',
+		title: 'Longdog',
+		description: 'Llena todos los espacios de la cuadrícula deslizando a nuestro perrito.',
+		gradient: 'from-yellow-500/20 to-amber-500/20',
+		icon: (
+			<svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5" />
 			</svg>
 		),
 	},
@@ -188,6 +225,39 @@ export default function JuegosPage() {
 								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
 							>
 								<AhorcadoGame />
+							</motion.div>
+						) : selectedGame === 'wordle' ? (
+							<motion.div
+								key="wordle"
+								initial={{ opacity: 0, x: 20 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -20 }}
+								transition={{ duration: 0.3 }}
+								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
+							>
+								<WordleGame />
+							</motion.div>
+						) : selectedGame === 'triki' ? (
+							<motion.div
+								key="triki"
+								initial={{ opacity: 0, x: 20 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -20 }}
+								transition={{ duration: 0.3 }}
+								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10"
+							>
+								<TrikiGame />
+							</motion.div>
+						) : selectedGame === 'longcat' ? (
+							<motion.div
+								key="longcat"
+								initial={{ opacity: 0, x: 20 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -20 }}
+								transition={{ duration: 0.3 }}
+								className="max-w-2xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl border border-white/15 p-6 md:p-10 pb-16"
+							>
+								<LongcatGame />
 							</motion.div>
 						) : null}
 					</AnimatePresence>

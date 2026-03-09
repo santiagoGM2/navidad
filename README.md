@@ -1,167 +1,88 @@
-# Cachetona: Un Viaje a Través de Nuestra Historia
+# Novia Web Application
 
-![Project Status](https://img.shields.io/badge/status-production-success)
-![Next.js](https://img.shields.io/badge/Next.js-14-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)
+This project is a modern, responsive, and highly interactive web application built specifically to celebrate a romantic relationship, encapsulating shared memories, interactive games, and future goals. Crafted with cutting-edge web technologies, the application delivers a premium, seamless user experience characterized by fluid animations and glassmorphism design principles.
 
-## 1. Descripción del Proyecto
+## Architecture & Technology Stack
 
-**Cachetona** es una aplicación web inmersiva e interactiva diseñada como una experiencia digital narrativa. El proyecto combina diseño UI/UX avanzado, animaciones fluidas y una arquitectura moderna para contar una historia lineal y emocional.
+The application leverages a robust set of modern web development tools:
 
-El objetivo principal es ofrecer una plataforma única y personalizada que va más allá de un sitio estático tradicional, incorporando elementos de gamificación suave, descubrimiento progresivo de contenido y persistencia de datos para "frases diarias", creando así una experiencia viva que evoluciona con el tiempo.
+- **Framework**: Next.js 14 (App Router)
+- **Library**: React 18
+- **Styling**: Tailwind CSS integrated with customized theme extensions
+- **Animations**: Framer Motion for sophisticated, physics-based UI transitions
+- **Database & Authentication**: Supabase (PostgreSQL, Storage, Auth, Realtime APIs)
+- **Language**: TypeScript for strict type-checking and improved scalability
 
-## 2. Tabla de Contenidos
+## Core Features
 
-1. [Descripción del Proyecto](#1-descripción-del-proyecto)
-2. [Tecnologías Utilizadas](#3-tecnologías-utilizadas)
-3. [Requisitos Previos](#4-requisitos-previos)
-4. [Instalación](#5-instalación)
-5. [Uso y Ejecución](#6-uso-y-ejecución)
-6. [Estructura del Proyecto](#7-estructura-del-proyecto)
-7. [Funcionalidades Principales](#8-funcionalidades-principales)
-8. [Buenas Prácticas](#9-buenas-prácticas)
-9. [Despliegue](#10-despliegue)
-10. [Licencia](#11-licencia)
+### 1. Dynamic User Interface
+- Context-aware UI elements including a responsive navigation bar and interactive global particles.
+- A fully integrated dark/space theme named "Constellation", using programmatic SVGs and CSS composites.
 
-## 3. Tecnologías Utilizadas
+### 2. Media Management & Collage
+- Real-time media gallery fetching images and videos directly from Supabase Storage.
+- Implements optimistic UI updates during uploads for instantaneous user feedback.
+- Secure fallback mechanisms and caching strategies to ensure smooth load times.
 
-El proyecto está construido sobre un stack moderno priorizando el rendimiento, la escalabilidad y la experiencia de desarrollo:
+### 3. Interactive Games Suite
+Implemented using React state management and Framer Motion for interactive gameplay:
+- **Puzzle de Recuerdos**: Features both traditional sliding and free-placement mechanics for custom images.
+- **Ahorcado**: A fully functional Hangman variant with a QWERTY-style animated keyboard.
+- **Palabritas de Amor**: A daily Wordle clone featuring romantic vocabulary.
+- **Triqui**: A classic Tic-Tac-Toe implementation with win-state detection algorithms.
+- **Longdog**: A grid-based puzzle requiring complete space coverage through swipe and keyboard controls.
 
-### Core
-- **Next.js 14 (App Router):** Framework principal para renderizado híbrido (SSR/CSR) y enrutamiento.
-- **React 18:** Biblioteca de UI para construcción de componentes.
-- **TypeScript:** Superset de JavaScript para tipado estático y robustez del código.
+### 4. Real-time Progress Tracking
+- Implements Supabase Realtime functionality combined with external serverless functions (Google Apps Script).
+- Automatically synchronizes external Google Sheets data updates to the PostgreSQL database, projecting them into the application via WebSocket subscriptions.
 
-### Estilos y Animación
-- **Tailwind CSS:** Framework de utilidad para diseño responsivo y sistema de diseño unificado.
-- **Framer Motion:** Biblioteca de animaciones de producción para gestos y transiciones complejas.
-- **CSS Modules:** Para estilos encapsulados específicos cuando es necesario.
+### 5. Shared Goals System
+- A robust "Dreams/Plans" CRUD component that utilizes persistent local storage layers to orchestrate shared objectives securely.
 
-### Backend y Datos
-- **Supabase:** Base de datos PostgreSQL como servicio para almacenamiento de contenido dinámico (Frases del Día).
-- **Next.js API Routes:** Endpoints serverless para lógica de negocio backend.
+### 6. Time-Locked Content
+- Advanced chronological gates utilizing standard UNIX timestamp comparisons for surprise content reveals, engineered for both client-side and potential server-side execution.
 
-## 4. Requisitos Previos
+## Installation & Local Development environment
 
-Antes de comenzar, asegúrese de tener instalado en su entorno:
+### Prerequisites
+- Node.js (v18.0 or higher recommended)
+- npm, yarn, pnpm or bun package managers
+- Supabase account with active project instance
 
-- **Node.js:** Versión 18.17.0 o superior.
-- **npm:** Gestor de paquetes (generalmente incluido con Node.js).
-- **Git:** Para control de versiones.
-- **Cuenta en Supabase:** Para la configuración de la base de datos (opcional si se usa solo frontend estático).
+### Environment Variable Configuration
+To execute the application locally, you must provide a properly configured `.env.local` file at the root directory:
 
-## 5. Instalación
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+```
 
-Siga estos pasos para configurar el entorno de desarrollo local:
+### Setup Instructions
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/tu-usuario/novia-web.git
-   cd novia-web
-   ```
-
-2. **Instalar dependencias:**
+1. Clone the repository and navigate to the project root.
+2. Install dependencies:
    ```bash
    npm install
    ```
-
-3. **Configuración de Variables de Entorno:**
-   Cree un archivo `.env.local` en la raíz del proyecto basándose en `.env.example`:
+3. Initialize the local development server:
    ```bash
-   NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_key_anonima
+   npm run dev
    ```
+4. Access the application at `http://localhost:3000`.
 
-## 6. Uso y Ejecución
+## Database Schema Highlights
 
-### Desarrollo
-Para iniciar el servidor de desarrollo con Hot Module Replacement (HMR):
-```bash
-npm run dev
-```
-La aplicación estará disponible en `http://localhost:3000`.
+The backend relies on structured PostgreSQL tables:
+- `collage_recuerdos`: Stores metadata and references for uploaded media items.
+- `ahorro_progress`: Single-row configuration bound to Realtime updates for savings tracking.
 
-### Producción (Build Local)
-Para simular el entorno de producción:
-```bash
-npm run build
-npm start
-```
+Row Level Security (RLS) policies are configured directly in Supabase to secure data mutation operations.
 
-### Linting
-Para verificar la calidad del código:
-```bash
-npm run lint
-```
+## Deployment Strategy
 
-## 7. Estructura del Proyecto
-
-La arquitectura sigue las convenciones de Next.js App Router:
-
-```
-novia-web/
-├── app/                    # Rutas y lógica de la aplicación (App Router)
-│   ├── api/                # Endpoints de API (Serverless functions)
-│   ├── cartas/             # Páginas de contenido específico
-│   ├── momentos/           # Galería de momentos
-│   ├── globals.css         # Estilos globales
-│   ├── layout.tsx          # Layout raíz con providers
-│   └── page.tsx            # Landing page principal
-├── components/             # Componentes React reutilizables (Átomos/Moléculas)
-│   ├── ui/                 # Componentes base de UI
-│   ├── ConstellationBackground.tsx  # Lógica de renderizado de fondo
-│   └── Navbar.tsx          # Navegación principal
-├── lib/                    # Utilidades y configuración de clientes (Supabase)
-├── public/                 # Assets estáticos (imágenes, fuentes)
-├── types/                  # Definiciones de tipos TypeScript globales
-├── .env.local              # Variables de entorno (no versionado)
-├── next.config.js          # Configuración de Next.js
-├── tailwind.config.ts      # Configuración de sistema de diseño
-└── tsconfig.json           # Configuración de TypeScript
-```
-
-## 8. Funcionalidades Principales
-
-1. **Fondo de Constelaciones Interactivo:**
-   - Renderizado dinámico de estrellas y constelaciones.
-   - Algoritmo de estrellas fugaces con gestión de memoria optimizada.
-   - Solución a problemas de hidratación (Hydration Mismatch Fix).
-
-2. **Sistema de "Frase del Día":**
-   - Integración con Supabase para obtener contenido diario.
-   - **Fallback System:** Mecanismo de redundancia que garantiza contenido visible incluso ante fallos de conexión a base de datos.
-   - Lógica de selección basada en el día del año (doy) para rotación consistente.
-
-3. **Línea de Tiempo Inmersiva:**
-   - Componente de scroll con animaciones de entrada.
-   - Carga diferida (Lazy Loading) para optimización de LCP (Largest Contentful Paint).
-
-4. **Diseño Responsivo Avanzado:**
-   - Adaptación fluida desde móviles (Mobile-First) hasta pantallas 4K.
-   - Tipografía fluida y espaciado dinámico.
-
-## 9. Buenas Prácticas
-
-El proyecto implementa estándares de ingeniería de software:
-- **Componentización Atómica:** Separación clara de responsabilidades en componentes UI.
-- **Server vs Client Components:** Uso estratégico de `'use client'` solo donde es necesario para maximizar el rendimiento SSR.
-- **Optimización de Assets:** Uso de `next/image` y formatos modernos (WebP/AVIF).
-- **Manejo de Errores:** Implementación de fallbacks graciosos (Graceful Degradation) en llamadas a API.
-- **Type Safety:** Tipado estricto con TypeScript para prevenir errores en tiempo de ejecución.
-
-## 10. Despliegue
-
-El proyecto está optimizado para despliegue en plataformas Serverless como **Vercel**.
-
-1. Conectar repositorio de GitHub a Vercel.
-2. Configurar variables de entorno en el dashboard de Vercel.
-3. Despliegue automático con cada push a `main`.
-
-## 11. Licencia
-
-Este proyecto es software propietario y privado. Todos los derechos reservados.
+The project is optimized for deployment on Vercel. Continuous Integration/Continuous Deployment (CI/CD) pipelines inherently support Next.js App Router projects on Vercel, assuring that environment variables align with production environment secrets.
 
 ---
-**Desarrollado con ❤️ y ☕ por Santiago GM.**
-*Ingeniero de Software Fullstack*
+
+*Architected and maintained with precision.*

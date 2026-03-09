@@ -13,7 +13,6 @@ import { MOMENTS } from '@/constants'
 import DepthTimeline from '@/components/DepthTimeline'
 import HeartbeatLetter from '@/components/HeartbeatLetter'
 import SealedLetters from '@/components/SealedLetters'
-import HowISeeYou from '@/components/HowISeeYou'
 import AnniversarySection from '@/components/AnniversarySection'
 import { useAhorroProgress } from '@/hooks/useAhorroProgress'
 
@@ -223,7 +222,7 @@ export default function Home() {
 									Nos vamos a Europa
 								</h2>
 								<p className="text-base font-light" style={{ color: 'rgba(255,255,255,0.6)' }}>
-									Día a día construimos el camino hacia nuestro primer viaje juntos
+									Día a día construimos el camino hacia nuestro primer viaje a Europa y en avión
 								</p>
 							</div>
 
@@ -338,10 +337,6 @@ export default function Home() {
 					</div>
 				</section>
 
-				{/* ═══════════════════════════════════════════════════════════
-				    ASÍ TE VEO YO — Constelación Dinámica
-				═══════════════════════════════════════════════════════════ */}
-				<HowISeeYou />
 
 				{/* ═══════════════════════════════════════════════════════════
 				    CARTAS CERRADAS EN EL TIEMPO
