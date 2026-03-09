@@ -97,7 +97,7 @@ export default function CumpleaneraPage() {
 						<span className="text-white text-3xl sm:text-5xl font-normal">cachetona hermosa</span>
 					</h1>
 					<p className="text-white/60 text-lg sm:text-xl max-w-2xl mx-auto italic">
-						"Un día en el que el mundo se hizo más bonito porque tú llegaste a él"
+						&quot;Un día en el que el mundo se hizo más bonito porque tú llegaste a él&quot;
 					</p>
 				</motion.div>
 
