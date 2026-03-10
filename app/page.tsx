@@ -82,14 +82,7 @@ export default function Home() {
 					</motion.div>
 				</section>
 
-				{/* ═══════════════════════════════════════════════════════════
-				    FRASE DEL DÍA (CON ESTADO EMOCIONAL)
-				═══════════════════════════════════════════════════════════ */}
-				<section className="py-20 md:py-28 px-6 relative z-10">
-					<div className="max-w-3xl mx-auto">
-						<EmotionalDailyPhrase />
-					</div>
-				</section>
+
 				{/* ═══════════════════════════════════════════════════════════
 				    CONTADOR DE TIEMPO
 				═══════════════════════════════════════════════════════════ */}
@@ -332,6 +325,15 @@ export default function Home() {
 								</motion.div>
 							</Link>
 						</motion.div>
+					</div>
+				</section>
+
+				{/* ═══════════════════════════════════════════════════════════
+				    FRASE DEL DÍA (Sencilla, post-ahorros)
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-20 md:py-28 px-6 relative z-10">
+					<div className="max-w-4xl mx-auto">
+						<EmotionalDailyPhrase />
 					</div>
 				</section>
 

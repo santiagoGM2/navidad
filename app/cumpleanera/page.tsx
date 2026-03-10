@@ -1,79 +1,79 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import ConstellationBackground from '@/components/ConstellationBackground'
 import BackButton from '@/components/BackButton'
 import Image from 'next/image'
 
-// Countdown lock settings (Disabled for testing as requested by user)
-const LOCK_UNTIL = new Date('2026-03-16T00:00:00') // March 16th, change year to current/next as needed
-const ENABLE_LOCK = false // Set to true to enable the lockdown
-
 export default function CumpleaneraPage() {
-	const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-	const [isLocked, setIsLocked] = useState(ENABLE_LOCK)
+	const [pin, setPin] = useState('')
+	const [isAuthorized, setIsAuthorized] = useState(false)
+	const [error, setError] = useState(false)
 
-	useEffect(() => {
-		if (!ENABLE_LOCK) return
-
-		const updateCountdown = () => {
-			const now = new Date()
-			const difference = LOCK_UNTIL.getTime() - now.getTime()
-
-			if (difference <= 0) {
-				setIsLocked(false)
-			} else {
-				setTimeLeft({
-					days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-					hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-					minutes: Math.floor((difference / 1000 / 60) % 60),
-					seconds: Math.floor((difference / 1000) % 60)
-				})
-			}
+	const handleVerify = (e: React.FormEvent) => {
+		e.preventDefault()
+		if (pin === '3186') {
+			setIsAuthorized(true)
+			setError(false)
+		} else {
+			setError(true)
+			setPin('')
+			setTimeout(() => setError(false), 2000)
 		}
+	}
 
-		updateCountdown()
-		const timer = setInterval(updateCountdown, 1000)
-		return () => clearInterval(timer)
-	}, [])
-
-	if (isLocked) {
+	if (!isAuthorized) {
 		return (
 			<ConstellationBackground>
 				<BackButton label="Volver" />
-				<div className="min-h-screen flex flex-col items-center justify-center p-6 text-center space-y-10 relative z-10 w-full overflow-hidden">
+				<div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 w-full">
 					<motion.div
-						initial={{ opacity: 0, scale: 0.9 }}
+						initial={{ opacity: 0, scale: 0.95 }}
 						animate={{ opacity: 1, scale: 1 }}
-						className="relative"
+						className="max-w-md w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-10 md:p-12 text-center shadow-2xl"
 					>
-						<div className="absolute inset-0 bg-violet-500/20 blur-[100px] rounded-full" />
-						<div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto bg-gradient-to-tr from-violet-600 to-pink-500 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(139,92,246,0.5)] mb-8">
-							<svg className="w-12 h-12 sm:w-16 sm:h-16 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<div className="w-20 h-20 mx-auto bg-gradient-to-tr from-violet-600 to-pink-500 rounded-3xl flex items-center justify-center shadow-lg shadow-violet-500/20 mb-8 rotate-3">
+							<svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
 							</svg>
 						</div>
-						
-						<h1 className="font-display text-4xl sm:text-6xl text-white font-bold mb-4 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-							Sorpresa en Camino
-						</h1>
-						<p className="text-white/70 text-lg sm:text-xl max-w-md mx-auto leading-relaxed">
-							Un detalle especial aguarda. Esta sección se abrirá en el cumpleaños de mi cachetona hermosa.
-						</p>
 
-						<div className="grid grid-cols-4 gap-3 sm:gap-6 max-w-lg mx-auto mt-12">
-							{Object.entries(timeLeft).map(([label, value]) => (
-								<div key={label} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-lg flex flex-col items-center">
-									<span className="text-3xl sm:text-5xl font-mono font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-										{value.toString().padStart(2, '0')}
-									</span>
-									<span className="text-[10px] sm:text-xs text-white/50 uppercase tracking-widest mt-2">
-										{label === 'days' ? 'Días' : label === 'hours' ? 'Horas' : label === 'minutes' ? 'Min' : 'Seg'}
-									</span>
-								</div>
-							))}
-						</div>
+						<h1 className="font-display text-3xl font-bold text-white mb-3">Acceso Protegido</h1>
+						<p className="text-white/60 text-sm mb-8">Ingresa el código para ver esta sección especial.</p>
+
+						<form onSubmit={handleVerify} className="space-y-4">
+							<div className="relative">
+								<input
+									type="password"
+									value={pin}
+									onChange={(e) => setPin(e.target.value)}
+									placeholder="••••"
+									className={`w-full bg-white/5 border ${error ? 'border-rose-500/50' : 'border-white/10'} rounded-2xl px-6 py-4 text-center text-2xl tracking-[0.5em] text-white placeholder-white/20 outline-none focus:border-violet-500/50 transition-all font-mono`}
+									maxLength={4}
+									autoFocus
+								/>
+								<AnimatePresence>
+									{error && (
+										<motion.p
+											initial={{ opacity: 0, y: -10 }}
+											animate={{ opacity: 1, y: 0 }}
+											exit={{ opacity: 0 }}
+											className="text-rose-400 text-xs font-bold mt-3 uppercase tracking-widest"
+										>
+											Código incorrecto.
+										</motion.p>
+									)}
+								</AnimatePresence>
+							</div>
+
+							<button
+								type="submit"
+								className="w-full py-4 bg-gradient-to-r from-violet-600 to-pink-600 text-white font-bold rounded-2xl shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 transition-all active:scale-95"
+							>
+								VER SORPRESA
+							</button>
+						</form>
 					</motion.div>
 				</div>
 			</ConstellationBackground>
