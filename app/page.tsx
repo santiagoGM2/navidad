@@ -82,7 +82,14 @@ export default function Home() {
 					</motion.div>
 				</section>
 
-
+				{/* ═══════════════════════════════════════════════════════════
+				    FRASE DEL DÍA (CON ESTADO EMOCIONAL)
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-20 md:py-28 px-6 relative z-10">
+					<div className="max-w-3xl mx-auto">
+						<EmotionalDailyPhrase />
+					</div>
+				</section>
 				{/* ═══════════════════════════════════════════════════════════
 				    CONTADOR DE TIEMPO
 				═══════════════════════════════════════════════════════════ */}
@@ -329,11 +336,44 @@ export default function Home() {
 				</section>
 
 				{/* ═══════════════════════════════════════════════════════════
-				    FRASE DEL DÍA (CON ESTADO EMOCIONAL)
+				    SUEÑOS JUNTOS
 				═══════════════════════════════════════════════════════════ */}
-				<section className="py-28 md:py-36 px-6 relative z-10">
-					<div className="max-w-3xl mx-auto">
-						<EmotionalDailyPhrase />
+				<section className="py-20 md:py-28 px-6 relative z-10">
+					<div className="max-w-4xl mx-auto">
+						<motion.div
+							initial={{ opacity: 0, y: 24 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.7 }}
+							viewport={{ once: true }}
+						>
+							<Link href="/planes" onClick={() => pathname && saveScrollPosition(pathname)}>
+								<motion.div
+									whileHover={{ scale: 1.015, y: -2 }}
+									whileTap={{ scale: 0.99 }}
+									className="relative overflow-hidden rounded-3xl cursor-pointer"
+									style={{
+										background: 'linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(6,78,59,0.4) 50%, rgba(16,185,129,0.08) 100%)',
+										border: '1px solid rgba(16,185,129,0.35)',
+										boxShadow: '0 0 60px rgba(16,185,129,0.12), inset 0 1px 0 rgba(255,255,255,0.07)',
+									}}
+								>
+									<div className="p-8 md:p-12 text-center group">
+										<p className="text-xs uppercase tracking-[0.3em] font-semibold mb-3" style={{ color: '#34D399' }}>
+											Planes a Futuro
+										</p>
+										<h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-6" style={{ textShadow: '0 0 40px rgba(16,185,129,0.4)' }}>
+											Sueños Juntos
+										</h2>
+										<p className="text-lg font-light mx-auto max-w-xl mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
+											Una lista compartida de lugares por visitar, metas por cumplir y mil aventuras que nos esperan.
+										</p>
+										<span className="inline-flex items-center gap-3 py-3.5 px-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-semibold shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-all duration-300">
+											Ver nuestros sueños →
+										</span>
+									</div>
+								</motion.div>
+							</Link>
+						</motion.div>
 					</div>
 				</section>
 
@@ -393,6 +433,48 @@ export default function Home() {
 										</span>
 									</div>
 								</div>
+							</Link>
+						</motion.div>
+					</div>
+				</section>
+
+				{/* ═══════════════════════════════════════════════════════════
+				    CUMPLEAÑOS
+				═══════════════════════════════════════════════════════════ */}
+				<section className="py-20 px-6 relative z-10">
+					<div className="max-w-4xl mx-auto">
+						<motion.div
+							initial={{ opacity: 0, y: 24 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.7 }}
+							viewport={{ once: true }}
+						>
+							<Link href="/cumpleanera" onClick={() => pathname && saveScrollPosition(pathname)}>
+								<motion.div
+									whileHover={{ scale: 1.015, y: -2 }}
+									whileTap={{ scale: 0.99 }}
+									className="relative overflow-hidden rounded-3xl cursor-pointer"
+									style={{
+										background: 'linear-gradient(135deg, rgba(244,114,182,0.15) 0%, rgba(131,24,67,0.4) 50%, rgba(244,114,182,0.08) 100%)',
+										border: '1px solid rgba(244,114,182,0.35)',
+										boxShadow: '0 0 60px rgba(244,114,182,0.12), inset 0 1px 0 rgba(255,255,255,0.07)',
+									}}
+								>
+									<div className="p-8 md:p-12 text-center group">
+										<p className="text-xs uppercase tracking-[0.3em] font-semibold mb-3" style={{ color: '#F472B6' }}>
+											Fechas Especiales
+										</p>
+										<h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-6" style={{ textShadow: '0 0 40px rgba(244,114,182,0.4)' }}>
+											Cumpleaños
+										</h2>
+										<p className="text-lg font-light mx-auto max-w-xl mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
+											Un rincón mágico para celebrar el día en que el mundo se hizo más bonito.
+										</p>
+										<span className="inline-flex items-center gap-3 py-3.5 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 text-white font-semibold shadow-lg shadow-pink-500/20 group-hover:shadow-pink-500/40 transition-all duration-300">
+											Ir a celebrar →
+										</span>
+									</div>
+								</motion.div>
 							</Link>
 						</motion.div>
 					</div>

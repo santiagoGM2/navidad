@@ -4,16 +4,16 @@ import { getDailyMemoriesStats } from '@/lib/admin-db'
 
 export default async function DashboardPage() {
 	const session = getSessionFromCookie()
-	const stats = await getDailyMemoriesStats()
+	const stats = await getDailyMemoriesStats(session?.username ?? '')
 
 	return (
 		<div className="space-y-8">
-			<div>
-				<h1 className="font-display text-2xl md:text-3xl font-bold text-white mb-1">
+			<div className="mb-6">
+				<h1 className="font-display text-3xl font-bold text-white mb-2 tracking-wide">
 					Panel de Administración
 				</h1>
-				<p className="text-white/70 text-sm md:text-base">
-					Hola, {session?.username}. Desde aquí podés gestionar los recuerdos del Collage.
+				<p className="text-white/70 text-lg flex items-center gap-2">
+					Usuario: <span className="text-white font-medium capitalize bg-white/10 px-3 py-1 rounded-full">{session?.username}</span>
 				</p>
 			</div>
 
@@ -37,20 +37,10 @@ export default async function DashboardPage() {
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<ActionCard
-					href="/admin/subir-foto"
-					title="Subir Recuerdo"
-					description="Subí una foto o video. Se publica directamente en el Collage público."
-					highlight
-				/>
-				<ActionCard
-					href="/collage"
-					title="Ver Collage"
-					description="Mirá todos los recuerdos publicados. Desde ahí podés eliminar si es necesario."
-				/>
-				<ActionCard
 					href="/admin/recuerdos"
 					title="Historial de recuerdos"
 					description="Ver todas las fotos subidas por fecha."
+					highlight
 				/>
 				<ActionCard
 					href="/admin/recap"

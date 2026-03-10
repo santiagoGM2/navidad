@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import { getSessionFromCookie } from '@/lib/auth-server'
-import AdminNav from '@/components/admin/AdminNav'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +14,8 @@ export default function PanelLayout({
 	}
 
 	return (
-		<>
-			<AdminNav username={session.username} />
-			<main className="relative z-10 pt-6 pb-16 px-4 md:px-6 max-w-5xl mx-auto">
-				{children}
-			</main>
-		</>
+		<main className="relative z-10 pt-6 pb-16 px-4 md:px-6 max-w-5xl mx-auto">
+			{children}
+		</main>
 	)
 }

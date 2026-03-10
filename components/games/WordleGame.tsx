@@ -32,17 +32,43 @@ export default function WordleGame() {
 	const [guesses, setGuesses] = useState<string[]>([])
 	const [currentGuess, setCurrentGuess] = useState('')
 	const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing')
+	const [isChecking, setIsChecking] = useState(false)
+	const [invalidAttempt, setInvalidAttempt] = useState(false)
 
 	useEffect(() => {
 		// Selecciona palabra diaria en el cliente
 		setSecretWord(getDailyWord())
 	}, [])
 
-	const onKeyPress = useCallback((key: string) => {
-		if (gameStatus !== 'playing') return
+	const validateWord = async (word: string) => {
+		try {
+			const res = await fetch(`https://es.wiktionary.org/w/api.php?action=query&titles=${word.toLowerCase()}&format=json&origin=*`)
+			const data = await res.json()
+			const pages = data.query.pages
+			const isMissing = '-1' in pages && pages['-1'].missing !== undefined
+			return !isMissing
+		} catch (error) {
+			// Si falla la red, aceptamos la palabra para no bloquear el juego
+			return true
+		}
+	}
+
+	const onKeyPress = useCallback(async (key: string) => {
+		if (gameStatus !== 'playing' || isChecking) return
 
 		if (key === 'ENTER') {
 			if (currentGuess.length === secretWord.length) {
+				setIsChecking(true)
+				const isValid = await validateWord(currentGuess)
+				setIsChecking(false)
+
+				if (!isValid) {
+					setInvalidAttempt(true)
+					triggerVibration(50)
+					setTimeout(() => setInvalidAttempt(false), 500)
+					return
+				}
+
 				const newGuesses = [...guesses, currentGuess]
 				setGuesses(newGuesses)
 				setCurrentGuess('')
@@ -56,12 +82,14 @@ export default function WordleGame() {
 			}
 		} else if (key === '⌫') {
 			setCurrentGuess(prev => prev.slice(0, -1))
+			setInvalidAttempt(false)
 		} else {
 			if (currentGuess.length < secretWord.length) {
 				setCurrentGuess(prev => prev + key)
+				setInvalidAttempt(false)
 			}
 		}
-	}, [currentGuess, gameStatus, guesses, secretWord])
+	}, [currentGuess, gameStatus, guesses, secretWord, isChecking])
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -100,7 +128,7 @@ export default function WordleGame() {
 	return (
 		<div className="w-full max-w-sm mx-auto select-none space-y-6">
 			<h2 className="font-display text-2xl text-white text-center font-bold" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)', letterSpacing: '2px' }}>
-				PALABRITAS DE AMOR
+				PALABRAS
 			</h2>
 			<p className="text-white/60 text-center text-sm mb-4">Adivina la palabra del día (1 por día)</p>
 
@@ -122,8 +150,8 @@ export default function WordleGame() {
 									<motion.div
 										key={colIndex}
 										initial={guess ? { rotateX: 90 } : {}}
-										animate={guess ? { rotateX: 0 } : {}}
-										transition={{ duration: 0.5, delay: colIndex * 0.1 }}
+										animate={guess ? { rotateX: 0, x: isCurrent && invalidAttempt ? [-5, 5, -5, 5, 0] : 0 } : { x: isCurrent && invalidAttempt ? [-5, 5, -5, 5, 0] : 0 }}
+										transition={{ duration: isCurrent && invalidAttempt ? 0.3 : 0.5, delay: isCurrent && invalidAttempt ? 0 : colIndex * 0.1 }}
 										className={`w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center font-bold text-xl sm:text-2xl rounded-xl transition-colors
 											${status === 'correct' ? 'bg-emerald-500 border-emerald-400 text-white shadow-[0_0_15px_rgba(16,185,129,0.5)]' :
 												status === 'present' ? 'bg-amber-500 border-amber-400 text-white shadow-[0_0_15px_rgba(245,158,11,0.5)]' :
@@ -139,6 +167,31 @@ export default function WordleGame() {
 						</div>
 					)
 				})}
+			</div>
+			
+			<div className="h-6 flex justify-center -mt-4 mb-2">
+				<AnimatePresence>
+					{invalidAttempt && (
+						<motion.p
+							initial={{ opacity: 0, y: -5 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -5 }}
+							className="text-amber-400 text-sm font-bold bg-black/40 px-3 py-1 rounded-full"
+						>
+							Palabra no válida
+						</motion.p>
+					)}
+					{isChecking && !invalidAttempt && (
+						<motion.p
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							className="text-white/50 text-xs font-bold bg-black/40 px-3 py-1 rounded-full"
+						>
+							Comprobando...
+						</motion.p>
+					)}
+				</AnimatePresence>
 			</div>
 
 			<AnimatePresence>

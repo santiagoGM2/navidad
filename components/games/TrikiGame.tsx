@@ -61,7 +61,6 @@ export default function TrikiGame() {
 				<h2 className="font-display text-4xl text-white font-bold tracking-wider" style={{ textShadow: '0 2px 15px rgba(139,92,246,0.5)' }}>
 					Triqui
 				</h2>
-				<p className="text-white/60 text-sm">El clásico, juega con tu persona favorita.</p>
 			</div>
 
 			<div className="flex justify-between items-center mb-4 px-4">
@@ -77,7 +76,7 @@ export default function TrikiGame() {
 			</div>
 
 			<div className="relative aspect-square max-w-[300px] mx-auto bg-white/5 rounded-2xl p-3 border border-white/10 shadow-[0_0_30px_rgba(139,92,246,0.1)]">
-				<div className="grid grid-cols-3 gap-2 h-full w-full">
+				<div className="grid grid-cols-3 grid-rows-3 gap-2 h-full w-full">
 					{board.map((cell, idx) => {
 						const isWinningCell = winningLine.includes(idx)
 						return (

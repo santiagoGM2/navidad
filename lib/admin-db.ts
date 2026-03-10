@@ -14,7 +14,7 @@ export interface DailyMemoryRow {
 	descripcion: string | null
 }
 
-export async function getDailyMemoriesStats(): Promise<{
+export async function getDailyMemoriesStats(username: string): Promise<{
 	totalPhotos: number
 	activeDays: number
 	photosThisYear: number
@@ -25,28 +25,32 @@ export async function getDailyMemoriesStats(): Promise<{
 	}
 	try {
 		const year = new Date().getFullYear()
-		const startTime = `${year}-01-01T00:00:00Z`
-
-		const { count: totalPhotos } = await client
-			.from('collage_recuerdos')
-			.select('*', { count: 'exact', head: true })
-
-		const { count: photosThisYear } = await client
-			.from('collage_recuerdos')
-			.select('*', { count: 'exact', head: true })
-			.gte('fecha_subida', startTime)
 
 		const { data: rows } = await client
 			.from('collage_recuerdos')
 			.select('fecha_subida')
-			.limit(5000)
+			.ilike('usuario_subio', username)
 
-		const uniqueDays = new Set((rows ?? []).map((r) => String(r.fecha_subida).slice(0, 10))).size
+		if (!rows) {
+			return { totalPhotos: 0, activeDays: 0, photosThisYear: 0 }
+		}
+
+		const totalPhotos = rows.length
+		let photosThisYear = 0
+		const uniqueDays = new Set<string>()
+
+		for (const r of rows) {
+			const dateStr = String(r.fecha_subida)
+			uniqueDays.add(dateStr.slice(0, 10))
+			if (dateStr.startsWith(year.toString())) {
+				photosThisYear++
+			}
+		}
 
 		return {
-			totalPhotos: totalPhotos ?? 0,
-			activeDays: uniqueDays,
-			photosThisYear: photosThisYear ?? 0,
+			totalPhotos,
+			activeDays: uniqueDays.size,
+			photosThisYear,
 		}
 	} catch (err) {
 		console.error('Error getting stats:', err)

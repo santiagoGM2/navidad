@@ -141,6 +141,7 @@ export default function CaptureMemoryButton({ onRecuerdoSubido }: CaptureMemoryB
 		<>
 			{/* Floating upload button */}
 			<motion.button
+				id="btn-collage"
 				initial={{ scale: 0, opacity: 0 }}
 				animate={{ scale: 1, opacity: 1 }}
 				transition={{ delay: 0.5, type: 'spring' }}
