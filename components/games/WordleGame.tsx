@@ -202,12 +202,12 @@ export default function WordleGame() {
 						className="text-center p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20"
 					>
 						<p className="text-2xl font-bold mb-2 text-white">
-							{gameStatus === 'won' ? '¡Eres increíble!' : '¡Oops!'}
+							{gameStatus === 'won' ? '¡Eres increíble!' : 'Fallaste :('}
 						</p>
 						<p className="text-white/80">
 							La palabra era: <span className="font-bold text-violet-300">{secretWord}</span>
 						</p>
-						<p className="text-white/50 text-sm mt-4">Vuelve mañana para otra palabra especial.</p>
+						<p className="text-white/50 text-sm mt-4">Vuelve mañana para otra palabra.</p>
 					</motion.div>
 				)}
 			</AnimatePresence>

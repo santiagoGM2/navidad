@@ -224,9 +224,13 @@ export default function PuzzleDeRecuerdos() {
 							initial={{ scale: 0 }}
 							animate={{ scale: [0, 1.2, 1] }}
 							transition={{ duration: 0.6, times: [0, 0.6, 1] }}
-							className="text-6xl"
+							className="flex justify-center"
 						>
-							🎉
+							<div className="w-16 h-16 text-emerald-400">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+								</svg>
+							</div>
 						</motion.div>
 						<div className="p-8 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-400/30">
 							<p className="text-emerald-300 font-bold text-lg mb-3">¡Armamos este recuerdo!</p>
@@ -246,7 +250,7 @@ export default function PuzzleDeRecuerdos() {
 					</motion.div>
 				) : ready ? (
 					<motion.div
-						key="puzzle"
+						key={`puzzle-${mode}`}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						className="space-y-6"

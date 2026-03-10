@@ -75,7 +75,7 @@ export default function EmotionalDailyPhrase() {
 					</p>
 				) : (
 					<div className="max-w-2xl mx-auto">
-						<div className="flex justify-center mb-8">
+						<div className="flex justify-center mb-6">
 							<motion.div
 								animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.1, 1] }}
 								transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
@@ -87,16 +87,26 @@ export default function EmotionalDailyPhrase() {
 							</motion.div>
 						</div>
 
+						<p
+							className="text-xs uppercase tracking-widest mb-4"
+							style={{
+								color: 'rgba(251, 191, 36, 0.9)',
+								textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+							}}
+						>
+							Frase del día
+						</p>
+
 						<AnimatePresence mode="wait">
 							<motion.p
 								key={phrase.id}
 								initial={{ opacity: 0, scale: 0.98 }}
 								animate={{ opacity: 1, scale: 1 }}
 								transition={{ duration: 1 }}
-								className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-tight text-white font-medium"
+								className="font-display text-2xl md:text-3xl lg:text-4xl italic leading-tight text-white font-medium mb-2"
 								style={{
 									textShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-									letterSpacing: '-0.02em'
+									letterSpacing: '-0.01em'
 								}}
 							>
 								&ldquo;{phrase.text}&rdquo;
