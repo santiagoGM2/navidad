@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 
 // ─── SVG Icons ───────────────────────────────────────────────────────────────
 const IconGift = () => (
@@ -48,9 +49,9 @@ const IconSparkle = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 2
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 const PRANK_PRIZES = [
-	{ id: 1, text: 'Sigue intentando', sub: 'Mejor suerte la proxima vez', icon: <IconWarning /> },
-	{ id: 2, text: 'Un fuerte abrazo', sub: 'Algo de amor igual', icon: <IconHug /> },
-	{ id: 3, text: 'Mordida de cachete', sub: 'jamas falla ;)', icon: <IconSmile /> },
+	{ id: 1, text: 'Te ganaste seguir intentando', sub: 'Mejor suerte la proxima vez', icon: <IconWarning /> },
+	{ id: 2, text: 'Te ganaste un abrazo muy fuerte', sub: 'Algo de amor igual', icon: <IconHug /> },
+	{ id: 3, text: 'Te ganaste una mordida de cachete', sub: 'jamas falla ;)', icon: <IconSmile /> },
 ]
 
 const REAL_PRIZES_1 = [
@@ -71,7 +72,7 @@ const COUPONS: Coupon[] = [
 	{ id: 1, title: 'Cita Misteriosa', desc: 'Tu eliges fecha, yo planeo todo', icon: <IconSearch />, terms: 'Valido 1 vez. Debe canjearse con amor. El plan es secreto y sorpresa.' },
 	{ id: 2, title: 'Picnic Romantico', desc: 'Manta, snacks y tu', icon: <IconStar />, terms: 'Incluye tus snacks favoritos. No reembolsable por lluvia leve.' },
 	{ id: 3, title: 'Desayuno Sorpresa', desc: 'A la cama, con mucho amor', icon: <IconSun />, terms: 'Yo lo preparo. Sin cargos extra por arreglarte el cabello.' },
-	{ id: 4, title: 'Karaoke Privado', desc: 'Cantamos hasta el amanecer', icon: <IconMusic />, terms: 'Sin jueces. Sin vergüenza. Solo nosotros dos.' },
+	{ id: 4, title: 'Karaoke Privado', desc: 'Te canto hasta que te canses de escucharme', icon: <IconMusic />, terms: 'Sin jueces. Sin vergüenza. Solo nosotros dos.' },
 	{ id: 5, title: 'Te Consiento Hoy', desc: 'Yo cocino, planeo y mimo', icon: <IconHeart className="w-8 h-8 text-pink-600" />, terms: 'Valido 1 dia completo. Incluye masajes bajo previa solicitud.' },
 	{ id: 6, title: 'Cita Elegante', desc: 'Nos vestimos fancy a cenar', icon: <IconDine />, terms: 'Tu escoges restaurante. Yo pago y te digo que eres hermosa toda la noche.' },
 	{ id: 7, title: 'Show Privado', desc: 'De tu striper personal', icon: <IconSparkle />, terms: 'Solo para TeFy. No transferible. Altamente confidencial.' },
@@ -119,13 +120,13 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
 				{/* Back */}
 				<div
 					style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)', position: 'absolute', inset: 0 }}
-					className="bg-white rounded-2xl border-2 border-pink-100 shadow-xl flex flex-col items-center justify-center p-3 text-center overflow-hidden"
+					className="bg-white rounded-2xl border-2 border-pink-100 shadow-xl flex flex-col items-center justify-center p-2 sm:p-3 text-center overflow-hidden"
 				>
 					<div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-900" />
 					<div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-900" />
-					<p className="text-[9px] font-bold uppercase tracking-widest text-pink-400 mb-1">Términos</p>
-					<p className="text-[10px] text-slate-600 italic leading-snug px-1">{coupon.terms}</p>
-					<div className="mt-2 bg-pink-50 border border-pink-200 text-pink-500 rounded-full px-2 py-0.5 text-[9px] font-mono">
+					<p className="text-[7px] sm:text-[9px] font-bold uppercase tracking-widest text-pink-400 mb-0.5 sm:mb-1">Términos</p>
+					<p className="text-[7.5px] sm:text-[10px] text-slate-600 italic leading-tight sm:leading-snug px-1.5">{coupon.terms}</p>
+					<div className="mt-1.5 sm:mt-2 bg-pink-50 border border-pink-200 text-pink-500 rounded-full px-1.5 sm:px-2 py-0.5 text-[6.5px] sm:text-[9px] font-mono">
 						CUMPLE-{coupon.id.toString().padStart(3, '0')} · Solo TeFy
 					</div>
 				</div>
@@ -552,7 +553,10 @@ export default function BirthdayFlow() {
 										<IconCheck />
 										Cupones guardados en tu cuenta
 									</div>
-									<p className="text-white/30 text-xs">Puedes revisarlos en el panel de administracion</p>
+									<p className="text-white/30 text-xs text-center mb-6">Puedes revisarlos en el panel de administracion</p>
+									<Link href="/cumpleanera/carta" className="w-full py-4 rounded-xl bg-white text-pink-600 font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform hover:scale-105 text-lg">
+										Continuar a mi carta
+									</Link>
 								</motion.div>
 							)}
 						</motion.div>
