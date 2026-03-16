@@ -259,7 +259,7 @@ export default function BirthdayFlow() {
 									<path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.485l-8.828-8.829a4 4 0 010-5.656z" clipRule="evenodd" />
 								</svg>
 								<h2 className="font-display text-3xl font-bold text-white mb-6">Guardar Regalos</h2>
-								<p className="text-white/70 mb-8">Todos estos cupones se asociarán a tu cuenta 'TeFy' para toda la vida.</p>
+								<p className="text-white/70 mb-8">Todos estos cupones se asociarán a tu cuenta &apos;TeFy&apos; para toda la vida.</p>
 								<button 
 									onClick={handleSave} 
 									disabled={isSaving}
