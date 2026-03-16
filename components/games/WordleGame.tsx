@@ -101,19 +101,41 @@ export default function WordleGame() {
 		return () => window.removeEventListener('keydown', handleKeyDown)
 	}, [onKeyPress])
 
-	const getLetterStatus = (letter: string, index: number, guess: string): LetterStatus => {
-		if (!secretWord) return 'empty'
-		if (secretWord[index] === letter) return 'correct'
-		if (secretWord.includes(letter)) return 'present'
-		return 'absent'
+	const getWordStatuses = (guess: string, secret: string): LetterStatus[] => {
+		if (!secret) return Array(guess.length).fill('empty')
+		const statuses: LetterStatus[] = Array(guess.length).fill('absent')
+		const secretLetterCounts: Record<string, number> = {}
+		
+		for (const char of secret) {
+			secretLetterCounts[char] = (secretLetterCounts[char] || 0) + 1
+		}
+
+		// First pass: find exact matches
+		for (let i = 0; i < guess.length; i++) {
+			if (guess[i] === secret[i]) {
+				statuses[i] = 'correct'
+				secretLetterCounts[guess[i]]--
+			}
+		}
+
+		// Second pass: find partial matches
+		for (let i = 0; i < guess.length; i++) {
+			if (statuses[i] !== 'correct' && secretLetterCounts[guess[i]] > 0) {
+				statuses[i] = 'present'
+				secretLetterCounts[guess[i]]--
+			}
+		}
+
+		return statuses
 	}
 
 	const getKeyStatus = (key: string): LetterStatus => {
 		let status: LetterStatus = 'empty'
 		guesses.forEach(guess => {
+			const statuses = getWordStatuses(guess, secretWord)
 			for (let i = 0; i < guess.length; i++) {
 				if (guess[i] === key) {
-					const s = getLetterStatus(key, i, guess)
+					const s = statuses[i]
 					if (s === 'correct') status = 'correct'
 					if (s === 'present' && status !== 'correct') status = 'present'
 					if (s === 'absent' && status === 'empty') status = 'absent'
@@ -143,7 +165,8 @@ export default function WordleGame() {
 							{wordToRender.split('').map((letter, colIndex) => {
 								let status: LetterStatus = 'empty'
 								if (guess) {
-									status = getLetterStatus(letter, colIndex, guess)
+									const statuses = getWordStatuses(guess, secretWord)
+									status = statuses[colIndex]
 								}
 
 								return (
@@ -222,8 +245,8 @@ export default function WordleGame() {
 									<button
 										key={key}
 										onClick={() => onKeyPress(key)}
-										className={`h-12 flex items-center justify-center rounded-lg font-bold transition-all sm:text-sm text-xs
-											${key === 'ENTER' || key === '⌫' ? 'px-3 sm:px-4 text-xs' : 'flex-1 max-w-[40px]'}
+										className={`h-[55px] flex items-center justify-center rounded-lg font-bold transition-all sm:text-base text-sm
+											${key === 'ENTER' || key === '⌫' ? 'px-3 sm:px-4 text-xs' : 'flex-1 max-w-[46px]'}
 											${status === 'correct' ? 'bg-emerald-500 text-white shadow-md' :
 												status === 'present' ? 'bg-amber-500 text-white shadow-md' :
 													status === 'absent' ? 'bg-white/5 text-white/30' :

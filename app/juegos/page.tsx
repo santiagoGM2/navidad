@@ -89,26 +89,27 @@ export default function JuegosPage() {
 	return (
 		<ConstellationBackground>
 			<div className="min-h-screen py-12 px-6 relative z-10">
-				<BackButton label="Volver" />
+				{selectedGame !== 'wordle' && <BackButton label="Volver" />}
 
 				<div className="max-w-4xl mx-auto">
-					{/* Header */}
-					<motion.div
-						className="flex items-center justify-between gap-4 mb-12 pt-4"
-						initial={{ opacity: 0, y: -10 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.5 }}
-					>
-						{selectedGame && (
-							<button
-								type="button"
-								onClick={() => setSelectedGame(null)}
-								className="text-white/90 hover:text-white font-medium transition-colors ml-auto"
-							>
-								← Volver a juegos
-							</button>
-						)}
-					</motion.div>
+					{selectedGame !== 'wordle' && (
+						<motion.div
+							className="flex items-center justify-between gap-4 mb-12 pt-4"
+							initial={{ opacity: 0, y: -10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+						>
+							{selectedGame && (
+								<button
+									type="button"
+									onClick={() => setSelectedGame(null)}
+									className="text-white/90 hover:text-white font-medium transition-colors ml-auto"
+								>
+									← Volver a juegos
+								</button>
+							)}
+						</motion.div>
+					)}
 
 					<AnimatePresence mode="wait">
 						{selectedGame === null ? (
