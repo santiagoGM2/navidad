@@ -45,9 +45,6 @@ const IconSun = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" s
 const IconMusic = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
 const IconDine = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" /></svg>
 const IconSparkle = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
-const IconTrophy = () => <svg className="w-10 h-10 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3h14l3 5-10 13L2 8l3-5z M2 8h20" /></svg>
-const IconDiamond = () => <svg className="w-10 h-10 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3h14l3 5-10 13L2 8l3-5z M2 8h20M8.5 3L5 8M15.5 3L19 8" /></svg>
-const IconPlane2 = () => <svg className="w-10 h-10 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 const PRANK_PRIZES = [
@@ -57,23 +54,9 @@ const PRANK_PRIZES = [
 ]
 
 const REAL_PRIZES_1 = [
-	{ id: 4, text: 'Mini Cooper', sub: 'Con tu nombre en la placa!', img: '/images/prize-minicooper.png' },
-	{ id: 5, text: 'Viaje a Japon', sub: 'Cerezos, sushi y todo el pack', img: '/images/prize-japan.jpg' },
-	{ id: 6, text: 'Isla Privada', sub: 'Tu y yo solos en el mar', img: '/images/prize-island.jpg' },
-]
-
-const PRANK_PRIZES_2 = [
-	{ id: 1, text: 'Nada, era trampa', sub: 'Jaja lo siento', icon: <IconWarning /> },
-	{ id: 2, text: 'Mis disculpas', sub: 'Muy sinceras', icon: <IconSmile /> },
-	{ id: 3, text: 'Un besito robado', sub: 'Inmediatamente', icon: <IconHug /> },
-	{ id: 4, text: 'Mordida de oreja', sub: 'Del lado izquierdo', icon: <IconHug /> },
-	{ id: 5, text: 'Cosquillas gratis', sub: 'Sin limite de tiempo', icon: <IconSmile /> },
-]
-
-const REAL_PRIZES_2 = [
-	{ id: 10, text: 'Anillo de Diamantes', sub: 'Por que no lo elegiste??', icon: <IconDiamond /> },
-	{ id: 11, text: 'Viaje a Paris', sub: 'La Ciudad del Amor, sin ti', icon: <IconPlane2 /> },
-	{ id: 12, text: 'Penthouse Propio', sub: 'Solo pa ti, lamentablemente no lo querías', icon: <IconTrophy /> },
+	{ id: 4, text: 'Te perdiste de un Mini Cooper', sub: 'Con tu nombre en la placa!', img: '/images/prize-island.jpg' },
+	{ id: 5, text: 'Te perdiste de un viaje a Japon', sub: 'Cerezos, sushi y todo el pack', img: '/images/prize-minicooper.png' },
+	{ id: 6, text: 'Te perdiste de una isla privada propia', sub: 'Tu y yo solos en el mar', img: '/images/prize-japan.jpg' },
 ]
 
 interface Coupon {
@@ -95,8 +78,14 @@ const COUPONS: Coupon[] = [
 	{ id: 8, title: 'Mordida de Nalga', desc: 'Permiso oficialmente concedido', icon: <IconHeart className="w-8 h-8 text-rose-600" />, terms: 'Un solo uso. Por amor. Sin previo aviso. No hay marcha atras.' },
 ]
 
+const REAL_PRIZES_2 = [
+	{ id: 10, text: 'Te perdiste de un anillo de diamantes', sub: 'Para toda la vida', img: '/images/prize-ring.png' },
+	{ id: 11, text: 'Te perdiste de un viaje a Paris', sub: 'La Ciudad del Amor', img: '/images/prize-paris.jpg' },
+	{ id: 12, text: 'Te perdiste de un penthouse propio', sub: 'Solo pa ti', img: '/images/prize-penthouse.png' },
+]
+
 const RIBBON_COLORS6 = ['bg-violet-400', 'bg-pink-400', 'bg-amber-400', 'bg-teal-400', 'bg-rose-400', 'bg-indigo-400']
-const RIBBON_COLORS8 = ['bg-violet-400', 'bg-pink-400', 'bg-amber-400', 'bg-teal-400', 'bg-rose-400', 'bg-indigo-400', 'bg-cyan-400', 'bg-fuchsia-400']
+const RIBBON_COLORS11 = ['bg-violet-400', 'bg-pink-400', 'bg-amber-400', 'bg-emerald-400', 'bg-teal-400', 'bg-rose-400', 'bg-indigo-400', 'bg-cyan-400', 'bg-fuchsia-400', 'bg-yellow-400', 'bg-lime-400']
 
 // ─── Coupon Card ─────────────────────────────────────────────────────────────
 function CouponCard({ coupon }: { coupon: Coupon }) {
@@ -126,7 +115,6 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
 						<h3 className="font-display font-bold text-pink-900 text-xs leading-tight">{coupon.title}</h3>
 						<p className="text-[10px] text-pink-700/70 mt-0.5 leading-tight">{coupon.desc}</p>
 					</div>
-					<p className="absolute bottom-1.5 text-pink-400/60 text-[9px] tracking-widest uppercase">Toca para ver términos</p>
 				</div>
 				{/* Back */}
 				<div
@@ -149,7 +137,7 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
 // ─── Gift Box ─────────────────────────────────────────────────────────────────
 interface PrankItem { id: number; text: string; sub: string; icon: React.ReactNode }
 interface RealItem1 { id: number; text: string; sub: string; img: string }
-interface RealItem2 { id: number; text: string; sub: string; icon: React.ReactNode }
+interface RealItem2 { id: number; text: string; sub: string; img: string }
 
 function GiftBox1({ onClick, isSelected, revealed, selIdx, unselIdx, ribbonColor }: {
 	onClick: () => void; isSelected: boolean; revealed: boolean
@@ -193,9 +181,8 @@ function GiftBox1({ onClick, isSelected, revealed, selIdx, unselIdx, ribbonColor
 			{realItem && (
 				<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="absolute inset-0">
 					<img src={realItem.img} alt={realItem.text} className="w-full h-full object-cover" />
-					<div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent flex flex-col justify-end p-2">
-						<p className="text-white font-bold text-[10px] leading-tight">{realItem.text}</p>
-						<p className="text-violet-200 text-[9px] leading-tight">{realItem.sub}</p>
+					<div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent flex flex-col justify-end p-2 text-center pb-3">
+						<p className="text-white font-bold text-[10px] leading-tight px-1">{realItem.text}</p>
 					</div>
 				</motion.div>
 			)}
@@ -207,7 +194,7 @@ function GiftBox2({ onClick, isSelected, revealed, selIdx, unselIdx, ribbonColor
 	onClick: () => void; isSelected: boolean; revealed: boolean
 	selIdx: number; unselIdx: number; ribbonColor: string
 }) {
-	const prankItem: PrankItem | null = isSelected ? (PRANK_PRIZES_2[selIdx] ?? PRANK_PRIZES_2[0]) : null
+	const couponItem: Coupon | null = isSelected ? (COUPONS[selIdx] ?? COUPONS[0]) : null
 	const realItem: RealItem2 | null = !isSelected && revealed ? (REAL_PRIZES_2[unselIdx] ?? null) : null
 
 	return (
@@ -219,32 +206,32 @@ function GiftBox2({ onClick, isSelected, revealed, selIdx, unselIdx, ribbonColor
 				isSelected
 					? 'bg-rose-500/10 border-rose-400'
 					: realItem
-						? 'bg-violet-500/10 border-violet-400'
+						? 'bg-violet-500/10 border-violet-400 p-0'
 						: 'bg-gradient-to-br from-rose-400/90 to-pink-600/90 border-rose-200 shadow-xl'
 			}`}
 		>
-			{!prankItem && !realItem && (
+			{!couponItem && !realItem && (
 				<>
 					<div className={`absolute inset-x-0 top-0 h-1/4 ${ribbonColor} opacity-50`} />
 					<div className={`absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[16%] ${ribbonColor} opacity-50`} />
 					<div className="text-white/80">
-						<svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-						</svg>
+						<IconGift />
 					</div>
 				</>
 			)}
-			{prankItem && (
+			{couponItem && (
 				<motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 18 }} className="flex flex-col items-center text-center gap-0.5">
-					{prankItem.icon}
-					<p className="text-white text-[9px] font-bold leading-tight">{prankItem.text}</p>
+					<div className="text-pink-300 transform scale-75">{couponItem.icon}</div>
+					<p className="text-white text-[9px] font-bold leading-tight mt-1">{couponItem.title}</p>
+					<p className="text-pink-200 text-[8px] leading-tight mt-0.5">{couponItem.desc}</p>
 				</motion.div>
 			)}
 			{realItem && (
-				<motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 280, damping: 18 }} className="flex flex-col items-center text-center gap-0.5">
-					{realItem.icon}
-					<p className="text-white text-[9px] font-bold leading-tight">{realItem.text}</p>
-					<p className="text-violet-200 text-[8px] leading-tight">{realItem.sub}</p>
+				<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="absolute inset-0">
+					<img src={realItem.img} alt={realItem.text} className="w-full h-full object-cover" />
+					<div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent flex flex-col justify-end p-2 text-center pb-2">
+						<p className="text-white font-bold text-[9px] leading-tight px-0.5">{realItem.text}</p>
+					</div>
 				</motion.div>
 			)}
 		</motion.div>
@@ -252,7 +239,6 @@ function GiftBox2({ onClick, isSelected, revealed, selIdx, unselIdx, ribbonColor
 }
 
 // ─── Runaway Yes Button ───────────────────────────────────────────────────────
-// Teleports to a random screen position on each click. At attempt 7, lets through.
 function RunawayYesButton({ onEscape, attempts, onAttempt }: {
 	onEscape: () => void; attempts: number; onAttempt: () => void
 }) {
@@ -282,11 +268,11 @@ function RunawayYesButton({ onEscape, attempts, onAttempt }: {
 			onTouchEnd={handlePress}
 			className={`py-4 px-10 rounded-full font-bold text-2xl select-none transition-shadow ${
 				escaped
-					? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-[0_0_35px_rgba(16,185,129,0.8)] animate-pulse'
+					? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-[0_0_35px_rgba(16,185,129,0.8)]'
 					: 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]'
 			}`}
 		>
-			{escaped ? 'SÍ  (atrápame!)' : 'SÍ'}
+			SÍ
 		</motion.button>
 	)
 }
@@ -301,16 +287,13 @@ export default function BirthdayFlow() {
 	const [selectedGifts1, setSelectedGifts1] = useState<number[]>([])
 	const [revealed1, setRevealed1] = useState(false)
 
-	// State 3 (second gift round)
+	// State 3 (second gift round - 11 boxes)
 	const [selectedGifts2, setSelectedGifts2] = useState<number[]>([])
 	const [revealed2, setRevealed2] = useState(false)
 
 	// Runaway states
 	const [attempts2, setAttempts2] = useState(0)
-	const [attempts4, setAttempts4] = useState(0)
 	const [noScale2, setNoScale2] = useState(1)
-	const [noScale4, setNoScale4] = useState(1)
-	const [showPopup4, setShowPopup4] = useState(false)
 
 	// State 6
 	const [isSaving, setIsSaving] = useState(false)
@@ -318,7 +301,7 @@ export default function BirthdayFlow() {
 	const [saveError, setSaveError] = useState('')
 
 	const unselectedIdx1 = Array.from({ length: 6 }, (_, i) => i).filter(i => !selectedGifts1.includes(i))
-	const unselectedIdx2 = Array.from({ length: 8 }, (_, i) => i).filter(i => !selectedGifts2.includes(i))
+	const unselectedIdx2 = Array.from({ length: 11 }, (_, i) => i).filter(i => !selectedGifts2.includes(i))
 
 	const handlePinSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
@@ -342,10 +325,10 @@ export default function BirthdayFlow() {
 	}
 
 	const handleGift2Click = (i: number) => {
-		if (selectedGifts2.length >= 5 || selectedGifts2.includes(i)) return
+		if (selectedGifts2.length >= 8 || selectedGifts2.includes(i)) return
 		const next = [...selectedGifts2, i]
 		setSelectedGifts2(next)
-		if (next.length === 5) setTimeout(() => setRevealed2(true), 1200)
+		if (next.length === 8) setTimeout(() => setRevealed2(true), 1200)
 	}
 
 	const handleSave = async () => {
@@ -439,8 +422,7 @@ export default function BirthdayFlow() {
 							</div>
 							<AnimatePresence>
 								{revealed1 && (
-									<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-										<p className="text-white/60 text-sm italic">Eso obtuviste... yes lo que no elegiste? Jajaja</p>
+									<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
 										<motion.button onClick={() => setState(2)} whileTap={{ scale: 0.95 }} className="py-3 px-8 rounded-full bg-white text-pink-600 font-bold shadow-[0_0_25px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform">
 											Quiero revancha
 										</motion.button>
@@ -453,9 +435,7 @@ export default function BirthdayFlow() {
 					{/* ─── State 2: Runaway Button 1 ─── */}
 					{state === 2 && (
 						<motion.div key="run1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-md text-center px-6">
-							<h2 className="font-display text-3xl font-bold text-white mb-3">Revancha de regalos?</h2>
-							<p className="text-white/50 text-sm mb-3">Quizas ahora si tengas mejor suerte...</p>
-							<p className="text-white/30 text-xs mb-10">Intento {attempts2 + 1} de 7 — el SI anda por ahi...</p>
+							<h2 className="font-display text-3xl font-bold text-white mb-10">¿Quieres otra oportunidad para recibir más regalos?</h2>
 							<div className="flex justify-center">
 								<motion.button
 									animate={{ scale: noScale2 }}
@@ -473,14 +453,14 @@ export default function BirthdayFlow() {
 						</motion.div>
 					)}
 
-					{/* ─── State 3: Second Gift Round (8 boxes) ─── */}
+					{/* ─── State 3: Second Gift Round (11 boxes) ─── */}
 					{state === 3 && (
 						<motion.div key="gifts2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-xl text-center">
 							<p className="text-pink-400 text-sm font-mono uppercase tracking-widest mb-2">Segunda oportunidad</p>
-							<h2 className="font-display text-3xl font-bold text-white mb-2">Elige 5 regalos</h2>
-							<p className="text-white/50 text-sm mb-8">Esta vez son 8 cajas. Lo que escojas es lo que te llevas.</p>
-							<div className="grid grid-cols-4 gap-2 mb-6">
-								{Array.from({ length: 8 }).map((_, i) => {
+							<h2 className="font-display text-3xl font-bold text-white mb-2">Elige 8 regalos</h2>
+							<p className="text-white/50 text-sm mb-8">Esta vez son 11 cajas. Elige rápido.</p>
+							<div className="grid grid-cols-3 sm:grid-cols-4 gap-2 lg:gap-3 mb-6">
+								{Array.from({ length: 11 }).map((_, i) => {
 									const selIdx = selectedGifts2.indexOf(i)
 									const unselIdx = unselectedIdx2.indexOf(i)
 									return (
@@ -491,7 +471,7 @@ export default function BirthdayFlow() {
 											revealed={revealed2}
 											selIdx={selIdx}
 											unselIdx={unselIdx}
-											ribbonColor={RIBBON_COLORS8[i]}
+											ribbonColor={RIBBON_COLORS11[i]}
 										/>
 									)
 								})}
@@ -499,9 +479,8 @@ export default function BirthdayFlow() {
 							<AnimatePresence>
 								{revealed2 && (
 									<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-										<p className="text-white/60 text-sm italic">Mira lo que no elegiste... pero tengo algo mejor para ti.</p>
-										<motion.button onClick={() => setState(4)} whileTap={{ scale: 0.95 }} className="py-3 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold shadow-[0_0_25px_rgba(236,72,153,0.4)]">
-											Ver mis cupones reales
+										<motion.button onClick={() => setState(5)} whileTap={{ scale: 0.95 }} className="mt-4 py-3 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold shadow-[0_0_25px_rgba(236,72,153,0.4)]">
+											Ver cupones obtenidos
 										</motion.button>
 									</motion.div>
 								)}
@@ -509,47 +488,12 @@ export default function BirthdayFlow() {
 						</motion.div>
 					)}
 
-					{/* ─── State 4: Runaway Button 2 ─── */}
-					{state === 4 && (
-						<motion.div key="run2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-md text-center px-6">
-							{showPopup4 && (
-								<motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="fixed inset-0 flex items-center justify-center z-[9998] pointer-events-none">
-									<div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 text-center shadow-[0_0_50px_rgba(236,72,153,0.5)] max-w-sm mx-4">
-										<div className="flex justify-center mb-3"><IconHeart className="w-12 h-12 text-pink-400" /></div>
-										<h3 className="text-2xl font-display font-bold text-white mb-2">Claro que si</h3>
-										<p className="text-white/80">Porque te amo mucho, tienes todos los cupones.</p>
-									</div>
-								</motion.div>
-							)}
-							<h2 className="font-display text-3xl font-bold text-white mb-3">Quieres ver tus 5 cupones restantes?</h2>
-							<p className="text-white/50 text-sm mb-3">Todos son para ti, pero tienes que pedirlos...</p>
-							<p className="text-white/30 text-xs mb-10">Intento {attempts4 + 1} de 7 — persigue el SI</p>
-							<div className="flex justify-center">
-								<motion.button
-									animate={{ scale: noScale4 }}
-									onClick={() => setNoScale4(s => s * 1.1)}
-									className="py-3 px-10 rounded-full bg-slate-800 border border-slate-600 text-white font-bold text-lg active:scale-95"
-								>
-									NO
-								</motion.button>
-							</div>
-							<RunawayYesButton
-								attempts={attempts4}
-								onAttempt={() => setAttempts4(a => a + 1)}
-								onEscape={() => {
-									setShowPopup4(true)
-									setTimeout(() => { setShowPopup4(false); setState(5) }, 2800)
-								}}
-							/>
-						</motion.div>
-					)}
-
 					{/* ─── State 5: All Coupons ─── */}
 					{state === 5 && (
 						<motion.div key="coupons" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-2xl text-center">
 							<p className="text-pink-400 text-sm font-mono uppercase tracking-widest mb-2">Tus regalos de verdad</p>
-							<h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">8 Cupones de Amor</h2>
-							<p className="text-white/50 text-sm mb-8">Toca cada uno para ver los terminos. Son todos tuyos.</p>
+							<h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">Cupones Obtenidos</h2>
+							<p className="text-white/50 text-sm mb-8">Disfrútalos, te los mereces.</p>
 							<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
 								{COUPONS.map(c => <CouponCard key={c.id} coupon={c} />)}
 							</div>
