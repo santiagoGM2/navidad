@@ -69,14 +69,14 @@ interface Coupon {
 }
 
 const COUPONS: Coupon[] = [
-	{ id: 1, title: 'Cita Misteriosa', desc: 'Tu eliges fecha, yo planeo todo', icon: <IconSearch />, terms: 'Valido 1 vez. Debe canjearse con amor. El plan es secreto y sorpresa.' },
-	{ id: 2, title: 'Picnic Romantico', desc: 'Manta, snacks y tu', icon: <IconStar />, terms: 'Incluye tus snacks favoritos. No reembolsable por lluvia leve.' },
-	{ id: 3, title: 'Desayuno Sorpresa', desc: 'A la cama, con mucho amor', icon: <IconSun />, terms: 'Yo lo preparo. Sin cargos extra por arreglarte el cabello.' },
-	{ id: 4, title: 'Karaoke Privado', desc: 'Te canto hasta que te canses de escucharme', icon: <IconMusic />, terms: 'Sin jueces. Sin vergüenza. Solo nosotros dos.' },
-	{ id: 5, title: 'Te Consiento Hoy', desc: 'Yo cocino, planeo y mimo', icon: <IconHeart className="w-8 h-8 text-pink-600" />, terms: 'Valido 1 dia completo. Incluye masajes bajo previa solicitud.' },
-	{ id: 6, title: 'Cita Elegante', desc: 'Nos vestimos fancy a cenar', icon: <IconDine />, terms: 'Tu escoges restaurante. Yo pago y te digo que eres hermosa toda la noche.' },
-	{ id: 7, title: 'Show Privado', desc: 'De tu striper personal', icon: <IconSparkle />, terms: 'Solo para TeFy. No transferible. Altamente confidencial.' },
-	{ id: 8, title: 'Mordida de Nalga', desc: 'Permiso oficialmente concedido', icon: <IconHeart className="w-8 h-8 text-rose-600" />, terms: 'Un solo uso. Por amor. Sin previo aviso. No hay marcha atras.' },
+	{ id: 1, title: 'Cita Misteriosa', desc: 'Tu eliges fecha, yo planeo todo', icon: <IconSearch />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 2, title: 'Picnic Romantico', desc: 'Manta, snacks y tu', icon: <IconStar />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 3, title: 'Desayuno Sorpresa', desc: 'A la cama, con mucho amor', icon: <IconSun />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 4, title: 'Karaoke Privado', desc: 'Te canto hasta que te canses de escucharme', icon: <IconMusic />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 5, title: 'Te Consiento Hoy', desc: 'Yo cocino, planeo y mimo', icon: <IconHeart className="w-8 h-8 text-pink-600" />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 6, title: 'Cita Elegante', desc: 'Nos vestimos fancy a cenar', icon: <IconDine />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 7, title: 'Show Privado', desc: 'De tu striper personal', icon: <IconSparkle />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
+	{ id: 8, title: 'Mordida de Nalga', desc: 'Permiso oficialmente concedido', icon: <IconHeart className="w-8 h-8 text-rose-600" />, terms: 'Expira en 1 año. Solo se usa 1 vez.' },
 ]
 
 const REAL_PRIZES_2 = [
