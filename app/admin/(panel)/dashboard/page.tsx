@@ -47,6 +47,11 @@ export default async function DashboardPage() {
 					title="Recap anual"
 					description="Recorré todas las fotos del año con una experiencia cinematográfica."
 				/>
+				<ActionCard
+					href="/admin/cupones"
+					title="Cupones de TeFy"
+					description="Ver y gestionar los cupones de cumpleaños de TeFy."
+				/>
 			</div>
 		</div>
 	)
