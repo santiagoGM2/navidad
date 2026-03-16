@@ -2,10 +2,12 @@ import { getSessionFromCookie } from '@/lib/auth-server'
 import Image from 'next/image'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function CartaCumpleanera() {
 	const session = getSessionFromCookie()
 
-	if (session?.username !== 'TeFy') {
+	if (session?.username.toLowerCase() !== 'tefy') {
 		return (
 			<div className="min-h-[100dvh] bg-zinc-950 text-white flex items-center justify-center p-6">
 				<div className="text-center">

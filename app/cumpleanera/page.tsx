@@ -3,6 +3,8 @@ import { COOKIE_NAME } from '@/lib/auth-constants'
 import { parseSessionToken } from '@/lib/auth-server'
 import BirthdayFlow from '@/components/fechas-especiales/BirthdayFlow'
 
+export const dynamic = 'force-dynamic'
+
 export default function CumpleaneraPage() {
 	const cookieStore = cookies()
 	const token = cookieStore.get(COOKIE_NAME)?.value
